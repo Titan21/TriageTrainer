@@ -5,7 +5,8 @@
     "Effect types are a fixed set implemented in code: scene, reveal_state, reveal_findings, ask, intervene, set_pose, tag, waste.",
     "correctWhen uses the condition language in content/FORMAT.md. Time costs are placeholders to tune in play-testing.",
     "listedForCasualty is true when the action appears in the casualty's expected.lifeSavingInterventions or expected.keyActions. Use it for presentation-specific help (glucose, inhaler) so authors decide where it applies.",
-    "onTrue.keepPoseWithAid: when the casualty has a mobility_aid of one of these types, keep their pose (a wheelchair user moves in their chair) and only add the motion overlay."
+    "onTrue.keepPoseWithAid: when the casualty has a mobility_aid of one of these types, keep their pose (a wheelchair user moves in their chair) and only add the motion overlay.",
+    "Card templates don't include the time: every card entry is timestamped when it is written."
   ],
   "groups": {
     "scene": "Scene and self",
@@ -146,7 +147,7 @@
         "overlay": "airway_open",
         "region": "head",
         "sets": { "airwayOpened": true },
-        "card": { "field": "treatment", "template": "Airway opened {time}" }
+        "card": { "field": "treatment", "template": "Airway opened" }
       },
       "correctWhen": {
         "any": [
@@ -166,7 +167,7 @@
         "fields": ["breathing", "rr", "breathingDepth"],
         "probe": "breathing_animation",
         "region": "chest",
-        "card": { "field": "signs", "template": "{breathingText} {time}" },
+        "card": { "field": "signs", "template": "{breathingText}" },
         "fallbackRegion": "back"
       },
       "correctWhen": true
@@ -181,7 +182,7 @@
         "fields": ["radialPulse"],
         "probe": "pulse_marker",
         "region": "right_hand",
-        "card": { "field": "signs", "template": "Radial pulse {pulseText} {time}" }
+        "card": { "field": "signs", "template": "Radial pulse {pulseText}" }
       },
       "correctWhen": true
     },
@@ -195,7 +196,7 @@
         "fields": ["crtSeconds"],
         "probe": "crt_marker",
         "region": "left_hand",
-        "card": { "field": "signs", "template": "CRT {crtSeconds} s {time}" }
+        "card": { "field": "signs", "template": "CRT {crtSeconds} s" }
       },
       "correctWhen": true
     },
@@ -209,7 +210,7 @@
         "fields": ["obeysCommands"],
         "probe": "response_bubble",
         "region": "face",
-        "card": { "field": "signs", "template": "Obeys commands: {obeysCommands} {time}" }
+        "card": { "field": "signs", "template": "Obeys commands: {obeysCommands}" }
       },
       "correctWhen": true
     },
@@ -229,7 +230,7 @@
       "effect": {
         "type": "intervene",
         "sets": { "rescueBreathsGiven": true },
-        "card": { "field": "treatment", "template": "5 rescue breaths {time}" }
+        "card": { "field": "treatment", "template": "5 rescue breaths" }
       },
       "correctWhen": {
         "all": [
@@ -287,7 +288,7 @@
         "overlay": "hand_pressure",
         "params": { "by": "bystander" },
         "target": "catastrophic_bleed",
-        "card": { "field": "treatment", "template": "Bystander holding pressure {time}" }
+        "card": { "field": "treatment", "template": "Bystander holding pressure" }
       },
       "correctWhen": {
         "all": [
@@ -323,7 +324,7 @@
         "type": "intervene",
         "overlay": "tourniquet",
         "target": "catastrophic_bleed",
-        "card": { "field": "treatment", "template": "Tourniquet {region} {time}" }
+        "card": { "field": "treatment", "template": "Tourniquet {region}" }
       },
       "correctWhen": { "field": "catastrophicBleedSite", "op": "eq", "value": "tourniquet_site" },
       "feedbackWrong": "A tourniquet only helps a catastrophic bleed on an arm or leg. Pack and press on junctional bleeds."
@@ -338,7 +339,7 @@
         "overlay": "hand_pressure",
         "params": { "by": "rescuer" },
         "target": "catastrophic_bleed",
-        "card": { "field": "treatment", "template": "Direct pressure {region} {time}" }
+        "card": { "field": "treatment", "template": "Direct pressure {region}" }
       },
       "correctWhen": { "field": "catastrophicBleed", "op": "eq", "value": true },
       "feedbackWrong": "Only a catastrophic bleed needs you to stop and press during the sieve. Minor bleeding can wait."
@@ -352,7 +353,7 @@
         "type": "intervene",
         "overlay": "wound_packing",
         "target": "catastrophic_bleed",
-        "card": { "field": "treatment", "template": "Wound packed {region} {time}" }
+        "card": { "field": "treatment", "template": "Wound packed {region}" }
       },
       "correctWhen": { "field": "catastrophicBleedSite", "op": "in", "value": ["junctional", "other"] },
       "feedbackWrong": "Packing is for catastrophic bleeds where a tourniquet won't fit (groin, neck, armpit). On a limb a tourniquet is faster."
@@ -367,7 +368,7 @@
         "overlay": "hand_pressure",
         "params": { "by": "self" },
         "target": "major_bleed",
-        "card": { "field": "treatment", "template": "Self-pressure {region} {time}" }
+        "card": { "field": "treatment", "template": "Self-pressure {region}" }
       },
       "correctWhen": {
         "all": [
@@ -385,7 +386,7 @@
       "effect": {
         "type": "intervene",
         "sets": { "glucoseGiven": true },
-        "card": { "field": "treatment", "template": "Oral glucose {time}" }
+        "card": { "field": "treatment", "template": "Oral glucose" }
       },
       "correctWhen": {
         "all": [
@@ -404,7 +405,7 @@
       "effect": {
         "type": "intervene",
         "sets": { "inhalerUsed": true },
-        "card": { "field": "treatment", "template": "Own reliever inhaler {time}" }
+        "card": { "field": "treatment", "template": "Own reliever inhaler" }
       },
       "correctWhen": {
         "all": [
@@ -422,7 +423,7 @@
       "effect": {
         "type": "set_pose",
         "pose": "recovery",
-        "card": { "field": "treatment", "template": "Recovery position {time}" }
+        "card": { "field": "treatment", "template": "Recovery position" }
       },
       "correctWhen": {
         "all": [
@@ -456,7 +457,7 @@
         "type": "intervene",
         "overlay": "splint",
         "target": "deformity",
-        "card": { "field": "treatment", "template": "Splinted {region} {time}" }
+        "card": { "field": "treatment", "template": "Splinted {region}" }
       },
       "correctWhen": false,
       "feedbackWrong": "Splinting is good first aid but not part of the sieve. Tag and move on; treatment teams splint later."
@@ -496,7 +497,7 @@
       "effect": {
         "type": "intervene",
         "sets": { "entrapped": false },
-        "card": { "field": "other", "template": "Released from entrapment {time}" }
+        "card": { "field": "other", "template": "Released from entrapment" }
       },
       "correctWhen": false,
       "feedbackWrong": "Releasing a long-trapped casualty without medical support can cause sudden collapse (crush syndrome). Flag them for medical before release."
@@ -509,7 +510,7 @@
       "effect": {
         "type": "scene",
         "do": "flag_for_medical",
-        "card": { "field": "other", "template": "Trapped - medical needed before release {time}" }
+        "card": { "field": "other", "template": "Trapped - medical needed before release" }
       },
       "correctWhen": { "field": "entrapped", "op": "eq", "value": true },
       "feedbackWrong": "They were not trapped, so there was nothing to flag."
@@ -555,7 +556,7 @@
         "type": "intervene",
         "overlay": "cervical_collar",
         "region": "neck",
-        "card": { "field": "treatment", "template": "Collar applied {time}" }
+        "card": { "field": "treatment", "template": "Collar applied" }
       },
       "correctWhen": false,
       "feedbackWrong": "Spinal care is not part of the sieve; note the mechanism and move on."

@@ -205,7 +205,7 @@ function applyStage(session, rc, st) {
   }
   rc.changedSince = session.clock;
   if (rc.visitedAt != null && (d.pose || d.appearance?.length || d.addFindings?.some((f) => f.visible))) {
-    session.messages.push({ t: session.clock, casualty: rc.id, text: `${nameOf(rc)} looks different.` });
+    session.messages.push({ t: session.clock, casualty: rc.id, text: `${displayName(session, rc.id)} looks different.` });
   }
 }
 
@@ -378,10 +378,10 @@ function applySceneEffect(session, a, rc) {
           r.visitedAt = session.clock;
           for (const f of r.findings) if (f.visible) addCard(session, r, f.cardField, f.label);
         }
-        addCard(session, r, 'signs', `Walking: yes ${clockText(session)}`);
+        addCard(session, r, 'signs', 'Walking: yes');
       }
     }
-    return { ok: true, text: walkers.length ? `${walkers.length} ${walkers.length === 1 ? 'person gets' : 'people get'} up and make their way to you: ${walkers.map(nameOf).join(', ')}.` : 'Nobody moves towards you.' };
+    return { ok: true, text: walkers.length ? `${walkers.length === 1 ? '1 person gets up and makes' : `${walkers.length} people get up and make`} their way to you: ${walkers.map((r) => displayName(session, r.id)).join(', ')}.` : 'Nobody moves towards you.' };
   }
   switch (e.do) {
     case 'check_danger': {
@@ -397,7 +397,7 @@ function applySceneEffect(session, a, rc) {
     case 'move_on': session.current = null; return { ok: true, text: 'You move on.' };
     case 'reassure': return { ok: true, text: rc?.state.canTalk ? 'They calm a little.' : 'There is no response.' };
     case 'flag_for_medical':
-      if (rc) addCard(session, rc, 'other', fill(session, rc, a.effect.card?.template ?? 'Flagged for medical {time}'));
+      if (rc) addCard(session, rc, 'other', fill(session, rc, a.effect.card?.template ?? 'Flagged for medical'));
       return { ok: true, text: 'Flagged: medical support needed before release.' };
     case 'move_casualty':
       return { ok: true, text: 'You drag them to a safer spot.' };
@@ -542,9 +542,21 @@ function intervene(session, rc, a) {
 
 // ---------- card ----------
 
-function nameOf(rc) {
-  const n = rc.def.identity?.name;
-  return n && rc.observedName ? n : rc.def.title;
+/**
+ * How the player knows a casualty: their name once learned, otherwise "Casualty N".
+ * Never the internal title, which describes the diagnosis.
+ */
+export function displayName(session, casualtyId) {
+  const rc = session.casualties.get(casualtyId);
+  const n = rc?.def.identity?.name;
+  return n && rc.observedName ? n : `Casualty ${session.order.indexOf(casualtyId) + 1}`;
+}
+
+/** State of a scene event, for banners: { fired, resolved, missed, deadlineAt, progress, needed }. */
+export function eventStatus(session, eventId) {
+  const ev = session.events.find((e) => e.def.id === eventId);
+  if (!ev) return null;
+  return { fired: ev.fired, resolved: ev.resolved, missed: ev.missed, deadlineAt: ev.deadlineAt ?? null, progress: ev.progress, needed: expectedResponses(ev.def) };
 }
 
 function fill(session, rc, template, extra = {}) {
@@ -634,6 +646,10 @@ export function hint(session) {
   if (!has('check_radial_pulse') && !has('check_crt')) return 'Check circulation: radial pulse or capillary refill.';
   if (!has('give_command') && rc.ageGroup !== 'child') return 'Can they follow a simple command?';
   if (rc.ageGroup === 'child' && !has('check_response')) return 'Check how they respond (AVPU).';
+  const breathingNow = rc.observed.breathing?.value === true;
+  const notResponding = rc.observed.obeysCommands?.value === false || ['pain', 'unresponsive'].includes(rc.observed.responsive?.value);
+  if (breathingNow && notResponding && !rc.state.entrapped && rc.pose !== 'recovery') return 'Breathing but not responding: protect the airway before you move on.';
+  if (rc.state.entrapped && !has('flag_for_medical')) return 'Trapped: make sure medical support is lined up before anyone frees them.';
   if (!rc.tag) return 'You have what you need. Tag them and move on.';
   return 'Tagged. Move on to the next casualty.';
 }

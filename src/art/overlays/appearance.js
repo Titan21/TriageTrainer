@@ -331,7 +331,8 @@ function wheelchairSide(broken, rng) {
   s += wheelSide(hub, 19, broken, rng);
   if (!broken) return { svg: s, w: 78, h: 64, rest: 27 };
   // tipped over: rotate about the wheel so the chair lies on its back
-  return { svg: `<g transform="rotate(-72 0 8)">${s}</g>`, w: 70, h: 80, rest: 24, tipped: true };
+  // Rotated extents are x -51..32, y -44..41: shift right by 10 to centre, and rest on the bottom edge.
+  return { svg: `<g transform="translate(10 0) rotate(-72 0 8)">${s}</g>`, w: 84, h: 86, rest: 39, tipped: true };
 }
 
 function wheelchairFront(ctx, broken) {

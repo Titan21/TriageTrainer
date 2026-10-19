@@ -134,7 +134,9 @@ export function renderCasualty(casualty, view = {}, content = {}) {
   const { vocab } = content;
   const warnings = [];
   const warn = (m) => { if (!warnings.includes(m)) warnings.push(m); };
-  const actionList = Array.isArray(content.actions) ? content.actions : content.actions?.actions ?? [];
+  // Accepts the actions.json document, its actions array, or a Map of id -> action.
+  const actionList = content.actions instanceof Map ? [...content.actions.values()]
+    : Array.isArray(content.actions) ? content.actions : content.actions?.actions ?? [];
   const actions = new Map(actionList.map((a) => [a.id, a]));
   const rules = content.rules;
 

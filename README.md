@@ -6,16 +6,17 @@ A browser game for practising mass casualty incident (MCI) triage, built for NZ 
 
 ## Status
 
-Early development. The content and the systems the game runs on exist; the playable app does not yet.
+Playable: **https://titan21.github.io/TriageTrainer/**. Rules are still a placeholder (see the warning above) and the content hasn't had a clinical review yet.
 
 - 64 casualties and 16 scenes (12 Learn, 4 Full scene) written as JSON
 - A rules engine that calculates the correct category from each casualty's true condition
-- A validator that checks all content and runs the rules engine against it
+- A game engine with a scene clock, deterioration, hazards, a triage card and a scored debrief
 - An SVG illustration system that draws every casualty from one shared vocabulary
+- A validator and a simulator that plays every scene; both run before every deploy
 
 See [PLAN.md](PLAN.md) for the design, the build order and the open questions.
 
-## How it will play
+## How it plays
 
 1. Read a short METHANE briefing.
 2. Approach a casualty. The picture shows only what you can see at a glance.
@@ -41,13 +42,23 @@ Modes: **Learn** (one to three casualties, with hints) and **Full scene** (8–1
 | `content/casualties/` | Casualties, one file per theme |
 | `content/scenes/` | Learn and Full-scene scenarios |
 | `src/engine/` | Rules engine |
+| `src/game/` | Game engine (sessions, actions, deterioration, scoring) |
+| `src/ui/` | The app's screens |
 | `src/art/` | SVG illustration system |
 | `tools/validate.mjs` | Content validator |
+| `tools/simulate.mjs` | Plays every scene through the game engine |
 | `tools/render-preview.mjs` | Contact sheet of every pose, overlay and casualty |
 
 ## Working on it
 
-You need [Node.js](https://nodejs.org/) 20 or later. There are no dependencies yet.
+You need [Node.js](https://nodejs.org/) 20 or later.
+
+```bash
+npm install
+npm run dev
+```
+
+This starts the game at http://localhost:5173/TriageTrainer/.
 
 ```bash
 npm run validate
@@ -57,6 +68,12 @@ This checks every content file. It reports anything that breaks the format, for 
 - an injury drawn on a body part the pose hides
 - vital signs that cross a triage threshold
 - an expected category that doesn't match the rules
+
+```bash
+npm run simulate
+```
+
+This plays every scene through the game engine with a careful player, who must tag everyone correctly from what they observed, and a careless one, and renders every picture.
 
 ```bash
 npm run preview:art

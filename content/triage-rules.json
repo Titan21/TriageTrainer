@@ -1,7 +1,7 @@
 {
   "version": 1,
   "approved": false,
-  "notice": "PLACEHOLDER PROTOCOL. Thresholds and steps are common published values (UK triage sieve / START for adults, JumpSTART for children), not NZRT's. Replace before real practice. The app shows a banner while approved is false.",
+  "notice": "Practice values only. These triage steps and thresholds are common published ones (UK triage sieve and START for adults, JumpSTART for children), not NZRT's protocol. Check with your team before relying on them.",
   "categories": [
     { "id": "red", "label": "Immediate", "priority": 1, "colour": "#c62828" },
     { "id": "orange", "label": "Urgent", "priority": 2, "colour": "#ef6c00" },

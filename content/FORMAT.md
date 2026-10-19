@@ -89,7 +89,7 @@ A casualty file is `{ "prefix": "ci_", "theme": "Circulation and bleeding", "cas
   "deterioration": [
     {
       "id": "d1",
-      "atSeconds": 90,                                // scene clock (Learn mode: from reaching the casualty)
+      "atSeconds": 90,                                // scene clock: seconds since the scene started
       "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
       "note": "Uncontrolled bleed: loses radial pulse, pale, confused.",
       "state": { "radialPulse": { "present": false, "rate": null }, "crtSeconds": { "range": [4, 5] }, "obeysCommands": false, "responsive": "voice", "canTalk": false },
@@ -143,7 +143,7 @@ A casualty file is `{ "prefix": "ci_", "theme": "Circulation and bleeding", "cas
 
 ### Deterioration stages
 
-- Time stage: `atSeconds` (strictly increasing across time stages).
+- Time stage: `atSeconds` on the scene clock, which starts when the scene starts and advances by each action's `timeCostSeconds` plus walking time between casualties. Strictly increasing across time stages. In a big scene, a casualty you reach late may already have deteriorated; that is intended.
 - Action stage: `afterAction` (an action id) and `delaySeconds` instead of `atSeconds`. Use this for consequences such as `release_from_entrapment` (crush) or `give_water`. Action stages branch off the state at that point in the list; they don't carry forward to later stages.
 - `unless`: action ids. If any of them was done before the stage time, the stage doesn't happen.
 - `state`: a partial patch merged into `state`. Objects merge; a range or number replaces.
@@ -203,6 +203,7 @@ These keep the art matching the data. The validator enforces them.
 - `casualties[].override` may replace the casualty's `approach`, `mechanism`, `speech` (text of the speech bubble, max 40 characters) and `teaching` so one casualty can be reused in a different incident. Only text can be overridden; the overridden approach must still describe only what is drawn (pose, look, appearance, visible findings), so don't place a casualty with `wet` appearance in a dry scene or `soot` where there was no fire.
 - `bystanders[].behaviour` is from `vocab.bystanderBehaviours`; `canHelp` lists action ids. Bystanders are drawn with the same figure system (pose `standing`, with `look`).
 - `hazards[].type` is from `vocab.hazards`; `events[].type` is from `vocab.sceneEvents`; `events[].hazard` refers to a hazard id in the same scene.
+- `deadlineSeconds` runs from the moment the player sees the alert (the end of the action in progress), and the player must *start* the response within it. Hazards and aftershocks missed this way cost the danger penalty; other events (bystander demands) cost a small penalty.
 - `correctResponse` is an action id (`withdraw`, `drop_cover_hold`, `make_safe`, `move_casualty`, etc.), a list of them in order (aftershock: `["drop_cover_hold", "withdraw"]`), or `ignore`. Each hazard's `defaultResponse` in vocab is an action id too.
 - Casualty full names must be unique across the library, because bystanders call casualties by name.
 

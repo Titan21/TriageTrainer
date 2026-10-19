@@ -1,12 +1,62 @@
-import rules from '../content/triage-rules.json';
-import { renderCasualty } from './art/index.js';
-import vocab from '../content/vocab.json';
-import actions from '../content/actions.json';
-import walking from '../content/casualties/walking.json';
+/// <reference types="vite/client" />
+// Boot and hash routing.
+//   #/                 home
+//   #/scene/<id>       briefing
+//   #/play             the game (needs a session, otherwise back to home)
+//   #/debrief          the result of the finished session
+// In `npm run dev` only, #/play?scene=<id>&auto=<n> and #/debrief?scene=<id>&auto=all jump to a state (see ui/dev.ts).
+import './styles.css';
+import { mountBriefing } from './ui/briefing';
+import { mountDebrief } from './ui/debrief';
+import { mountHome } from './ui/home';
+import { mountPlay } from './ui/play';
+import { app } from './ui/state';
+import { parseHash } from './ui/util';
 
-const app = document.querySelector<HTMLDivElement>('#app')!;
-const banner = rules.approved ? '' : `<p style="background:#fff3cd;padding:8px">${rules.notice}</p>`;
-const sample = walking.casualties[0];
-const { svg } = renderCasualty(sample, { mode: 'approach' }, { vocab, actions, rules });
+const root = document.querySelector<HTMLDivElement>('#app')!;
+let cleanup: (() => void) | undefined;
+let token = 0;
 
-app.innerHTML = `${banner}<h1>Triage Trainer</h1><p>Work in progress. ${sample.approach}</p><div style="max-width:320px">${svg}</div>`;
+function go(hash: string) {
+  location.replace(hash);
+}
+
+async function route() {
+  const mine = ++token;
+  const { path, query } = parseHash(location.hash);
+  const [screen, arg] = path;
+  cleanup?.();
+  cleanup = undefined;
+
+  let playOpts: { dialog?: string | null } = {};
+  if (import.meta.env.DEV && (screen === 'play' || screen === 'debrief') && query.get('scene')) {
+    const dev = await import('./ui/dev');
+    if (mine !== token) return;
+    playOpts = dev.setup(screen, query);
+  }
+
+  document.title = 'Triage Trainer';
+  root.className = `screen screen-${screen || 'home'}`;
+
+  if (screen === 'scene' && arg) {
+    if (!mountBriefing(root, arg)) return go('#/');
+    document.title = 'Briefing · Triage Trainer';
+  } else if (screen === 'play') {
+    if (!app.session) return go('#/');
+    if (app.session.ended || app.report) return go('#/debrief');
+    cleanup = mountPlay(root, playOpts);
+    document.title = 'Play · Triage Trainer';
+  } else if (screen === 'debrief') {
+    if (!mountDebrief(root)) return go('#/');
+    document.title = 'Debrief · Triage Trainer';
+  } else if (!screen) {
+    mountHome(root);
+  } else {
+    return go('#/');
+  }
+  window.scrollTo(0, 0);
+  if (screen !== 'play') root.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true });
+}
+
+window.addEventListener('hashchange', route);
+void route();

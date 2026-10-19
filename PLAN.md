@@ -4,9 +4,9 @@ A browser game for practising mass casualty incident (MCI) triage before an NZRT
 
 > **Protocol status:** the triage rules in `content/triage-rules.json` are a placeholder (UK sieve / START for adults, JumpSTART-style for children), not NZRT's. `"approved": false` makes the app show a banner until NZRT's protocol replaces them.
 
-## Where things stand (2026-10-19)
+## Where things stand (2026-10-20)
 
-Built so far. There is no app yet; this is the content and the systems the app will run on:
+**Playable at https://titan21.github.io/TriageTrainer/**: every Learn and Full scene can be played from briefing to debrief, on a phone or a desktop. The art contact sheet is at `/preview/`.
 
 | Path | What it is |
 |---|---|
@@ -18,7 +18,10 @@ Built so far. There is no app yet; this is the content and the systems the app w
 | `content/scenes/*.json` | 12 Learn scenes and 4 Full scenes |
 | `src/engine/rules.js` | Rules engine: computes the correct category from a casualty's true state, and which checks the player needed to justify it |
 | `src/art/` | SVG illustration system driven entirely by `vocab.json` |
+| `src/game/session.js` | Game engine: scene clock, actions, reveals, deterioration, events, triage card, hints, debrief and scoring |
+| `src/ui/`, `src/main.ts`, `src/styles.css` | The app: home, briefing, play (casualty strip, map, picture, actions, card), tag dialog and debrief |
 | `tools/validate.mjs` | Content validator (`npm run validate`) |
+| `tools/simulate.mjs` | Plays every scene and every casualty with a careful and a careless player (`npm run simulate`) |
 | `tools/render-preview.mjs` | Contact sheet of every pose, overlay and casualty (`npm run preview:art` → `preview/index.html`) |
 
 The casualties and scenes were drafted by several parallel agents against the shared contract. The validator checks every file, and every casualty was spot-checked for text vs picture and clinical sense. They still need a review by an NZRT clinician (see [Content review notes](#content-review-notes)).
@@ -36,14 +39,18 @@ The casualties and scenes were drafted by several parallel agents against the sh
 - **The truth is computed, never hard-coded.** The rules engine derives the correct category from a casualty's state at the moment of tagging. Each casualty's expected categories are assertions the validator checks, so a rules change immediately shows which casualties change outcome.
 - **Randomised vitals use a seeded RNG,** so a debrief or bug report can replay the exact run.
 - **Placeholder banner** while `triage-rules.json` has `"approved": false`.
+- **Clock: game time.** Each action costs its `timeCostSeconds` and walking between casualties costs time by distance, all on one scene clock. Deterioration and hazard deadlines run on that clock, so speed matters without real-time pressure. A real-time option for Full scenes is still open.
+- **The player sees observations, not the truth.** The picture's vital-sign probes show the values as last checked, so a casualty who deteriorates looks the same until you re-check (visible changes such as pallor or slumping show straight away).
+- **Casualties are "Casualty N" until you learn their name.** Internal titles describe the diagnosis and are never shown during play.
+- **CI plays the game.** The deploy workflow runs the validator and the simulator before building, so content or engine changes that break play never deploy.
 
 ## Core loop (single casualty)
 1. **Briefing:** short METHANE summary.
 2. **Approach:** the picture shows only the pose, look, appearance and visible findings.
-3. **Act:** the core sieve actions are always on screen in a fixed order (walk, breathing, airway, pulse/CRT, command, expose, life-saving interventions), plus 2–3 rotating extras drawn from traps and silly options. Fixed positions build the habit; the extras test judgement.
+3. **Act:** the core sieve actions are always on screen in a fixed order (walk, breathing, airway, pulse/CRT, command, expose, life-saving interventions), plus 3 rotating extras drawn from traps and silly options that look exactly like the core buttons. Everything else is under "More actions". Fixed positions build the habit; the extras test judgement.
 4. Each action costs game time. It reveals state or findings, applies an intervention, or triggers a consequence (an action-triggered deterioration stage).
 5. **Tag** at any point. Tagging ends the sieve for that casualty.
-6. **Re-triage** (Full scene): casualties are revisited. Vitals change only when re-checked; visible changes (pallor, slumping) show automatically.
+6. **Re-triage:** go back to a casualty, re-check and re-tag. Vitals change only when re-checked; visible changes (pallor, slumping) show automatically, with a "looks different" message. Walking wounded who answer the call-out come to you, so they can be tagged green straight away and re-triaged later.
 7. **Handover** (later milestone): IMISTAMBO from the card.
 8. **Debrief:**
    - correct category at the moment of tagging
@@ -205,12 +212,12 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 
 ## Build order
 1. ✅ Content contract, rules engine, validator, casualty library and scenes.
-2. ✅ Illustration system prototype and contact sheet (casualty-by-casualty visual review still to do).
-3. Scaffold the Vite + TS app. Create the GitHub repo and the Pages workflow (validate → build → deploy), placeholder banner and seeded RNG.
-4. Learn mode, text-first with the existing art: action panel, game clock, reveals, triage card, tagging, debrief with process checks.
-5. Deterioration and interventions in play (time and action stages), re-triage.
-6. Scoring and the debrief view: full picture with missed findings highlighted.
-7. Full-scene mode: map, moving between casualties, bystanders, hazards and events.
+2. ✅ Illustration system and contact sheet. Spot-checked the riskiest casualties; the front-view sitting pose could read more clearly as sitting.
+3. ✅ Vite + TS app, GitHub repo, Pages workflow (validate → simulate → build → deploy), placeholder banner, seeded RNG (`?seed=`).
+4. ✅ Learn mode: action panel, game clock, reveals, triage card, tagging, hints, debrief with process checks.
+5. ✅ Deterioration and interventions in play (time and action stages), re-triage by revisiting and re-tagging.
+6. ✅ Scoring and the debrief view: full picture at the moment of tagging, mistakes, missed findings, what changed over time, teaching.
+7. ◐ Full-scene mode: playable with a map, walking between casualties, hazards with deadlines and bystander events. Still to do: bystanders you can talk to and direct beyond "hold pressure", and casualties arriving mid-scene.
 8. Handover builder.
 9. Mobile polish and offline (PWA).
 10. Swap in NZRT's protocol and card. The validator then lists every casualty whose expected category changes, so content and rules are updated together.
@@ -227,6 +234,13 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 - **Editing content without code:** edit a JSON file on github.com and commit. The Action validates it, and the error log names the casualty and field if something's wrong.
 - **The contact sheet is published** at `<site>/preview/` so an NZRT clinician can review every casualty's picture, text and stages without installing anything.
 
+## Next steps
+- **Offline (PWA)** so the trainer works without signal at the exercise (build step 9).
+- **Clinician review** of the content using the contact sheet and the content review notes below.
+- **Handover builder** (build step 8).
+- **Play-testing with NZRT members** to tune time costs, target times and scoring weights (all placeholder values in `actions.json` and `triage-rules.json`).
+- **Art polish:** sitting pose, a shortened rotated leg for hip fractures, more prone and slumped casualties.
+
 ## Open questions
 - NZRT triage steps, thresholds and category names/colours. Many tag systems use yellow rather than orange, and white rather than black.
 - The child sieve: age cut-off (the library uses the adult sieve from about 12), and how infants who can't walk by age are tagged (placeholder: orange).
@@ -234,7 +248,7 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 - Exact fields and layout of the NZRT triage card (a photo of a blank card would help).
 - Does catastrophic bleeding stay red after it is controlled (placeholder: yes)?
 - Are oral glucose for a known low blood sugar, and helping with someone's own reliever inhaler, acceptable during the sieve (placeholder: yes, when quick)?
-- Clock model: game time from action costs only, or also real-time pressure in Full scene?
+- Clock model: game time works well for learning. Should Full scenes also add real-time pressure?
 - Communication barriers: a Deaf casualty who writes or signs is modelled as `canTalk: false`; should identity and history be obtainable by gesture or writing?
 - How will the exercise present injuries: moulage, cards or role-players?
 - GitHub repo name and owner (sets the Pages base path).
