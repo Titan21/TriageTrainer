@@ -5,6 +5,13 @@
   "type": "module",
   "scripts": {
     "validate": "node tools/validate.mjs",
-    "preview:art": "node tools/render-preview.mjs"
+    "preview:art": "node tools/render-preview.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
   }
 }
