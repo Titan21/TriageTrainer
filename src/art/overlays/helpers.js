@@ -29,10 +29,12 @@ export const headGroup = (geom, inner) => `<g transform="${headTransform(geom)}"
 
 /** Face feature layout in head-local units (r = 1). `side` of eyes: +1 = casualty's left. */
 export function faceLayout(geom) {
+  const dy = geom.head.back ? -0.13 : 0; // head tilted back (airway open): features ride up the face
+  const up = (p) => [p[0], p[1] + dy];
   if (geom.head.mode === 'profile') {
-    return { mode: 'profile', eyes: [{ p: [0.52, -0.04], side: -1 }], brows: [[0.52, -0.3]], mouth: [0.68, 0.52], nose: [1.0, 0.2], cheek: [[0.4, 0.34]], forehead: [[0.55, -0.55], [0.3, -0.6]] };
+    return { mode: 'profile', eyes: [{ p: up([0.52, -0.04]), side: -1 }], brows: [up([0.52, -0.3])], mouth: up([0.68, 0.52]), nose: up([1.0, 0.2]), cheek: [up([0.4, 0.34])], forehead: [[0.55, -0.55], [0.3, -0.6]] };
   }
-  return { mode: 'front', eyes: [{ p: [-0.38, -0.02], side: -1 }, { p: [0.38, -0.02], side: 1 }], brows: [[-0.38, -0.3], [0.38, -0.3]], mouth: [0, 0.5], nose: [0, 0.15], cheek: [[-0.58, 0.3], [0.58, 0.3]], forehead: [[-0.3, -0.58], [0.1, -0.64], [0.4, -0.54]] };
+  return { mode: 'front', eyes: [{ p: up([-0.38, -0.02]), side: -1 }, { p: up([0.38, -0.02]), side: 1 }], brows: [up([-0.38, -0.3]), up([0.38, -0.3])], mouth: up([0, 0.5]), nose: up([0, 0.15]), cheek: [up([-0.58, 0.3]), up([0.58, 0.3])], forehead: [[-0.3, -0.58], [0.1, -0.64], [0.4, -0.54]] };
 }
 
 // ---- defs ----
@@ -56,6 +58,8 @@ export function regionClip(ctx, region, pad = 1) {
   return ctx.def(`clip-${region}`, (id) => `<clipPath id="${id}"><path d="${footprintPath(a, pad)}"/></clipPath>`);
 }
 export function bodyShape(ctx) {
+  // with a shared base (preview), the outline lives once in the shared definitions
+  if (ctx.sharedShape) return ctx.sharedShape;
   return ctx.def('bodyshape', (id) => `<path id="${id}" d="${ctx.figure.bodyUnion}"/>`);
 }
 export function bodyClip(ctx) {

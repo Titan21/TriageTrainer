@@ -2,10 +2,7 @@
 // (possibly modified) geometry and a resolved style. Returns SVG fragments for
 // the ground / body / clothing layers plus the union path of the body (for clipping).
 
-import {
-  f, pt, add, sub, mul, unit, perp, dir, lerp, dist, circlePath, capsulePath, chainPath, polyPath, roundedPoly,
-  mix, lighten, darken,
-} from './util.js';
+import { f, pt, add, sub, mul, unit, perp, lerp, dist, circlePath, capsulePath, chainPath, polyPath, roundedPoly, lighten, darken } from './util.js';
 import { torsoOutline, torsoPoint, torsoHalfWidth, subPolyline, polyLength, polyAt, findLimb } from './skeleton.js';
 import { FIXED_COLOURS, OUTLINE } from './palette.js';
 

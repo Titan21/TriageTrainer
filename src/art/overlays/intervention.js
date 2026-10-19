@@ -1,10 +1,10 @@
 // Intervention overlays: things the player does to the casualty.
 
-import { f, pt, dir, perp, add, sub, mul, unit, lerp, rectPath, capsulePath, roundedPoly, circlePath, esc, mix } from '../util.js';
+import { f, pt, dir, perp, add, sub, mul, unit, lerp, rectPath, capsulePath, esc, mix } from '../util.js';
 import { OUTLINE, INK, FIXED_COLOURS, SKIN } from '../palette.js';
 import { reachArm, polyAt, polyLength } from '../skeleton.js';
-import { FONT, textWidth, nearestOnRect } from '../labels.js';
-import { frame, headPoint, darkLine } from './helpers.js';
+import { textWidth, nearestOnRect } from '../labels.js';
+import { headPoint, darkLine } from './helpers.js';
 import { spot } from './injury.js';
 import { chooseFreeArm, heldHand, holdPoint } from './appearance.js';
 import { outward } from './probe.js';
@@ -113,6 +113,7 @@ export const tourniquet = {
 export const airway_open = {
   kind: 'intervention',
   params: {},
+  geometry(geom) { geom.head.back = true; },
   draw(ctx) {
     const g = ctx.geom, r = g.head.r;
     const P = (x, y) => headPoint(g, x, y);

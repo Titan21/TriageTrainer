@@ -1,10 +1,10 @@
 // Probe overlays: results of checks the player has done. Draw functions get the
 // concrete value in spec.value; readouts are placed by the shared label placer.
 
-import { f, pt, dir, perp, add, sub, mul, unit, dist, clamp, rectPath, capsulePath, roundedPoly } from '../util.js';
-import { OUTLINE, INK, FIXED_COLOURS } from '../palette.js';
-import { FONT, textWidth, nearestOnRect } from '../labels.js';
-import { frame, darkLine, textEl } from './helpers.js';
+import { f, pt, dir, perp, add, mul, clamp, rectPath, capsulePath } from '../util.js';
+import { OUTLINE, INK } from '../palette.js';
+import { textWidth, nearestOnRect } from '../labels.js';
+import { frame, darkLine } from './helpers.js';
 import { requestBubble } from './appearance.js';
 
 const TEAL = '#2f6f8f';

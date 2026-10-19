@@ -1,0 +1,17 @@
+# Dependencies and build output
+node_modules/
+dist/
+
+# Generated art contact sheet (rebuild with: npm run preview:art)
+preview/
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Logs and OS/editor clutter
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

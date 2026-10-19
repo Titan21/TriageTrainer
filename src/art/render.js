@@ -6,8 +6,8 @@
 //   ground -> body -> clothing -> injuries -> entrapment -> appearance
 //          -> interventions -> probes/callouts -> tag
 
-import { f, pt, esc, hash, makeRng, rectPath, circlePath, lerp } from './util.js';
-import { mergeState, sampleStates, isRange } from '../engine/rules.js';
+import { f, esc, hash, makeRng, rectPath, circlePath, lerp } from './util.js';
+import { mergeState, sampleStates } from '../engine/rules.js';
 import { getSkeleton, cloneGeometry, deriveAnchors, bodyCircles, VIEWBOX } from './skeleton.js';
 import { drawFigure } from './figure.js';
 import { resolveStyle, OUTLINE } from './palette.js';
@@ -181,7 +181,7 @@ export function renderCasualty(casualty, view = {}, content = {}) {
   const has = (o) => appearance.some((a) => a.overlay === o);
   const style = resolveStyle(casualty.id ?? 'x', casualty.look, { pallor: has('pallor'), wet: has('wet') });
   const ageGroup = vocab?.ageGroups?.[casualty.ageGroup] || ['adult', 'child'].includes(casualty.ageGroup) ? casualty.ageGroup : 'adult';
-  if (casualty.ageGroup !== ageGroup) warn(`unknown ageGroup "${casualty.ageGroup}", drawn as adult`);
+  if (casualty.ageGroup != null && casualty.ageGroup !== ageGroup) warn(`unknown ageGroup "${casualty.ageGroup}", drawn as adult`);
   const base = getSkeleton(pose, ageGroup);
   if (!base) {
     warn(`no skeleton for pose "${pose}"`);
@@ -245,6 +245,7 @@ export function renderCasualty(casualty, view = {}, content = {}) {
   const ctx = {
     geom, anchors, allAnchors, hidden, covered, style, figure, vocab, rules, state, uid, warn,
     animate: view.animate !== false,
+    sharedShape: typeof content.shareBase === 'function' ? `sh${hash(figure.bodyUnion).toString(36)}` : null,
     lip: cyan ? '#6c82a8' : style.lip,
     add: (layer, svg) => { if (svg) layers[layer].push(svg); },
     def: (key, build) => { const id = `${uid}-${key}`; if (!defs.has(key)) defs.set(key, build(id)); return id; },
@@ -331,8 +332,6 @@ export function renderCasualty(casualty, view = {}, content = {}) {
     if (!region) { region = (OFFSIDE_FALLBACK[regs[0]] ?? []).find((r) => anchors[r]); dashed = true; }
     if (!region) continue;
     if (covered.has(region) && x.overlay !== 'entrapment') continue;
-    const a = anchors[region];
-    ctx.add('probes', '');
     OVERLAYS.callout.draw(ctx, { region, value: { text: shortLabel(x) + (dashed ? ' (other side)' : '') }, dashed });
   }
 
@@ -340,12 +339,19 @@ export function renderCasualty(casualty, view = {}, content = {}) {
   labelReqs.sort((p, q) => (LABEL_PRIORITY[p.layer] ?? 3) - (LABEL_PRIORITY[q.layer] ?? 3) || p.order - q.order);
   for (const l of placeLabels(labelReqs, bodyCircles(geom))) ctx.add(l.layer, l.svg);
 
-  // 7. assemble
+  // 7. assemble. Optional content.shareBase(svg) -> id lets a page that shows many figures
+  // keep each identical body + clothing once and reference it with <use> (opt-in; used by the preview).
   const vb = content.viewBox ?? VIEWBOX;
+  if (typeof content.shareBase === 'function') {
+    const shape = `<defs><path id="${ctx.sharedShape}" d="${figure.bodyUnion}"/></defs>`;
+    const ref = content.shareBase(shape + layers.body.join('') + layers.clothing.join(''));
+    layers.body = [`<use href="#${ref}"/>`];
+    layers.clothing = [];
+  }
   const body = LAYERS.map((l) => (layers[l].length ? `<g id="${uid}-${l}" class="layer-${l}">${layers[l].join('')}</g>` : '')).join('');
   const debug = content.debugAnchors ? debugLayer(anchors) : '';
   const bg = content.background ? `<rect x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" fill="${content.background}"/>` : '';
-  const label = describe(casualty, pose, st);
+  const label = describe(casualty, pose);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.join(' ')}" role="img" aria-label="${esc(label)}" font-family="${FONT}">`
     + `<title>${esc(label)}</title>${defs.size ? `<defs>${[...defs.values()].join('')}</defs>` : ''}${bg}${body}${debug}</svg>`;
   return { svg, warnings, anchors, pose, state };
@@ -355,7 +361,6 @@ export function renderCasualty(casualty, view = {}, content = {}) {
     const label = it.f?.id ?? it.key;
     if (hidden.has(it.region)) warn(`${label}: ${it.overlay} on ${it.region} not drawn: region hidden in pose ${pose}${it.cutaway || view.callouts ? ' (shown as an other-side callout)' : ''}`);
     else warn(`${label}: ${it.overlay} on ${it.region} not drawn: no anchor in pose ${pose} (amputated or missing)`);
-    if (it.f && (it.f.visible !== true && revealed.has(it.f.id) && calloutIds !== 'none' && (calloutIds === null || calloutIds === 'all' || calloutIds.includes(it.f.id)))) { /* handled in callout loop */ }
   }
 }
 
@@ -380,7 +385,7 @@ function cutawayPatch(ctx, it, inner) {
   return `<g class="cutaway">${patch}${free ? inner : `<g clip-path="url(#${clipId})">${inner}</g>`}</g>`;
 }
 
-function describe(casualty, pose, st) {
+function describe(casualty, pose) {
   const parts = [`${casualty.ageGroup ?? 'adult'} casualty ${pose}`];
   if (casualty.title) parts.push(casualty.title);
   return parts.join(': ');

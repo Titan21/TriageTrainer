@@ -8,6 +8,7 @@
 //   node tools/render-preview.mjs --only pose|overlays|casualties --out some.html  (for testing)
 //   node tools/render-preview.mjs --filter bleed        only casualties whose id contains the text
 //   node tools/render-preview.mjs --overlay bleed,wound only these overlays on the overlay sheet
+//   node tools/render-preview.mjs --vocab other.json     use another vocab file (to try the coverage failure path)
 //
 // Exits non-zero (listing the gaps) if checkCoverage finds any.
 
@@ -29,7 +30,7 @@ const overlayFilter = flag('--overlay')?.split(',') ?? null;
 const includes = flagAll('--include').map((p) => resolve(p));
 
 const readJson = (p) => JSON.parse(readFileSync(p, 'utf8'));
-const vocab = readJson(join(root, 'content', 'vocab.json'));
+const vocab = readJson(flag('--vocab') ? resolve(flag('--vocab')) : join(root, 'content', 'vocab.json'));
 const actionsDoc = readJson(join(root, 'content', 'actions.json'));
 const rules = readJson(join(root, 'content', 'triage-rules.json'));
 const content = { vocab, actions: actionsDoc, rules };
@@ -63,8 +64,15 @@ for (const p of includes) loadCasualtyFile(p);
 // ---- helpers ----
 // every inline SVG on the page needs its own id namespace (clipPaths, patterns)
 let uidCounter = 0;
+// identical body + clothing is stored once and referenced with <use> to keep the page small
+const sharedBases = new Map();
+const shareBase = (svg) => {
+  let id = sharedBases.get(svg);
+  if (!id) { id = `base${sharedBases.size}`; sharedBases.set(svg, id); }
+  return id;
+};
 const svgOf = (cas, view, extra = {}) => {
-  try { return renderCasualty(cas, { animate: true, ...view }, { ...content, uid: `p${++uidCounter}`, ...extra }); }
+  try { return renderCasualty(cas, { animate: true, ...view }, { ...content, uid: `p${++uidCounter}`, shareBase, ...extra }); }
   catch (e) { return { svg: `<div class="err">Render error: ${esc(e.message)}</div>`, warnings: [`render error: ${e.message}`], anchors: {} }; }
 };
 
@@ -89,6 +97,7 @@ function poseSheet() {
 
 // ================= B. overlay sheet =================
 const REPS = ['head', 'face', 'neck', 'chest', 'abdomen', 'back', 'left_upper_arm', 'right_forearm', 'left_hand', 'left_groin', 'left_thigh', 'right_lower_leg', 'left_foot'];
+const REPS_CHILD = ['head', 'chest', 'left_upper_arm', 'left_hand', 'left_thigh'];
 const TRAP_SETS = [['left_thigh', 'left_lower_leg', 'left_foot'], ['right_thigh', 'right_lower_leg'], ['chest', 'abdomen'], ['pelvis', 'left_thigh', 'right_thigh'], ['left_forearm', 'left_hand']];
 const RESP = [['alert', 'check_response', {}], ['voice', 'check_response', {}], ['pain', 'check_response', {}], ['unresponsive', 'check_response', {}]];
 
@@ -102,7 +111,7 @@ function cropFor(name, region, kind, anchors) {
   if (full.includes(name) || region === 'whole_body') return null;
   const a = anchors?.[region];
   if (!a) return null;
-  const size = ['face', 'head'].includes(region) ? (kind === 'probe' ? 150 : 64) : kind === 'probe' || kind === 'intervention' ? 170 : ['left_hand', 'right_hand', 'left_foot', 'right_foot'].includes(region) ? 80 : 96;
+  const size = name === 'callout' ? 200 : ['face', 'head'].includes(region) ? (kind === 'probe' ? 150 : 64) : kind === 'probe' || kind === 'intervention' ? 170 : ['left_hand', 'right_hand', 'left_foot', 'right_foot'].includes(region) ? 80 : 96;
   const x = Math.max(0, Math.min(240 - size, a.x - size / 2)), y = Math.max(0, Math.min(240 - size, a.y - size / 2));
   return [x, y, size, size];
 }
@@ -128,9 +137,11 @@ function overlaySheet() {
     html += `<h3>${esc(kind)} overlays</h3>`;
     for (const [name, def] of Object.entries(vocab.overlays).filter(([n, d]) => d.kind === kind && (!overlayFilter || overlayFilter.includes(n)))) {
       const regs = overlayRegions(vocab, name) ?? [];
-      const rep = def.regions === 'any_body' ? REPS.filter((r) => regs.includes(r)) : regs;
+      const repAdult = def.regions === 'any_body' ? REPS.filter((r) => regs.includes(r)) : regs;
+      const repChild = def.regions === 'any_body' ? REPS_CHILD.filter((r) => regs.includes(r)) : name === 'impaled_object' ? ['chest', 'abdomen', 'left_thigh'] : regs;
       html += `<details class="group" open><summary><b>${esc(name)}</b> <span class="muted">${esc(kind)} &middot; regions: ${esc(Array.isArray(def.regions) ? def.regions.length + ' listed' : def.regions)} &middot; params: ${esc(JSON.stringify(def.params))}</span></summary><p class="look">${esc(def.look)}</p><div class="tiles">`;
       for (const age of Object.keys(vocab.ageGroups)) {
+        const rep = age === 'adult' ? repAdult : repChild;
         if (name === 'entrapment') {
           for (const mat of def.params.material) for (const set of TRAP_SETS) html += tile(name, set[0], { material: mat }, age, { regions: set, label: set.join('+').replace(/left_|right_/g, (m) => m[0] + '_') });
         } else if (name === 'breathing_animation') {
@@ -239,6 +250,7 @@ const coverageBanner = gaps.length
 
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NZRT triage art preview</title><style>${css}</style></head><body>
 <header><h1>Triage art preview</h1><nav><a href="#poses">A. Pose sheet</a><a href="#overlays">B. Overlay sheet</a><a href="#casualties">C. Casualties (${casualties.length})</a></nav></header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${[...sharedBases].map(([svg, id]) => `<g id="${id}">${svg}</g>`).join('')}</defs></svg>
 <main>${coverageBanner}${sections.join('\n')}</main></body></html>`;
 
 mkdirSync(dirname(outPath), { recursive: true });

@@ -2,14 +2,12 @@
 // face features (eyes, expression, cyanosis, sweating, soot is an injury) and
 // speech. Guarding re-poses the free arm.
 
-import {
-  f, pt, dir, perp, add, sub, mul, unit, dist, lerp, clamp, circlePath, capsulePath, chainPath, rectPath, roundedPoly, blobPath, rad,
-} from '../util.js';
-import { OUTLINE, INK, FIXED_COLOURS } from '../palette.js';
-import { reachArm, findLimb, torsoPoint, torsoHalfWidth, polyAt } from '../skeleton.js';
+import { f, pt, perp, add, sub, mul, unit, dist, lerp, clamp, chainPath, roundedPoly, blobPath, rad } from '../util.js';
+import { OUTLINE, INK } from '../palette.js';
+import { reachArm, findLimb, torsoPoint, torsoHalfWidth } from '../skeleton.js';
 import { silhouette, segDrawPts } from '../figure.js';
-import { FONT, textWidth, wrapText, nearestOnRect } from '../labels.js';
-import { frame, headPoint, headGroup, faceLayout, blurFilter, dustFill, bodyClip, darkLine, textEl } from './helpers.js';
+import { textWidth, wrapText, nearestOnRect } from '../labels.js';
+import { frame, headPoint, headGroup, faceLayout, blurFilter, dustFill, bodyClip, darkLine } from './helpers.js';
 
 const MOTION = '#55606b';
 

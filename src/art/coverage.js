@@ -6,7 +6,7 @@
 import { getSkeleton, getAnchors, VIEWBOX, POSES } from './skeleton.js';
 import { OVERLAYS, KIND_LAYER } from './overlays/index.js';
 import { LOOK_SUPPORT, TOP_PALETTE, BOTTOM_PALETTE, SHOE_PALETTE, FIXED_COLOURS, looksLikeTagColour, colourDistance } from './palette.js';
-import { renderCasualty } from './render.js';
+import { renderCasualty, LAYERS } from './render.js';
 
 const POSE_PREFERENCE = ['supine', 'sitting', 'standing', 'prone', 'recovery', 'slumped'];
 const MAX_COMBOS = 40;
@@ -139,6 +139,14 @@ export function checkCoverage(vocab, opts = {}) {
       }
     }
   }
+  // ---- fixed layer order ----
+  const probe = overlayProbe(vocab, 'bleed', 'left_thigh', { severity: 'catastrophic' }, { pose: 'supine' });
+  probe.casualty.appearance.push({ overlay: 'speech', params: { text: 'Help' } }, { overlay: 'dust' });
+  probe.casualty.findings.push({ id: 'f2', overlay: 'entrapment', regions: ['right_thigh'], params: { material: 'slab' }, visible: true });
+  const acts = [{ id: 'a1', effect: { type: 'reveal_state', fields: [], probe: 'breathing_animation', region: 'chest' } }, { id: 'a2', effect: { type: 'intervene', overlay: 'tourniquet', target: 'f1' } }];
+  const order = renderCasualty(probe.casualty, { done: ['a1', 'a2'], tag: 'red', animate: false }, { vocab, actions: acts, rules: opts.rules, shareBase: null }).svg.match(/class="layer-(\w+)"/g)?.map((m) => m.slice(13, -1)) ?? [];
+  const want = LAYERS.filter((l) => order.includes(l));
+  if (order.join() !== want.join() || order.length < 7) gap(`layer order is [${order.join(', ')}], expected ${LAYERS.join(' -> ')} (missing layers allowed only when empty)`);
   // poses implemented but missing from vocab are fine; poses in vocab without code are reported above
   for (const p of Object.keys(POSES)) if (!vocab.poses[p]) gap(`info: renderer has pose "${p}" that vocab does not list`);
   return gaps;

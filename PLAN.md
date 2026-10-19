@@ -91,7 +91,33 @@ Fixes from the first draft:
 Scoring uses a penalty matrix by correct vs assigned category. Under-triage costs more than over-triage, and tagging a salvageable casualty black is the worst outcome.
 
 ## Illustration system
-__ART_SECTION__
+The picture always reflects what the player knows, nothing more. Code: `src/art/` (pure ES modules, returns SVG strings). Spec: the `overlays`, `poses` and `regions` in `content/vocab.json`.
+
+- **Skeleton figures:**
+  - Each pose (standing, sitting, slumped, supine, prone, recovery) is a set of limb angles in one shared 240×240 viewBox, so every casualty renders at the same scale.
+  - Children use the same skeleton with child proportions, so every overlay anchors the same way.
+  - Base appearance comes from `look` (skin tone, hair, top, bottom). Clothing colours are picked deterministically from the casualty id from a muted palette that never uses tag colours.
+- **Region anchors** (position, angle, length, width) come from the skeleton for all 21 regions. Regions a pose hides (e.g. face and chest when prone) have no anchor.
+- **One draw function per overlay** (33 in total): injuries, entrapment, appearance (including mobility aids), probes, interventions and the tag. Casualties never carry their own art, only overlay ids, regions and params, so consistency is by construction.
+- **Fixed layer order:** ground (pools, shadows) → body → clothing → injuries → entrapment → appearance → interventions → probes and callouts → tag.
+- **Rules that keep the picture honest:**
+  - Entrapment hides everything underneath it.
+  - Hidden bleeds appear in a cut-away patch of clothing once exposed.
+  - Probes fall back to another region when theirs is hidden (breathing on the back when prone).
+  - Findings on hidden regions get an "(other side)" callout.
+  - Wheelchair users keep their seated pose when they "walk".
+  - Deterioration applies pose, appearance and finding changes cumulatively.
+- **Accessibility:**
+  - Blood is dark maroon with a hatch texture, never the tag red.
+  - Burns are never orange.
+  - The tag always prints its text label.
+- **`checkCoverage(vocab)`** lists any pose, age group, region, overlay or param value without an implementation; the preview fails if there are gaps (currently 0).
+- **Contact sheet:** `npm run preview:art` writes `preview/index.html`:
+  - every pose with labelled anchors
+  - every overlay on every allowed region and param
+  - every casualty as Approach, Debrief (everything revealed, vitals, life-saving interventions, tag) and one panel per deterioration stage, next to its approach text and teaching points
+
+  The renderer agent checked it visually in headless Edge. I've only spot-checked the pose sheet so far; a casualty-by-casualty visual pass is still to do.
 
 ## Triage card (IMISTAMBO)
 The findings panel is the team's triage card in IMISTAMBO order. Confirm field names and layout against the real NZRT card.
@@ -179,7 +205,7 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 
 ## Build order
 1. ✅ Content contract, rules engine, validator, casualty library and scenes.
-2. ✅ Illustration system prototype and contact sheet.
+2. ✅ Illustration system prototype and contact sheet (casualty-by-casualty visual review still to do).
 3. Scaffold the Vite + TS app. Create the GitHub repo and the Pages workflow (validate → build → deploy), placeholder banner and seeded RNG.
 4. Learn mode, text-first with the existing art: action panel, game clock, reveals, triage card, tagging, debrief with process checks.
 5. Deterioration and interventions in play (time and action stages), re-triage.

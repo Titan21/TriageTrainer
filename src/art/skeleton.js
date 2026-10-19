@@ -8,7 +8,7 @@
 //
 // "left"/"right" always mean the casualty's own sides.
 
-import { dir, add, sub, mul, lerp, unit, perp, angleOf, len, dist, rotAround } from './util.js';
+import { dir, add, sub, mul, lerp, unit, perp, angleOf, dist, rotAround } from './util.js';
 
 export const VIEWBOX = [0, 0, 240, 240];
 const CX = 120, GROUND_Y = 226, LYING_CY = 126;

@@ -2,12 +2,10 @@
 // (injuries or entrapment); ground effects (blood pools, debris shadows) are
 // added to the ground layer through ctx.add('ground', ...).
 
-import {
-  f, pt, dir, perp, add, sub, mul, unit, dist, lerp, clamp, rad, circlePath, chainPath, rectPath, blobPath, roundedPoly, polyPath,
-} from '../util.js';
-import { OUTLINE, BLOOD, WOUND, FIXED_COLOURS } from '../palette.js';
-import { kinkSegment, amputate, polyAt, polyLength, subPolyline } from '../skeleton.js';
-import { frame, headPoint, hatchFill, crossHatchFill, blurFilter, clipped, darkLine, slot, footprintPath } from './helpers.js';
+import { f, pt, dir, perp, add, sub, mul, dist, clamp, circlePath, chainPath, rectPath, blobPath, roundedPoly, polyPath } from '../util.js';
+import { OUTLINE, BLOOD, WOUND } from '../palette.js';
+import { kinkSegment, amputate, subPolyline } from '../skeleton.js';
+import { frame, headPoint, hatchFill, crossHatchFill, blurFilter, clipped, darkLine, slot } from './helpers.js';
 
 const SWELL = '#c8b2de';
 
