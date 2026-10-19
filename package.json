@@ -8,7 +8,8 @@
     "preview:art": "node tools/render-preview.mjs",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "simulate": "node tools/simulate.mjs"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

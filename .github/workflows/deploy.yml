@@ -26,6 +26,8 @@ jobs:
       - run: npm ci
       - name: Validate content
         run: npm run validate
+      - name: Play every scene through the engine
+        run: npm run simulate
       - run: npm run build
       - name: Build art contact sheet
         run: node tools/render-preview.mjs --out dist/preview/index.html
