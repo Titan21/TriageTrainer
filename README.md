@@ -89,7 +89,7 @@ All casualties are fictional.
 
 ## Hosting
 
-The game will be hosted on GitHub Pages and deployed by GitHub Actions. Content is validated before every deploy, and the game will work offline once loaded.
+The game is hosted on GitHub Pages and deployed by GitHub Actions on every push to `main`. The validator and the simulator run before every deploy. After the first visit the game works offline, and on a phone it can be added to the home screen.
 
 ## Contributing
 

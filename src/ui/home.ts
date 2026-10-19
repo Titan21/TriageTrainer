@@ -2,6 +2,7 @@ import { content } from './engine';
 import { bindHintsToggle, header, hintsToggle, protocolBanner } from './components';
 import { esc, plural } from './util';
 import type { Scene } from './types';
+import { offlineReady, onOfflineReady } from '../pwa';
 
 function sceneList(scenes: Scene[]): string {
   return `<ul class="scene-list">${scenes.map((s) => `<li><a class="scene-card" href="#/scene/${esc(s.id)}">
@@ -29,6 +30,11 @@ export function mountHome(root: HTMLElement): void {
       <p class="section-note">A whole incident with a map, bystanders, hazards and a clock.</p>
       ${sceneList(full)}
     </section>
+    <p class="offline-note" id="offline-note" role="status"></p>
   </main>`;
   bindHintsToggle(root);
+  const note = root.querySelector<HTMLElement>('#offline-note')!;
+  const show = (ok: boolean) => { note.textContent = ok ? 'Saved on this device: works without a connection.' : ''; };
+  show(offlineReady());
+  onOfflineReady(show);
 }

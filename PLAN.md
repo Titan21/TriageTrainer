@@ -35,7 +35,7 @@ The casualties and scenes were drafted by several parallel agents against the sh
 - **Hosting: GitHub Pages**, deployed by GitHub Actions on every push to `main`. The workflow runs the validator first, so broken content never deploys (see [Hosting and deployment](#hosting-and-deployment)).
 - **Stack:** Vite + TypeScript, no framework, no backend. The engine and art are pure ES modules with no DOM or Node APIs, so the app, the validator and the preview share them.
 - **Content is JSON imported at build time.** It's bundled and precached for offline play; edits deploy through the same Action.
-- **Offline:** PWA via `vite-plugin-pwa` (Pages serves HTTPS, so the service worker works).
+- **Offline:** PWA via `vite-plugin-pwa`. The first visit caches the whole game (about 390 KB); after that it plays with no connection and can be added to a phone's home screen. New deploys update it automatically. The art contact sheet at `/preview/` is deliberately not cached.
 - **The truth is computed, never hard-coded.** The rules engine derives the correct category from a casualty's state at the moment of tagging. Each casualty's expected categories are assertions the validator checks, so a rules change immediately shows which casualties change outcome.
 - **Randomised vitals use a seeded RNG,** so a debrief or bug report can replay the exact run.
 - **Placeholder banner** while `triage-rules.json` has `"approved": false`.
@@ -219,7 +219,7 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 6. ✅ Scoring and the debrief view: full picture at the moment of tagging, mistakes, missed findings, what changed over time, teaching.
 7. ◐ Full-scene mode: playable with a map, walking between casualties, hazards with deadlines and bystander events. Still to do: bystanders you can talk to and direct beyond "hold pressure", and casualties arriving mid-scene.
 8. Handover builder.
-9. Mobile polish and offline (PWA).
+9. ◐ Mobile polish and offline: ✅ offline (PWA, installable, tested with the server stopped). Mobile polish continues with play-testing.
 10. Swap in NZRT's protocol and card. The validator then lists every casualty whose expected category changes, so content and rules are updated together.
 
 ## Hosting and deployment
@@ -235,7 +235,6 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 - **The contact sheet is published** at `<site>/preview/` so an NZRT clinician can review every casualty's picture, text and stages without installing anything.
 
 ## Next steps
-- **Offline (PWA)** so the trainer works without signal at the exercise (build step 9).
 - **Clinician review** of the content using the contact sheet and the content review notes below.
 - **Handover builder** (build step 8).
 - **Play-testing with NZRT members** to tune time costs, target times and scoring weights (all placeholder values in `actions.json` and `triage-rules.json`).

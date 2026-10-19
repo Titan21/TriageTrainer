@@ -27,6 +27,19 @@
         "--strictPort"
       ],
       "port": 5179
+    },
+    {
+      "name": "app-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "preview",
+        "--",
+        "--port",
+        "4179",
+        "--strictPort"
+      ],
+      "port": 4179
     }
   ]
 }

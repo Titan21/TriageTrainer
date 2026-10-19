@@ -12,6 +12,7 @@ import { mountHome } from './ui/home';
 import { mountPlay } from './ui/play';
 import { app } from './ui/state';
 import { parseHash } from './ui/util';
+import { startPwa } from './pwa';
 
 const root = document.querySelector<HTMLDivElement>('#app')!;
 let cleanup: (() => void) | undefined;
@@ -60,3 +61,5 @@ async function route() {
 
 window.addEventListener('hashchange', route);
 void route();
+
+startPwa();
