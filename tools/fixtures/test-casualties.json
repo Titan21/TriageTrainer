@@ -1,0 +1,184 @@
+{
+  "prefix": "fx_",
+  "theme": "Renderer test fixtures (not game content)",
+  "casualties": [
+    {
+      "id": "fx_recovery_adult",
+      "title": "Recovery position, adult, long hair, hoodie and skirt",
+      "ageGroup": "adult",
+      "pose": "recovery",
+      "look": { "skinTone": "dark", "hair": "long", "top": "hoodie", "bottom": "skirt" },
+      "approach": "Woman on her left side, head tilted, eyes closed, pale. A graze on her cheek and a bleed on the right thigh.",
+      "appearance": [
+        { "overlay": "pallor" },
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } },
+        { "overlay": "sweating" },
+        { "overlay": "speech", "params": { "text": "Mmm... cold..." } }
+      ],
+      "state": { "canWalk": false, "canTalk": false, "responsive": "voice", "obeysCommands": false, "breathing": true, "rr": { "range": [20, 22] }, "breathingDepth": "shallow", "radialPulse": { "present": true, "rate": { "range": [100, 108] } }, "crtSeconds": 3, "catastrophicBleed": false, "entrapped": false },
+      "findings": [
+        { "id": "graze_face", "label": "Graze on cheek", "cardField": "injuries", "overlay": "wound", "region": "face", "params": { "type": "abrasion" }, "visible": true },
+        { "id": "bleed_thigh_r", "label": "Major bleed, right thigh", "cardField": "injuries", "overlay": "bleed", "region": "right_thigh", "params": { "severity": "major" }, "visible": true },
+        { "id": "bruise_back", "label": "Bruise across the back", "cardField": "injuries", "overlay": "bruising", "region": "back", "params": {}, "visible": false, "revealedBy": "expose_check_bleeding" },
+        { "id": "groin_wound", "label": "Cut, left groin", "cardField": "injuries", "overlay": "wound", "region": "left_groin", "params": { "type": "laceration" }, "visible": false, "revealedBy": "expose_check_bleeding" }
+      ],
+      "deterioration": [
+        { "id": "d1", "atSeconds": 60, "note": "Stops speaking, motion stops.", "state": { "responsive": "unresponsive" }, "removeAppearance": ["speech", "sweating"], "appearance": [{ "overlay": "cyanosis" }], "expectedCategory": "red" }
+      ],
+      "expected": { "category": "red", "lifeSavingInterventions": ["recovery_position"], "traps": [], "targetSeconds": 60 },
+      "teaching": ["Fixture: recovery pose with profile face, long hair, hidden findings on other-side regions."]
+    },
+    {
+      "id": "fx_recovery_child",
+      "title": "Recovery position, child, school uniform",
+      "ageGroup": "child",
+      "pose": "recovery",
+      "look": { "skinTone": "light", "hair": "tied", "top": "school_uniform", "bottom": "shorts" },
+      "approach": "Child on their side, breathing, no response.",
+      "appearance": [{ "overlay": "eyes", "params": { "state": "half_closed" } }, { "overlay": "expression", "params": { "mood": "confused" } }, { "overlay": "dust" }],
+      "state": { "canWalk": false, "canTalk": false, "responsive": "pain", "painResponseAppropriate": false, "obeysCommands": false, "breathing": true, "rr": 30, "breathingDepth": "noisy", "radialPulse": { "present": true, "rate": 130 }, "crtSeconds": 3, "catastrophicBleed": false, "entrapped": false },
+      "findings": [
+        { "id": "swell_head", "label": "Swelling over the temple", "cardField": "injuries", "overlay": "swelling", "region": "head", "params": {}, "visible": true },
+        { "id": "burn_arm", "label": "Burn on upper arm", "cardField": "injuries", "overlay": "burn", "region": "right_upper_arm", "params": { "depth": "partial" }, "visible": true }
+      ],
+      "deterioration": [],
+      "expected": { "category": "red", "lifeSavingInterventions": [], "traps": [], "targetSeconds": 60 },
+      "teaching": ["Fixture: child in recovery."]
+    },
+    {
+      "id": "fx_prone_child",
+      "title": "Prone child, curly hair, hidden chest finding",
+      "ageGroup": "child",
+      "pose": "prone",
+      "look": { "skinTone": "medium", "hair": "curly", "top": "hoodie", "bottom": "overalls" },
+      "approach": "Child lying face down.",
+      "appearance": [{ "overlay": "eyes", "params": { "state": "closed" } }, { "overlay": "expression", "params": { "mood": "pain" } }, { "overlay": "speech", "params": { "text": "Mum?" } }, { "overlay": "wet" }],
+      "state": { "canWalk": false, "canTalk": true, "responsive": "voice", "obeysCommands": true, "breathing": true, "rr": 28, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 120 }, "crtSeconds": 2, "catastrophicBleed": false, "entrapped": false },
+      "findings": [
+        { "id": "wound_back", "label": "Cut on back", "cardField": "injuries", "overlay": "wound", "region": "back", "params": { "type": "laceration" }, "visible": true },
+        { "id": "bleed_chest", "label": "Bleeding chest, under the child", "cardField": "injuries", "overlay": "bleed", "region": "chest", "params": { "severity": "minor" }, "visible": false, "revealedBy": "expose_check_bleeding" }
+      ],
+      "deterioration": [],
+      "expected": { "category": "orange", "lifeSavingInterventions": [], "traps": [], "targetSeconds": 60 },
+      "teaching": ["Fixture: prone child; face-hidden warnings are expected."]
+    },
+    {
+      "id": "fx_trapped_furniture",
+      "title": "Entrapment under a cabinet, then released",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "light", "hair": "bald", "top": "jacket", "bottom": "overalls" },
+      "approach": "Man on his back with both legs under a toppled cabinet.",
+      "appearance": [{ "overlay": "dust" }, { "overlay": "eyes", "params": { "state": "open" } }, { "overlay": "expression", "params": { "mood": "distress" } }],
+      "state": { "canWalk": false, "canTalk": true, "responsive": "alert", "obeysCommands": true, "breathing": true, "rr": 18, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 90 }, "crtSeconds": 2, "catastrophicBleed": false, "entrapped": true },
+      "findings": [
+        { "id": "trap", "label": "Legs under a cabinet", "cardField": "other", "overlay": "entrapment", "regions": ["left_thigh", "left_lower_leg", "right_thigh", "right_lower_leg"], "params": { "material": "furniture" }, "visible": true },
+        { "id": "bleed_under", "label": "Bleeding under the cabinet", "cardField": "injuries", "overlay": "bleed", "region": "left_lower_leg", "params": { "severity": "major" }, "visible": false, "revealedBy": "release_from_entrapment" }
+      ],
+      "deterioration": [
+        { "id": "d_release", "afterAction": "release_from_entrapment", "delaySeconds": 20, "note": "Freed: weak, grey.", "state": { "entrapped": false, "radialPulse": { "present": false, "rate": null } }, "appearance": [{ "overlay": "pallor" }], "addFindings": [{ "id": "swell", "label": "Swollen thigh", "cardField": "injuries", "overlay": "swelling", "region": "right_thigh", "params": {}, "visible": true }], "expectedCategory": "red" }
+      ],
+      "expected": { "category": "orange", "lifeSavingInterventions": [], "traps": [], "targetSeconds": 60 },
+      "teaching": ["Fixture: furniture entrapment."]
+    },
+    {
+      "id": "fx_hidden_cutaway",
+      "title": "Hidden findings revealed in cut-away patches",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "curly", "top": "jacket", "bottom": "trousers" },
+      "approach": "Man lying on his back, awake.",
+      "appearance": [{ "overlay": "eyes", "params": { "state": "open" } }, { "overlay": "expression", "params": { "mood": "pain" } }, { "overlay": "motion", "params": { "type": "writhing" } }],
+      "state": { "canWalk": false, "canTalk": true, "responsive": "alert", "obeysCommands": true, "breathing": true, "rr": 24, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 110 }, "crtSeconds": 3, "catastrophicBleed": false, "entrapped": false },
+      "findings": [
+        { "id": "h_bleed", "label": "Bleed under sleeve", "cardField": "injuries", "overlay": "bleed", "region": "right_forearm", "params": { "severity": "major" }, "visible": false, "revealedBy": "expose_check_bleeding" },
+        { "id": "h_burn", "label": "Burn under jacket", "cardField": "injuries", "overlay": "burn", "region": "chest", "params": { "depth": "partial" }, "visible": false, "revealedBy": "expose_check_bleeding" },
+        { "id": "h_defo", "label": "Open fracture of left lower leg", "cardField": "injuries", "overlay": "deformity", "region": "left_lower_leg", "params": { "open": true }, "visible": false, "revealedBy": "expose_check_bleeding" },
+        { "id": "h_impaled", "label": "Glass in the thigh", "cardField": "injuries", "overlay": "impaled_object", "region": "right_thigh", "params": { "object": "glass" }, "visible": false, "revealedBy": "expose_check_bleeding" },
+        { "id": "v_swell", "label": "Swollen hand", "cardField": "injuries", "overlay": "swelling", "region": "left_hand", "params": {}, "visible": true }
+      ],
+      "deterioration": [
+        { "id": "d1", "atSeconds": 60, "note": "Impaled glass removed by someone; motion stops.", "removeFindings": ["h_impaled"], "removeAppearance": ["motion"], "expectedCategory": "red" },
+        { "id": "d2", "atSeconds": 120, "note": "Seizing.", "appearance": [{ "overlay": "motion", "params": { "type": "seizing" } }], "expectedCategory": "red" }
+      ],
+      "expected": { "category": "red", "lifeSavingInterventions": ["direct_pressure", "splint_limb"], "traps": [], "targetSeconds": 60 },
+      "teaching": ["Fixture: cut-away patches; direct_pressure and splint_limb applied in the debrief."]
+    },
+    {
+      "id": "fx_amputation_guarding",
+      "title": "Forearm amputation with tourniquet, guarding, child-sized pad",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "dark", "hair": "short", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Man sitting, holding his belly.",
+      "appearance": [{ "overlay": "eyes", "params": { "state": "open" } }, { "overlay": "expression", "params": { "mood": "panic" } }, { "overlay": "guarding", "region": "abdomen" }, { "overlay": "speech", "params": { "text": "My hand! My hand is gone!" } }],
+      "state": { "canWalk": false, "canTalk": true, "responsive": "alert", "obeysCommands": true, "breathing": true, "rr": 26, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 124 }, "crtSeconds": 3, "catastrophicBleed": true, "entrapped": false },
+      "findings": [
+        { "id": "amp", "label": "Left forearm amputation", "cardField": "injuries", "overlay": "amputation", "region": "left_forearm", "params": {}, "visible": true },
+        { "id": "bleed", "label": "Catastrophic bleed, left forearm", "cardField": "injuries", "overlay": "bleed", "region": "left_forearm", "params": { "severity": "catastrophic" }, "visible": true, "lifeThreat": "catastrophic_bleed" }
+      ],
+      "deterioration": [],
+      "expected": { "category": "red", "lifeSavingInterventions": ["apply_tourniquet"], "traps": [], "targetSeconds": 45 },
+      "teaching": ["Fixture: amputation stump, pool, guarding re-poses the free arm."]
+    },
+    {
+      "id": "fx_self_pressure",
+      "title": "Self pressure on a major bleed (new hand_pressure by self)",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "tied", "top": "shirt", "bottom": "trousers" },
+      "approach": "Woman sitting, pressing on her thigh.",
+      "appearance": [{ "overlay": "eyes", "params": { "state": "open" } }, { "overlay": "expression", "params": { "mood": "distress" } }],
+      "state": { "canWalk": false, "canTalk": true, "responsive": "alert", "obeysCommands": true, "breathing": true, "rr": 22, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 100 }, "crtSeconds": 2, "catastrophicBleed": false, "entrapped": false },
+      "findings": [
+        { "id": "major", "label": "Major bleed, right thigh", "cardField": "injuries", "overlay": "bleed", "region": "right_thigh", "params": { "severity": "major" }, "visible": true }
+      ],
+      "deterioration": [],
+      "expected": { "category": "orange", "lifeSavingInterventions": ["self_pressure"], "traps": [], "targetSeconds": 45 },
+      "teaching": ["Fixture: uses self_pressure if actions.json defines it."]
+    },
+    {
+      "id": "fx_walking_aid",
+      "title": "Wheelchair user who can walk: keepPoseWithAid",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "long", "top": "jacket", "bottom": "trousers" },
+      "approach": "Woman in a wheelchair, calm.",
+      "appearance": [{ "overlay": "mobility_aid", "params": { "type": "wheelchair", "condition": "intact" } }, { "overlay": "eyes", "params": { "state": "open" } }, { "overlay": "expression", "params": { "mood": "calm" } }],
+      "state": { "canWalk": true, "canTalk": true, "responsive": "alert", "obeysCommands": true, "breathing": true, "rr": 16, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 80 }, "crtSeconds": 2, "catastrophicBleed": false, "entrapped": false },
+      "findings": [],
+      "deterioration": [],
+      "expected": { "category": "green", "lifeSavingInterventions": [], "traps": [], "targetSeconds": 30 },
+      "teaching": ["Fixture: ask_to_walk must keep the pose when a wheelchair is present."]
+    },
+    {
+      "id": "fx_aids_standing",
+      "title": "Standing with a walking frame and crutches, shaking",
+      "ageGroup": "adult",
+      "pose": "standing",
+      "look": { "skinTone": "dark", "hair": "bald", "top": "hi_vis", "bottom": "skirt" },
+      "approach": "Person standing next to a bent walking frame.",
+      "appearance": [{ "overlay": "mobility_aid", "params": { "type": "walking_frame", "condition": "broken" } }, { "overlay": "motion", "params": { "type": "shaking" } }, { "overlay": "eyes", "params": { "state": "open" } }, { "overlay": "expression", "params": { "mood": "confused" } }, { "overlay": "speech", "params": { "text": "Where is my husband?" } }],
+      "state": { "canWalk": true, "canTalk": true, "responsive": "alert", "obeysCommands": true, "breathing": true, "rr": 16, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 80 }, "crtSeconds": 2, "catastrophicBleed": false, "entrapped": false },
+      "findings": [{ "id": "bruise", "label": "Bruise on the forearm", "cardField": "injuries", "overlay": "bruising", "region": "left_forearm", "params": {}, "visible": true }],
+      "deterioration": [],
+      "expected": { "category": "green", "lifeSavingInterventions": [], "traps": [], "targetSeconds": 30 },
+      "teaching": ["Fixture: standing pose with aids."]
+    },
+    {
+      "id": "fx_child_looks",
+      "title": "Child standing, every top and bottom, walking",
+      "ageGroup": "child",
+      "pose": "standing",
+      "look": { "skinTone": "dark", "hair": "long", "top": "hoodie", "bottom": "overalls" },
+      "approach": "Child standing, crying.",
+      "appearance": [{ "overlay": "eyes", "params": { "state": "open" } }, { "overlay": "expression", "params": { "mood": "panic" } }, { "overlay": "motion", "params": { "type": "walking" } }, { "overlay": "cyanosis" }],
+      "state": { "canWalk": true, "canTalk": true, "responsive": "alert", "obeysCommands": true, "breathing": true, "rr": 30, "breathingDepth": "normal", "radialPulse": { "present": true, "rate": 120 }, "crtSeconds": 2, "catastrophicBleed": false, "entrapped": false },
+      "findings": [{ "id": "wound", "label": "Puncture in the foot", "cardField": "injuries", "overlay": "wound", "region": "left_foot", "params": { "type": "puncture" }, "visible": true }],
+      "deterioration": [],
+      "expected": { "category": "green", "lifeSavingInterventions": [], "traps": [], "targetSeconds": 30 },
+      "teaching": ["Fixture: child standing."]
+    }
+  ]
+}

@@ -1,0 +1,419 @@
+{
+  "version": 1,
+  "notes": [
+    "Shared vocabulary for casualties, scenes and the illustration system. Content files may only use ids defined here.",
+    "Left/right always mean the casualty's own left/right, not the viewer's.",
+    "Every overlay is drawn exactly one way by the renderer, so casualties never carry art of their own."
+  ],
+  "ageGroups": {
+    "adult": { "description": "Adults and teenagers. Adult body proportions and adult sieve." },
+    "child": {
+      "description": "Roughly ages 1-10 (placeholder: confirm NZRT cut-off). Child body proportions and child sieve."
+    }
+  },
+  "regions": [
+    "head",
+    "face",
+    "neck",
+    "chest",
+    "abdomen",
+    "pelvis",
+    "back",
+    "left_upper_arm",
+    "left_forearm",
+    "left_hand",
+    "right_upper_arm",
+    "right_forearm",
+    "right_hand",
+    "left_groin",
+    "right_groin",
+    "left_thigh",
+    "left_lower_leg",
+    "left_foot",
+    "right_thigh",
+    "right_lower_leg",
+    "right_foot"
+  ],
+  "regionGroups": {
+    "any_body": [
+      "head",
+      "face",
+      "neck",
+      "chest",
+      "abdomen",
+      "pelvis",
+      "back",
+      "left_upper_arm",
+      "left_forearm",
+      "left_hand",
+      "right_upper_arm",
+      "right_forearm",
+      "right_hand",
+      "left_groin",
+      "right_groin",
+      "left_thigh",
+      "left_lower_leg",
+      "left_foot",
+      "right_thigh",
+      "right_lower_leg",
+      "right_foot"
+    ],
+    "limb_segments": [
+      "left_upper_arm",
+      "left_forearm",
+      "right_upper_arm",
+      "right_forearm",
+      "left_thigh",
+      "left_lower_leg",
+      "right_thigh",
+      "right_lower_leg"
+    ],
+    "extremities": ["left_hand", "right_hand", "left_foot", "right_foot"],
+    "tourniquet_sites": [
+      "left_upper_arm",
+      "left_forearm",
+      "right_upper_arm",
+      "right_forearm",
+      "left_thigh",
+      "left_lower_leg",
+      "right_thigh",
+      "right_lower_leg"
+    ],
+    "junctional": ["left_groin", "right_groin", "neck"],
+    "torso": ["chest", "abdomen", "pelvis", "back"],
+    "head_neck": ["head", "face", "neck"],
+    "whole_body": ["whole_body"]
+  },
+  "poses": {
+    "standing": {
+      "description": "Upright, facing the viewer. Walking wounded, bystanders.",
+      "hiddenRegions": ["back"]
+    },
+    "sitting": {
+      "description": "Sitting on the ground, back upright or against a wall, legs out in front.",
+      "hiddenRegions": ["back"]
+    },
+    "slumped": {
+      "description": "Sitting but slumped forward or sideways, head down. Usually a deterioration of sitting.",
+      "hiddenRegions": ["back"]
+    },
+    "supine": { "description": "Lying on the back, seen from above.", "hiddenRegions": ["back"] },
+    "prone": {
+      "description": "Lying face down, seen from above. Face, chest, abdomen and groins are not visible.",
+      "hiddenRegions": ["face", "chest", "abdomen", "left_groin", "right_groin"]
+    },
+    "recovery": {
+      "description": "Lying on the left side in the recovery position, top leg bent, head tilted. Only reached through the recovery_position action or a deterioration.",
+      "hiddenRegions": ["left_groin", "right_groin"]
+    }
+  },
+  "look": {
+    "description": "Base appearance so casualties are recognisable on a scene map. The renderer picks colours from a fixed muted palette that never uses the tag colours.",
+    "skinTone": ["light", "medium", "dark"],
+    "hair": ["short", "long", "tied", "bald", "curly"],
+    "top": ["tshirt", "jacket", "shirt", "hi_vis", "school_uniform", "hoodie"],
+    "bottom": ["trousers", "shorts", "skirt", "overalls"]
+  },
+  "overlays": {
+    "bleed": {
+      "kind": "injury",
+      "regions": "any_body",
+      "params": { "severity": ["minor", "major", "catastrophic"] },
+      "look": "Dark maroon (#5e0b15) irregular stain with a fine diagonal hatch texture, so blood never reads as the red triage tag. minor: small patch. major: stain covering most of the region, slowly spreading. catastrophic: covers the region, pulses, and leaves a pool on the ground next to the region. Hidden bleeds appear inside a cut-away patch of clothing once revealed."
+    },
+    "wound": {
+      "kind": "injury",
+      "regions": "any_body",
+      "params": { "type": ["laceration", "puncture", "abrasion"] },
+      "look": "laceration: short dark line with a thin pink margin. puncture: small dark circle. abrasion: rough-edged pink graze with speckles. No visible tissue."
+    },
+    "deformity": {
+      "kind": "injury",
+      "regions": "limb_segments",
+      "params": { "open": [true, false] },
+      "look": "The limb segment is drawn with a 25-degree kink at its midpoint. open=true adds a small puncture-style wound mark at the kink (no bone drawn)."
+    },
+    "amputation": {
+      "kind": "injury",
+      "regions": [
+        "left_forearm",
+        "right_forearm",
+        "left_lower_leg",
+        "right_lower_leg",
+        "left_hand",
+        "right_hand",
+        "left_foot",
+        "right_foot"
+      ],
+      "params": {},
+      "look": "The limb stops partway along the segment with a rounded, clothing-edged stump. Parts beyond it are not drawn. Pair it with a bleed finding on the same region unless already controlled."
+    },
+    "swelling": {
+      "kind": "injury",
+      "regions": [
+        "head",
+        "face",
+        "neck",
+        "abdomen",
+        "left_upper_arm",
+        "left_forearm",
+        "left_hand",
+        "right_upper_arm",
+        "right_forearm",
+        "right_hand",
+        "left_thigh",
+        "left_lower_leg",
+        "left_foot",
+        "right_thigh",
+        "right_lower_leg",
+        "right_foot"
+      ],
+      "params": {},
+      "look": "Outward bulge of the region outline with a pale purple tint."
+    },
+    "bruising": {
+      "kind": "injury",
+      "regions": "any_body",
+      "params": {},
+      "look": "Soft-edged purple-yellow blotch."
+    },
+    "burn": {
+      "kind": "injury",
+      "regions": "any_body",
+      "params": { "depth": ["superficial", "partial", "full"] },
+      "look": "superficial: pink tint. partial: pink-brown patch with small white blister circles. full: charcoal-grey leathery patch with cross-hatch. Never orange, to keep clear of the orange tag."
+    },
+    "impaled_object": {
+      "kind": "injury",
+      "regions": [
+        "chest",
+        "abdomen",
+        "pelvis",
+        "back",
+        "left_upper_arm",
+        "left_forearm",
+        "right_upper_arm",
+        "right_forearm",
+        "left_thigh",
+        "left_lower_leg",
+        "right_thigh",
+        "right_lower_leg",
+        "left_groin",
+        "right_groin"
+      ],
+      "params": { "object": ["rebar", "glass", "wood", "metal_sheet"] },
+      "look": "A grey (rebar, metal_sheet), pale blue (glass) or brown (wood) object protruding at an angle from the region centre, with a small dark ring where it enters."
+    },
+    "soot": {
+      "kind": "injury",
+      "regions": ["face"],
+      "params": {},
+      "look": "Grey-black smudges around the nose and mouth. Sign of smoke inhalation."
+    },
+    "entrapment": {
+      "kind": "entrapment",
+      "regions": "any_body",
+      "multiRegion": true,
+      "params": { "material": ["rubble", "beam", "slab", "vehicle", "furniture"] },
+      "look": "Grey block shapes (rubble: broken chunks; beam: one long timber or steel bar; slab: one flat concrete block; vehicle: dark panel edge; furniture: a brown wooden shelf or cabinet outline) drawn over every covered region. Any overlay on a covered region is hidden underneath."
+    },
+    "pallor": {
+      "kind": "appearance",
+      "regions": "whole_body",
+      "params": {},
+      "look": "Skin desaturated and shifted toward grey; lips pale. Must still be noticeable on dark skin tones (grey lips and inner eyelids)."
+    },
+    "cyanosis": {
+      "kind": "appearance",
+      "regions": ["face"],
+      "params": {},
+      "look": "Blue-grey tint on lips and around the mouth."
+    },
+    "sweating": {
+      "kind": "appearance",
+      "regions": ["face"],
+      "params": {},
+      "look": "Three or four small droplet shapes on the forehead and cheeks."
+    },
+    "dust": {
+      "kind": "appearance",
+      "regions": "whole_body",
+      "params": {},
+      "look": "Light grey speckle over skin and clothing."
+    },
+    "wet": {
+      "kind": "appearance",
+      "regions": "whole_body",
+      "params": {},
+      "look": "Darker clothing with a few drip shapes and flattened hair."
+    },
+    "eyes": {
+      "kind": "appearance",
+      "regions": ["face"],
+      "params": { "state": ["open", "closed", "half_closed"] },
+      "look": "Eye shapes on the face. Default when not set: open if responsive is alert, otherwise closed."
+    },
+    "expression": {
+      "kind": "appearance",
+      "regions": ["face"],
+      "params": { "mood": ["calm", "pain", "distress", "panic", "blank", "confused"] },
+      "look": "Mouth and brow shapes. Default when not set: calm if alert, blank otherwise."
+    },
+    "motion": {
+      "kind": "appearance",
+      "regions": "whole_body",
+      "params": { "type": ["walking", "agitated", "shaking", "writhing", "seizing"] },
+      "look": "Short motion lines around the body; seizing adds a jagged outline. Purely visual cue, not animation-dependent."
+    },
+    "speech": {
+      "kind": "appearance",
+      "regions": ["face"],
+      "params": { "text": "string" },
+      "look": "Speech bubble from the mouth, max about 40 characters. Something the casualty says without being asked."
+    },
+    "mobility_aid": {
+      "kind": "appearance",
+      "regions": "whole_body",
+      "params": {
+        "type": ["wheelchair", "walking_frame", "crutches", "walking_stick"],
+        "condition": ["intact", "broken"]
+      },
+      "look": "The person's own mobility aid on the ground beside the figure, in neutral grey and blue. A wheelchair is drawn side-on next to a sitting figure (or under them if the pose is sitting and the aid is intact). broken: wheelchair tipped with a buckled wheel; frame, crutches or stick bent with a snapped segment."
+    },
+    "guarding": {
+      "kind": "appearance",
+      "regions": [
+        "head",
+        "chest",
+        "abdomen",
+        "pelvis",
+        "left_upper_arm",
+        "left_forearm",
+        "right_upper_arm",
+        "right_forearm"
+      ],
+      "params": {},
+      "look": "The casualty's opposite free hand is moved to hold or cradle this region."
+    },
+    "breathing_animation": {
+      "kind": "probe",
+      "regions": ["chest", "back"],
+      "params": {},
+      "look": "Chest outline (or the back, when the pose hides the chest) rises and falls at the revealed rate; flat with a 'no movement' mark when not breathing. Shallow or gasping depth changes the amplitude."
+    },
+    "pulse_marker": {
+      "kind": "probe",
+      "regions": ["left_hand", "right_hand"],
+      "params": {},
+      "look": "Two-finger marker on the wrist with a small heart-beat glyph, or a crossed glyph when absent."
+    },
+    "crt_marker": {
+      "kind": "probe",
+      "regions": ["left_hand", "right_hand"],
+      "params": {},
+      "look": "Fingertip marker with a small stopwatch glyph and the seconds."
+    },
+    "response_bubble": {
+      "kind": "probe",
+      "regions": ["face"],
+      "params": {},
+      "look": "Rounded response bubble (distinct from speech: dashed outline) showing the response to a check, e.g. 'Squeezes hand' or 'No response'."
+    },
+    "callout": {
+      "kind": "probe",
+      "regions": "any_body",
+      "params": {},
+      "look": "Small pinned label with a leader line to the region. Every revealed finding gets one; tapping it jumps to its triage card field."
+    },
+    "tourniquet": {
+      "kind": "intervention",
+      "regions": "tourniquet_sites",
+      "params": {},
+      "look": "Black band with a windlass bar, placed toward the body end of the segment, plus a small time label."
+    },
+    "wound_packing": {
+      "kind": "intervention",
+      "regions": "any_body",
+      "params": {},
+      "look": "White gauze pushed into the wound site with a hand pressing on it."
+    },
+    "hand_pressure": {
+      "kind": "intervention",
+      "regions": "any_body",
+      "params": { "by": ["rescuer", "bystander", "self"] },
+      "look": "Gloved hand (rescuer: purple glove), bare hand (bystander) or the casualty's own free hand (self, same as guarding plus a white pad) pressing on the region."
+    },
+    "airway_open": {
+      "kind": "intervention",
+      "regions": ["head"],
+      "params": {},
+      "look": "Head tilted back with a small chin-lift arrow."
+    },
+    "triage_tag": {
+      "kind": "intervention",
+      "regions": ["left_hand", "right_hand"],
+      "params": { "category": ["red", "orange", "green", "black"] },
+      "look": "Tag on the wrist in the category colour with the category's text label printed on it, never colour alone."
+    },
+    "splint": {
+      "kind": "intervention",
+      "regions": "limb_segments",
+      "params": {},
+      "look": "Two straight boards along the segment held with white ties."
+    },
+    "cervical_collar": {
+      "kind": "intervention",
+      "regions": ["neck"],
+      "params": {},
+      "look": "Rigid collar band around the neck."
+    }
+  },
+  "hazards": {
+    "cracking_wall": {
+      "description": "Wall or ceiling visibly cracking, dust falling.",
+      "defaultResponse": "withdraw"
+    },
+    "gas_smell": { "description": "Strong smell of gas; may hiss.", "defaultResponse": "withdraw" },
+    "aftershock": {
+      "description": "Ground shaking; loose material may fall.",
+      "defaultResponse": "drop_cover_hold"
+    },
+    "fire_smoke": { "description": "Smoke or flames nearby.", "defaultResponse": "withdraw" },
+    "downed_power_line": { "description": "Fallen line on the ground, possibly live.", "defaultResponse": "withdraw" },
+    "rising_water": { "description": "Flood water or tsunami surge rising.", "defaultResponse": "withdraw" },
+    "unstable_floor": { "description": "Floor sagging or partly collapsed.", "defaultResponse": "withdraw" },
+    "falling_glass": { "description": "Broken glazing above.", "defaultResponse": "withdraw" },
+    "traffic": { "description": "Moving vehicles near the casualties.", "defaultResponse": "make_safe" },
+    "chemical_spill": {
+      "description": "Unknown liquid or vapour, odd smell, people coughing. Withdraw upwind and uphill.",
+      "defaultResponse": "withdraw"
+    },
+    "ash_fall": { "description": "Volcanic ash or debris falling.", "defaultResponse": "withdraw" }
+  },
+  "bystanderBehaviours": {
+    "pulls_to_friend": "Keeps grabbing the rescuer and insisting they treat a specific casualty first.",
+    "panicking": "Uninjured or minor injury, distressed, loud, may block access.",
+    "helper": "Calm, willing to hold pressure or keep an airway open if instructed.",
+    "parent": "Parent or carer of a child casualty; can give identity and history.",
+    "filming": "Filming on a phone, ignores instructions.",
+    "obstructive": "Tries to move or pull a casualty out, or gets in the way.",
+    "walking_wounded_helper": "Has a minor injury, already tagged green, can be given a simple task."
+  },
+  "sceneEvents": {
+    "hazard_appears": "A hazard from the hazards list appears or gets worse.",
+    "aftershock": "Shaking. Usually paired with a hazard and a correct response.",
+    "bystander_interrupt": "A bystander demands attention.",
+    "new_casualty": "A casualty arrives or is discovered.",
+    "radio_message": "Instruction or information over the radio.",
+    "resources_arrive": "More responders or equipment arrive.",
+    "casualty_calls_out": "A casualty out of view calls or stops calling out."
+  },
+  "style": {
+    "notes": [
+      "Flat, friendly, schematic figures with consistent 2px outlines. No photos and no gore.",
+      "Tag colours (red, orange, green, black) are reserved for tags and UI. Clothing, blood, burns and props never use them.",
+      "Blood is dark maroon with a hatch texture so it never reads as a red tag.",
+      "Child figures use child proportions (larger head, shorter limbs) on the same skeleton so every overlay anchors the same way."
+    ]
+  }
+}

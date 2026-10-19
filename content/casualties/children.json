@@ -1,0 +1,620 @@
+{
+  "prefix": "ch_",
+  "theme": "Children",
+  "casualties": [
+    {
+      "id": "ch_lost_walker_01",
+      "title": "Crying child with a scraped shin",
+      "ageGroup": "child",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "tied", "top": "school_uniform", "bottom": "skirt" },
+      "approach": "Girl in a school uniform sitting on the ground at the evacuation point, crying and calling for her mum, with a scraped right shin.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "I can't find my mum!" } }
+      ],
+      "identity": { "name": "Aroha Parata", "age": 6, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Tripped and scraped her shin running up the hill when the tsunami warning sounded, and lost her mum in the crowd.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown; she is too upset to say and her mum is not here",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "breathesAfterRescueBreaths": null,
+        "rr": { "range": [26, 30] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [105, 120] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_shin_r",
+          "label": "Scraped right shin, minor",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_lower_leg",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["stay_and_comfort", "clean_wound", "wrap_in_blanket"],
+        "targetSeconds": 30
+      },
+      "teaching": [
+        "A child who can walk is green, even when she is crying loudly and calling for her mum.",
+        "Loud crying is not a sign of serious injury, so do not let it pull you away from quieter casualties.",
+        "Tag her green, then hand her to a teacher or a walking-wounded adult instead of staying with her yourself.",
+        "A scraped shin is minor bleeding and can wait; only catastrophic bleeding is treated during the sieve."
+      ],
+      "tags": ["child", "walking_wounded", "green", "tsunami", "evacuation"]
+    },
+    {
+      "id": "ch_toddler_cant_walk_01",
+      "title": "Toddler too young to walk",
+      "ageGroup": "child",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "short", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Toddler sitting on the floor of a childcare centre play room, dusty and crying.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "dust" }
+      ],
+      "identity": { "name": "Ethan Lim", "age": 1, "sex": "male", "source": "bystander" },
+      "history": {
+        "mechanism": "Ceiling tiles fell in the play room during the earthquake; a childcare worker saw him sit up and cry straight away.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Healthy toddler; crawls and pulls himself up on furniture but is not walking yet",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "breathesAfterRescueBreaths": null,
+        "rr": { "range": [36, 40] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [125, 140] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [],
+      "deterioration": [
+        {
+          "id": "d1",
+          "afterAction": "give_water",
+          "delaySeconds": 20,
+          "note": "Coughs and chokes on the drink: breathing fast and noisy, lips going blue-grey.",
+          "state": { "rr": { "range": [50, 54] }, "breathingDepth": "noisy" },
+          "appearance": [
+            { "overlay": "expression", "params": { "mood": "panic" } },
+            { "overlay": "cyanosis" }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["give_water", "stay_and_comfort", "wrap_in_blanket"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "A child too young to walk cannot be cleared by the walking step, so he is sieved on breathing, pulse and response.",
+        "Not walking because of age is not an injury, but the sieve cannot clear him as green, so he comes out orange.",
+        "Crying is a reassuring sign: he has an open airway and enough breath to make a noise.",
+        "Give nothing by mouth, even to a distressed toddler, because he could choke."
+      ],
+      "tags": ["child", "toddler", "orange", "earthquake", "childcare"]
+    },
+    {
+      "id": "ch_trapped_fast_breather_01",
+      "title": "Trapped boy breathing fast",
+      "ageGroup": "child",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "short", "top": "school_uniform", "bottom": "shorts" },
+      "approach": "Boy in school uniform sitting in a dusty classroom with a fallen roof beam across both lower legs, frightened and sweating.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "My legs are stuck!" } },
+        { "overlay": "sweating" },
+        { "overlay": "dust" }
+      ],
+      "identity": { "name": "Hemi Ngata", "age": 9, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "The classroom ceiling and a roof beam came down in the earthquake; he has been trapped by his legs for over an hour.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Healthy",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "breathesAfterRescueBreaths": null,
+        "rr": { "range": [42, 44] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [115, 125] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trapped_legs",
+          "label": "Both lower legs trapped under a fallen roof beam",
+          "cardField": "injuries",
+          "overlay": "entrapment",
+          "regions": ["left_lower_leg", "right_lower_leg"],
+          "params": { "material": "beam" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "afterAction": "release_from_entrapment",
+          "delaySeconds": 60,
+          "note": "Collapses soon after being freed (crush injury): pale, drowsy, no radial pulse.",
+          "state": {
+            "responsive": "voice",
+            "canTalk": false,
+            "obeysCommands": false,
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [4, 5] },
+            "entrapped": false
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 240,
+          "note": "Breathing is getting faster and he is tiring: dust and fear.",
+          "state": { "rr": { "range": [50, 54] } },
+          "appearance": [
+            { "overlay": "expression", "params": { "mood": "panic" } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["release_from_entrapment", "stay_and_comfort", "give_water"],
+        "targetSeconds": 55,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "A rate over 30 would be red in an adult, but children breathe faster: in a child only a rate under 15 or over 45 is red.",
+        "Count the breaths: 42 to 44 is orange, but the rate can creep past 45, so check him again.",
+        "Being trapped does not change the category: sieve him as normal, then flag him for medical before anyone frees him.",
+        "Freeing a child who has been trapped for a long time can cause a sudden collapse."
+      ],
+      "tags": ["child", "entrapment", "respiratory_rate", "orange", "earthquake", "school"]
+    },
+    {
+      "id": "ch_rescue_breaths_01",
+      "title": "Drowned girl, breathes after rescue breaths",
+      "ageGroup": "child",
+      "pose": "supine",
+      "look": { "skinTone": "dark", "hair": "curly", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Girl of about four lying on her back on a grass bank, soaking wet, grey and still, with blue-tinged lips.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } },
+        { "overlay": "wet" },
+        { "overlay": "pallor" },
+        { "overlay": "cyanosis" }
+      ],
+      "identity": { "name": "Mele Tuipulotu", "age": 4, "sex": "female", "source": "bystander" },
+      "history": {
+        "mechanism": "Swept off her feet in the flood water; a neighbour pulled her out after about a minute and carried her up the bank.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown; the neighbour does not know the family well",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "unresponsive",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": false,
+        "breathesAfterAirwayOpen": false,
+        "breathesAfterRescueBreaths": true,
+        "rr": { "range": [24, 28] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [64, 76] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 120,
+          "unless": ["rescue_breaths"],
+          "note": "No breaths for two minutes: the heart stops, no pulse.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "breathesAfterRescueBreaths": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "crtSeconds": { "range": [6, 8] }
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["rescue_breaths"],
+        "traps": ["start_cpr", "wrap_in_blanket", "stay_and_comfort"],
+        "targetSeconds": 70
+      },
+      "teaching": [
+        "Open the airway first. If she is still not breathing, check for a pulse.",
+        "A child with a pulse who is not breathing gets 5 rescue breaths; many children start breathing again after them.",
+        "Give only the five breaths, not CPR: once she breathes, tag her red and move on.",
+        "With no pulse, or still no breathing after the five breaths, she would be black."
+      ],
+      "tags": ["child", "airway", "rescue_breaths", "red", "flood", "drowning"]
+    },
+    {
+      "id": "ch_no_pulse_01",
+      "title": "Boy not breathing, no pulse",
+      "ageGroup": "child",
+      "pose": "supine",
+      "look": { "skinTone": "light", "hair": "short", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Boy of about five lying on his back on the slip debris, grey-faced and still, with dust on his clothes and a bruise on his forehead.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } },
+        { "overlay": "pallor" },
+        { "overlay": "dust" }
+      ],
+      "identity": { "name": "Oliver Brown", "age": 5, "sex": "male", "source": "bystander" },
+      "history": {
+        "mechanism": "The hillside slipped behind the camp site; other campers dug him out after about fifteen minutes.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown; his family is not with him",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "unresponsive",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": false,
+        "breathesAfterAirwayOpen": false,
+        "breathesAfterRescueBreaths": null,
+        "rr": 0,
+        "breathingDepth": "none",
+        "radialPulse": { "present": false, "rate": null },
+        "crtSeconds": { "range": [7, 9] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bruise_forehead",
+          "label": "Bruise on the forehead",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "head",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "black",
+        "lifeSavingInterventions": [],
+        "traps": ["start_cpr", "stay_and_comfort", "wrap_in_blanket"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "The rule is the same for a child: not breathing after the airway is opened, and no pulse, is black.",
+        "This is harder emotionally, but CPR on one child ties up a rescuer while other casualties who could be saved are waiting.",
+        "Tag him black, tell the controller so someone can support the people around him, and keep sieving."
+      ],
+      "tags": ["child", "black", "no_pulse", "landslide", "emotional"]
+    },
+    {
+      "id": "ch_pain_response_01",
+      "title": "Boy with an abnormal response to pain",
+      "ageGroup": "child",
+      "pose": "supine",
+      "look": { "skinTone": "dark", "hair": "short", "top": "school_uniform", "bottom": "shorts" },
+      "approach": "Boy in school uniform lying on his back on the roadside next to the school bus, eyes closed, with a swollen lump on his head.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } }
+      ],
+      "identity": { "name": "Siaosi Faleolo", "age": 7, "sex": "male", "source": "bystander" },
+      "history": {
+        "mechanism": "Thrown against the seat in front when the school bus rolled; his teacher saw him hit his head.",
+        "allergies": "None known (teacher)",
+        "medications": "None (teacher)",
+        "background": "Healthy (teacher)",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "pain",
+        "painResponseAppropriate": false,
+        "obeysCommands": false,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "breathesAfterRescueBreaths": null,
+        "rr": { "range": [26, 30] },
+        "breathingDepth": "noisy",
+        "radialPulse": { "present": true, "rate": { "range": [86, 96] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "swelling_head",
+          "label": "Swollen lump on the head",
+          "cardField": "injuries",
+          "overlay": "swelling",
+          "region": "head",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 120,
+          "unless": ["open_airway", "recovery_position"],
+          "note": "Airway blocks as he lies on his back: stops breathing but restarts with the airway open.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": true,
+            "responsive": "unresponsive",
+            "painResponseAppropriate": null,
+            "rr": { "range": [22, 26] },
+            "breathingDepth": "noisy"
+          },
+          "appearance": [
+            { "overlay": "cyanosis" }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 300,
+          "unless": ["open_airway", "recovery_position"],
+          "note": "Still no airway help: breathing and pulse stop.",
+          "state": {
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "radialPulse": { "present": false, "rate": null }
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["open_airway", "recovery_position"],
+        "traps": ["apply_collar", "give_water", "full_head_to_toe"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "A child who responds to pain only in an abnormal way (stiffening, or a noise with no purpose) is red, even with a normal pulse.",
+        "The child sieve goes breathing, then pulse, then response, so you only reach the response check when the first two are normal.",
+        "A child who pushes your hand away on purpose has an appropriate response; this boy does not.",
+        "Keep his airway safe with a head tilt or the recovery position: a child like this can stop breathing."
+      ],
+      "tags": ["child", "head_injury", "avpu", "red", "bus_crash"]
+    },
+    {
+      "id": "ch_forearm_bleed_01",
+      "title": "Girl with a catastrophic forearm bleed",
+      "ageGroup": "child",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "long", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Girl in a PE T-shirt sitting on the ground by the collapsed sports stand, crying out, with dark blood spreading from her right forearm.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "My arm! It won't stop!" } }
+      ],
+      "identity": { "name": "Priya Patel", "age": 8, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Cut her right forearm on a sheet of roofing metal when the stand collapsed at the school sports day.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Healthy",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "breathesAfterRescueBreaths": null,
+        "rr": { "range": [28, 32] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [135, 145] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": true,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bleed_forearm_r",
+          "label": "Catastrophic bleeding, right forearm",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "right_forearm",
+          "params": { "severity": "catastrophic" },
+          "visible": true,
+          "lifeThreat": "catastrophic_bleed"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 90,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Losing blood fast: pale and drowsy, no radial pulse.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [5, 6] },
+            "responsive": "voice",
+            "obeysCommands": false,
+            "canTalk": false
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 210,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Collapses and stops breathing.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive"
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["apply_tourniquet"],
+        "traps": ["clean_wound", "stay_and_comfort", "give_water"],
+        "targetSeconds": 35
+      },
+      "teaching": [
+        "Catastrophic bleeding is the first question in the child sieve too: stop it, then tag red.",
+        "A tourniquet works on a small arm or leg: put it on the limb above the wound and write the time on the card.",
+        "Do not stop to clean or comfort her: only life-threatening bleeding is treated during the sieve."
+      ],
+      "tags": ["child", "bleeding", "tourniquet", "red", "stand_collapse"]
+    },
+    {
+      "id": "ch_teen_adult_sieve_01",
+      "title": "Teenager sieved as an adult",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "tied", "top": "school_uniform", "bottom": "trousers" },
+      "approach": "Teenage girl in a school uniform sitting on the roadside, wincing with a hand pressed to her chest, her left lower leg bent out of line.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "speech", "params": { "text": "It hurts to breathe." } },
+        { "overlay": "guarding", "region": "chest" }
+      ],
+      "identity": { "name": "Grace Kim", "age": 14, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Thrown against the seat in front when the school bus rolled.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Healthy",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "breathesAfterRescueBreaths": null,
+        "rr": { "range": [31, 33] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [108, 118] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "deformity_shin_l",
+          "label": "Bent left lower leg, closed",
+          "cardField": "injuries",
+          "overlay": "deformity",
+          "region": "left_lower_leg",
+          "params": { "open": false },
+          "visible": true
+        },
+        {
+          "id": "bruise_chest",
+          "label": "Bruising across the chest",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["splint_limb", "apply_collar", "stay_and_comfort"],
+        "targetSeconds": 40
+      },
+      "teaching": [
+        "At 14 she goes through the adult sieve, not the child sieve: older children and teenagers are triaged as adults.",
+        "A rate over 30 is red in the adult sieve; 32 breaths a minute in a six-year-old would only be orange.",
+        "Her bent leg is not why she is red, her fast breathing is, so do not stop to splint it."
+      ],
+      "tags": ["child", "teenager", "adult_sieve", "respiratory_rate", "red", "bus_crash"]
+    }
+  ]
+}

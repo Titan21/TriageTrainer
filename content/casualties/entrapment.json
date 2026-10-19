@@ -1,0 +1,905 @@
+{
+  "prefix": "en_",
+  "theme": "Entrapment and crush",
+  "casualties": [
+    {
+      "id": "en_slab_legs_01",
+      "title": "Legs under a slab for hours",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "short", "top": "shirt", "bottom": "trousers" },
+      "approach": "Man lying on his back with both legs under a concrete slab, dusty, talking and wincing.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "speech", "params": { "text": "Get this off me! I'm so thirsty." } }
+      ],
+      "identity": { "name": "Wiremu Parata", "age": 47, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "The office floor slab collapsed in the earthquake and came down across both legs about three hours ago.",
+        "allergies": "None known",
+        "medications": "Blood pressure tablets",
+        "background": "High blood pressure",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [18, 22] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [96, 104] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_legs_slab",
+          "label": "Both legs trapped under a concrete floor slab",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": [
+            "left_thigh",
+            "left_lower_leg",
+            "left_foot",
+            "right_thigh",
+            "right_lower_leg",
+            "right_foot"
+          ],
+          "params": { "material": "slab" },
+          "visible": true
+        },
+        {
+          "id": "graze_head",
+          "label": "Small graze on the forehead",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "crush_pulse_lost",
+          "afterAction": "release_from_entrapment",
+          "delaySeconds": 20,
+          "note": "Freed with no medical support after hours under load: radial pulse lost, grey, sweating, confused.",
+          "state": {
+            "entrapped": false,
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [4, 5] },
+            "obeysCommands": false,
+            "responsive": "voice"
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "sweating" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "confused" } },
+            { "overlay": "speech", "params": { "text": "I feel strange... dizzy..." } }
+          ],
+          "addFindings": [
+            {
+              "id": "swollen_thigh_l",
+              "label": "Swollen, bruised left thigh",
+              "cardField": "injuries",
+              "overlay": "swelling",
+              "region": "left_thigh",
+              "params": {},
+              "visible": true
+            },
+            {
+              "id": "swollen_thigh_r",
+              "label": "Swollen, bruised right thigh",
+              "cardField": "injuries",
+              "overlay": "swelling",
+              "region": "right_thigh",
+              "params": {},
+              "visible": true
+            }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "crush_unresponsive",
+          "afterAction": "release_from_entrapment",
+          "delaySeconds": 90,
+          "note": "Collapse continues: unresponsive, only gasping breaths, no radial pulse.",
+          "state": {
+            "entrapped": false,
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [4, 5] },
+            "obeysCommands": false,
+            "canTalk": false,
+            "responsive": "unresponsive",
+            "breathingDepth": "gasping",
+            "rr": { "range": [8, 9] }
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["release_from_entrapment", "give_water"],
+        "targetSeconds": 50,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "Trapped but breathing normally, with a pulse and obeying commands, is orange.",
+        "After hours under a heavy load, lifting it off can release toxins into the blood and stop the heart.",
+        "Flag for medical before any release, then tag and move on; do not free them yourself.",
+        "However thirsty they are, nothing by mouth."
+      ],
+      "tags": ["entrapment", "crush", "earthquake", "building_collapse"]
+    },
+    {
+      "id": "en_beam_arm_01",
+      "title": "Arm pinned under a beam",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "tied", "top": "tshirt", "bottom": "trousers" },
+      "approach": "Woman sitting upright with her right arm pinned under a fallen beam, dusty, looking frightened.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "My arm's stuck under this beam!" } }
+      ],
+      "identity": { "name": "Lily Chen", "age": 29, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "The cafe ceiling came down in the earthquake and a beam fell across her right arm about 40 minutes ago.",
+        "allergies": "Penicillin",
+        "medications": "None",
+        "background": "None",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [28, 30] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [104, 116] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_arm_beam",
+          "label": "Right arm pinned under a fallen beam",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": ["right_upper_arm", "right_forearm"],
+          "params": { "material": "beam" },
+          "visible": true
+        },
+        {
+          "id": "graze_forearm_l",
+          "label": "Graze on the left forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "bleed_shin_l",
+          "label": "Small cut on the left shin, bleeding lightly",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "left_lower_leg",
+          "params": { "severity": "minor" },
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["release_from_entrapment", "clean_wound"],
+        "targetSeconds": 50,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "A trapped casualty cannot walk, so go on to breathing, pulse and commands; she passes all three and is orange.",
+        "A rate of 30 is not over 30. Count the full 15 seconds before you call it red.",
+        "Even one pinned arm is entrapment: flag for medical rather than lifting the beam.",
+        "A graze or small cut does not change the category."
+      ],
+      "tags": ["entrapment", "earthquake", "building_collapse"]
+    },
+    {
+      "id": "en_bus_chest_01",
+      "title": "Wedged in a bus seat, chest compressed",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "dark", "hair": "short", "top": "jacket", "bottom": "trousers" },
+      "approach": "Man sitting with his lower body wedged by crushed vehicle panels, one hand clutching his chest, blue-grey lips, sweating.",
+      "appearance": [
+        { "overlay": "cyanosis" },
+        { "overlay": "sweating" },
+        { "overlay": "guarding", "region": "chest" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "Can't... breathe... my chest..." } }
+      ],
+      "identity": { "name": "Tevita Fifita", "age": 58, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "The bus left the road and rolled onto its side; he was thrown against the seat frame in front and then wedged by the crushed floor.",
+        "allergies": "None known",
+        "medications": "Warfarin",
+        "background": "Atrial fibrillation",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [34, 38] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [118, 130] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_lower_body_vehicle",
+          "label": "Lower body wedged by crushed vehicle panels",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": ["abdomen", "pelvis", "left_thigh", "right_thigh"],
+          "params": { "material": "vehicle" },
+          "visible": true
+        },
+        {
+          "id": "bruise_chest",
+          "label": "Bruising across the chest",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "tiring",
+          "atSeconds": 150,
+          "unless": [],
+          "note": "Tiring: drowsy, breathing slows and becomes very shallow.",
+          "state": {
+            "responsive": "voice",
+            "canTalk": false,
+            "obeysCommands": false,
+            "rr": { "range": [8, 9] },
+            "crtSeconds": { "range": [4, 5] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "arrest",
+          "atSeconds": 330,
+          "unless": [],
+          "note": "Breathing stops and the radial pulse is lost.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "canTalk": false,
+            "obeysCommands": false,
+            "radialPulse": { "present": false, "rate": null }
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } }
+          ],
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["release_from_entrapment", "apply_collar"],
+        "targetSeconds": 45,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "Fast breathing over 30 with blue-grey lips is red, even though he is awake and talking.",
+        "He is trapped: flag for medical, tag red and move on; do not try to cut or lift him free.",
+        "A chest compressed in a crash can tire out and stop breathing within minutes, so red casualties need re-checking.",
+        "The crash mechanism does not need a collar in the sieve; note it and move on."
+      ],
+      "tags": ["entrapment", "bus_crash", "chest", "breathing"]
+    },
+    {
+      "id": "en_landslide_buried_01",
+      "title": "Half-buried in a landslide, cold and confused",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "curly", "top": "jacket", "bottom": "trousers" },
+      "approach": "Woman sitting half-buried in rubble from the waist down, soaked, pale and looking confused.",
+      "appearance": [
+        { "overlay": "wet" },
+        { "overlay": "pallor" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "confused" } },
+        { "overlay": "speech", "params": { "text": "Where's Bob? Is it morning yet?" } }
+      ],
+      "identity": { "name": "Joan Whitaker", "age": 68, "sex": "female", "source": "bystander" },
+      "history": {
+        "mechanism": "A hillside slip after days of heavy rain hit the house; she was buried to the waist for about four hours.",
+        "allergies": "Unknown",
+        "medications": "Heart tablets (neighbour thinks)",
+        "background": "Heart condition (neighbour thinks)",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "voice",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [22, 26] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [58, 66] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_pelvis_legs_rubble",
+          "label": "Pelvis and both legs buried in rubble",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": [
+            "pelvis",
+            "left_groin",
+            "right_groin",
+            "left_thigh",
+            "right_thigh",
+            "left_lower_leg",
+            "right_lower_leg",
+            "left_foot",
+            "right_foot"
+          ],
+          "params": { "material": "rubble" },
+          "visible": true
+        },
+        {
+          "id": "graze_forearm_l",
+          "label": "Graze on the left forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "cold_exhaustion",
+          "atSeconds": 360,
+          "unless": [],
+          "note": "Cold and exhausted: no longer responds to her voice, breathing slows.",
+          "state": {
+            "responsive": "pain",
+            "canTalk": false,
+            "obeysCommands": false,
+            "rr": { "range": [8, 9] },
+            "breathingDepth": "shallow"
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "release_arrest",
+          "afterAction": "release_from_entrapment",
+          "delaySeconds": 25,
+          "note": "Freed with no medical support after hours buried and cold: collapses and stops breathing.",
+          "state": {
+            "entrapped": false,
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "canTalk": false,
+            "obeysCommands": false,
+            "radialPulse": { "present": false, "rate": null }
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["wrap_in_blanket", "release_from_entrapment"],
+        "targetSeconds": 55,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "Confused and not following commands is red, even with a pulse and a normal breathing rate.",
+        "Cold hands can muddy capillary refill, so run every sieve step and decide on the whole picture.",
+        "Buried for hours means crush risk: flag for medical before anyone digs her out.",
+        "A blanket helps but comes after the sieve; ask a bystander to cover her."
+      ],
+      "tags": ["entrapment", "crush", "landslide", "hypothermia"]
+    },
+    {
+      "id": "en_trapped_bleed_01",
+      "title": "Legs trapped, arm bleeding heavily",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "short", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Man lying on his back with both legs under rubble, a heavily bleeding wound on his right upper arm, dusty and panicking.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "panic" } },
+        { "overlay": "speech", "params": { "text": "My arm! It won't stop bleeding!" } }
+      ],
+      "identity": { "name": "Arjun Patel", "age": 36, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Part of the stand collapsed at the stadium; falling concrete pinned both legs and a broken seat frame cut his right arm.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "None",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [24, 28] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [120, 134] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": true,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_legs_rubble",
+          "label": "Both legs trapped under concrete rubble",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": [
+            "left_thigh",
+            "left_lower_leg",
+            "left_foot",
+            "right_thigh",
+            "right_lower_leg",
+            "right_foot"
+          ],
+          "params": { "material": "rubble" },
+          "visible": true
+        },
+        {
+          "id": "bleed_arm_r",
+          "label": "Catastrophic bleeding, right upper arm",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "right_upper_arm",
+          "params": { "severity": "catastrophic" },
+          "visible": true,
+          "lifeThreat": "catastrophic_bleed"
+        },
+        {
+          "id": "bruise_head",
+          "label": "Bruise on the side of the head",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "head",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "bleed_shock",
+          "atSeconds": 90,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Uncontrolled bleed: loses radial pulse, grey, drowsy.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [5, 6] },
+            "obeysCommands": false,
+            "responsive": "voice",
+            "canTalk": false
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "bleed_arrest",
+          "atSeconds": 240,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Stops breathing from blood loss.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive"
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } }
+          ],
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["apply_tourniquet"],
+        "traps": ["release_from_entrapment", "full_head_to_toe"],
+        "targetSeconds": 50,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "Stop a catastrophic bleed first, even in a trapped casualty; the bleed is on his arm, not under the debris.",
+        "The tourniquet goes high on the upper arm; note the time on the card.",
+        "Then flag for medical before release, tag red and move on.",
+        "Do not try to free his legs first: the bleed kills faster than the entrapment."
+      ],
+      "tags": ["entrapment", "bleeding", "stand_collapse", "tourniquet"]
+    },
+    {
+      "id": "en_car_unconscious_01",
+      "title": "Trapped and unconscious but breathing",
+      "ageGroup": "adult",
+      "pose": "slumped",
+      "look": { "skinTone": "dark", "hair": "long", "top": "hi_vis", "bottom": "overalls" },
+      "approach": "Woman slumped forward with her eyes closed, legs trapped by crushed vehicle panels, a cut on her head.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } }
+      ],
+      "identity": { "name": null, "age": 40, "sex": "female", "source": "none" },
+      "history": {
+        "mechanism": "Ute hit by a rockfall on the coastal highway in the earthquake; driver found unresponsive with her legs wedged by the crushed front panels.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "none"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "unresponsive",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [10, 12] },
+        "breathingDepth": "noisy",
+        "radialPulse": { "present": true, "rate": { "range": [88, 98] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_legs_vehicle",
+          "label": "Both legs trapped by crushed vehicle panels",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": [
+            "left_thigh",
+            "left_lower_leg",
+            "left_foot",
+            "right_thigh",
+            "right_lower_leg",
+            "right_foot"
+          ],
+          "params": { "material": "vehicle" },
+          "visible": true
+        },
+        {
+          "id": "cut_head",
+          "label": "Cut on the forehead",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "laceration" },
+          "visible": true
+        },
+        {
+          "id": "bruise_chest",
+          "label": "Seat-belt bruising across the chest",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "airway_blocked",
+          "atSeconds": 120,
+          "unless": ["open_airway"],
+          "note": "Head slumps further forward and the airway blocks: breathing stops until the airway is opened.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": true,
+            "rr": { "range": [12, 14] },
+            "breathingDepth": "normal"
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "cyanosis" }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "hypoxic_arrest",
+          "atSeconds": 300,
+          "unless": ["open_airway"],
+          "note": "No air for several minutes: the heart stops.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "radialPulse": { "present": false, "rate": null }
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["open_airway"],
+        "traps": ["recovery_position", "release_from_entrapment", "apply_collar"],
+        "targetSeconds": 45,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "Unconscious but breathing is red: she cannot follow commands, so the sieve ends at the commands step.",
+        "Open the airway and keep it open; the recovery position is not possible while she is trapped.",
+        "A slumped, unresponsive casualty can block her own airway and stop breathing within minutes.",
+        "Flag for medical before any release, then tag red. An unknown name is a valid entry."
+      ],
+      "tags": ["entrapment", "airway", "vehicle", "earthquake", "unconscious"]
+    },
+    {
+      "id": "en_bookshelf_leg_01",
+      "title": "Lightly trapped under a fallen shelf",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "tied", "top": "shirt", "bottom": "skirt" },
+      "approach": "Woman lying on her back with her left lower leg under a long fallen timber shelf, dusty and looking worried.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "Just a shelf! Can you lift it off?" } }
+      ],
+      "identity": { "name": "Fatima Hussein", "age": 52, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Bookshelves toppled in the earthquake and one landed across her left lower leg about ten minutes ago.",
+        "allergies": "None known",
+        "medications": "Metformin",
+        "background": "Type 2 diabetes",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [16, 20] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [86, 96] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_leg_shelf",
+          "label": "Left lower leg under a fallen bookshelf",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": ["left_lower_leg", "left_foot"],
+          "params": { "material": "furniture" },
+          "visible": true
+        },
+        {
+          "id": "graze_forearm_r",
+          "label": "Graze on the right forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "bruise_arm_l",
+          "label": "Bruise on the left upper arm",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "left_upper_arm",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["release_from_entrapment", "clean_wound", "stay_and_comfort"],
+        "targetSeconds": 45,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "A trapped casualty cannot walk, so she never reaches green however minor her injuries look.",
+        "Resist lifting the shelf yourself: it costs about two minutes while other casualties wait.",
+        "Tag orange, flag for medical, and leave the release to the rescue team.",
+        "Grazes and bruises do not change the category."
+      ],
+      "tags": ["entrapment", "minor_injuries", "earthquake", "building_collapse"]
+    },
+    {
+      "id": "en_prone_debris_01",
+      "title": "Face down under tsunami debris",
+      "ageGroup": "adult",
+      "pose": "prone",
+      "look": { "skinTone": "light", "hair": "short", "top": "hoodie", "bottom": "shorts" },
+      "approach": "Man lying face down, soaked, with a graze across his back and his left leg under a timber beam, calling for help.",
+      "appearance": [
+        { "overlay": "wet" },
+        { "overlay": "speech", "params": { "text": "Help! I can't turn over!" } }
+      ],
+      "identity": { "name": "Nikau Tipene", "age": 24, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "A tsunami surge swept debris through the campground; a timber beam fell across his left leg and he landed face down.",
+        "allergies": "Bee stings",
+        "medications": "None",
+        "background": "Asthma as a child",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [27, 29] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [100, 112] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": true
+      },
+      "findings": [
+        {
+          "id": "trap_leg_beam",
+          "label": "Left leg trapped under a timber beam",
+          "cardField": "other",
+          "overlay": "entrapment",
+          "regions": ["left_thigh", "left_lower_leg", "left_foot"],
+          "params": { "material": "beam" },
+          "visible": true
+        },
+        {
+          "id": "graze_back",
+          "label": "Graze across the upper back",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "back",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "bruise_shin_r",
+          "label": "Bruise on the right shin",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "right_lower_leg",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "bruise_chest",
+          "label": "Bruising across the chest, hidden face down",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "chest_injury_declares",
+          "atSeconds": 240,
+          "unless": [],
+          "note": "A chest injury hidden under him declares itself: breathing becomes fast and shallow.",
+          "state": {
+            "rr": { "range": [32, 36] },
+            "breathingDepth": "shallow",
+            "crtSeconds": { "range": [3, 4] }
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "speech", "params": { "text": "Can't get my breath. Chest hurts." } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["release_from_entrapment", "full_head_to_toe"],
+        "targetSeconds": 55,
+        "keyActions": ["flag_for_medical"]
+      },
+      "teaching": [
+        "A face-down casualty hides the face, chest and belly: talk to them, watch the back move and count the rate.",
+        "Awake and talking can still hide a chest injury, so re-check breathing when you pass again.",
+        "A trapped leg means he cannot walk: orange, flag for medical, and do not free him yourself.",
+        "Do not roll or search him in the sieve; a full head-to-toe check takes about three minutes."
+      ],
+      "tags": ["entrapment", "prone", "tsunami", "hidden_injury"]
+    }
+  ]
+}

@@ -1,0 +1,852 @@
+{
+  "prefix": "bl_",
+  "theme": "Bleeding and circulation",
+  "casualties": [
+    {
+      "id": "bl_thigh_bleed_01",
+      "title": "Catastrophic thigh bleed, shop front collapse",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "dark", "hair": "short", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Man lying on his back in front of a collapsed shop front, covered in dust. A dark pool is spreading beside his left thigh. He is pale and sweating, and shouting for help.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "My leg! Help me!" } },
+        { "overlay": "pallor" },
+        { "overlay": "sweating" },
+        { "overlay": "dust" }
+      ],
+      "identity": { "name": "Sione Taufa", "age": 34, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Hit by falling glass and masonry when a shop front collapsed in the earthquake.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Asthma as a child",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [24, 28] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [118, 130] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": true,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bleed_thigh_l",
+          "label": "Catastrophic bleeding, left thigh",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "left_thigh",
+          "params": { "severity": "catastrophic" },
+          "visible": true,
+          "lifeThreat": "catastrophic_bleed"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 90,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Uncontrolled bleed: loses the radial pulse, drifts and stops making sense.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [4, 5] },
+            "obeysCommands": false,
+            "responsive": "voice",
+            "canTalk": false
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "confused" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "d2",
+          "atSeconds": 240,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Stops breathing and does not restart when the airway is opened.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "obeysCommands": false,
+            "canTalk": false,
+            "canWalk": false
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["apply_tourniquet"],
+        "traps": ["stay_and_comfort", "give_water", "wrap_in_blanket"],
+        "targetSeconds": 40
+      },
+      "teaching": [
+        "Stop catastrophic bleeding before anything else, then tag red.",
+        "A tourniquet goes high on the thigh, above the wound, and is tightened until the bleeding stops; note the time on the card.",
+        "A fast pulse, slow capillary refill and a pale, sweaty look all mean heavy blood loss, even while he is still shouting."
+      ],
+      "tags": ["bleeding", "earthquake", "tourniquet"]
+    },
+    {
+      "id": "bl_groin_bleed_01",
+      "title": "Junctional groin bleed, factory accident",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "bald", "top": "tshirt", "bottom": "overalls" },
+      "approach": "Man sitting against a factory wall, pale and sweating, with a dark pool spreading beside his left groin. He is shouting that it won't stop.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "panic" } },
+        { "overlay": "speech", "params": { "text": "It won't stop! It won't stop!" } },
+        { "overlay": "pallor" },
+        { "overlay": "sweating" }
+      ],
+      "identity": { "name": "Wiremu Ngata", "age": 52, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "A sheet of metal tore loose when a dryer failed at the dairy factory and cut into his groin.",
+        "allergies": "None known",
+        "medications": "Blood pressure tablets",
+        "background": "High blood pressure",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [26, 30] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [124, 136] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": true,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bleed_groin_l",
+          "label": "Catastrophic bleeding, left groin (junctional)",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "left_groin",
+          "params": { "severity": "catastrophic" },
+          "visible": true,
+          "lifeThreat": "catastrophic_bleed"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d_tourniquet",
+          "afterAction": "apply_tourniquet",
+          "delaySeconds": 30,
+          "unless": ["pack_wound", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "A tourniquet cannot sit above a groin bleed, so it does nothing. The time lost costs him his pulse.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [4, 5] },
+            "obeysCommands": false,
+            "responsive": "voice",
+            "canTalk": false
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "confused" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "d1",
+          "atSeconds": 90,
+          "unless": ["pack_wound", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Uncontrolled bleed: loses the radial pulse and slumps sideways.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [4, 5] },
+            "obeysCommands": false,
+            "responsive": "voice",
+            "canTalk": false
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "confused" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "d2",
+          "atSeconds": 220,
+          "unless": ["pack_wound", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Stops breathing and does not restart when the airway is opened.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "obeysCommands": false,
+            "canTalk": false,
+            "canWalk": false
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["pack_wound", "direct_pressure"],
+        "traps": ["apply_tourniquet", "give_water", "stay_and_comfort"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "A tourniquet does not work on the groin; pack the wound and press hard instead.",
+        "The groin, neck and armpit are junctional areas: the bleeding is catastrophic but there is no limb segment above it for a tourniquet.",
+        "If you have a bystander, get them to hold firm pressure while you finish the sieve checks and tag red."
+      ],
+      "tags": ["bleeding", "industrial_accident", "junctional"]
+    },
+    {
+      "id": "bl_blast_amputation_01",
+      "title": "Blast lower-leg amputation, gas explosion",
+      "ageGroup": "adult",
+      "pose": "prone",
+      "look": { "skinTone": "light", "hair": "curly", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Man lying face down outside a cafe wrecked by the gas explosion, covered in dust. He is pale, his right leg ends below the knee and a dark pool is spreading beside it. There is a burn on his back.",
+      "appearance": [
+        { "overlay": "pallor" },
+        { "overlay": "dust" }
+      ],
+      "identity": { "name": null, "age": 45, "sex": "male", "source": "none" },
+      "history": {
+        "mechanism": "Thrown by a gas explosion at a cafe. He cannot give an account.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "none"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "pain",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [22, 26] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [132, 144] } },
+        "crtSeconds": { "range": [4, 5] },
+        "catastrophicBleed": true,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "amputation_leg_r",
+          "label": "Traumatic amputation, right lower leg",
+          "cardField": "injuries",
+          "overlay": "amputation",
+          "region": "right_lower_leg",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "bleed_leg_r",
+          "label": "Catastrophic bleeding, right lower leg",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "right_lower_leg",
+          "params": { "severity": "catastrophic" },
+          "visible": true,
+          "lifeThreat": "catastrophic_bleed"
+        },
+        {
+          "id": "burn_back",
+          "label": "Superficial burn, upper back",
+          "cardField": "injuries",
+          "overlay": "burn",
+          "region": "back",
+          "params": { "depth": "superficial" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 60,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Uncontrolled bleed: loses the radial pulse and stops responding to pain.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [5, 6] },
+            "responsive": "unresponsive"
+          },
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 150,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Stops breathing and does not restart when the airway is opened.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "obeysCommands": false,
+            "canTalk": false,
+            "canWalk": false
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["apply_tourniquet"],
+        "traps": ["cool_burn", "full_head_to_toe", "search_for_id"],
+        "targetSeconds": 40
+      },
+      "teaching": [
+        "A traumatic amputation bleeds heavily: put a tourniquet on above the stump straight away.",
+        "The dust and the burn on his back are distractions; stop the catastrophic bleed first.",
+        "He cannot talk, so you will not get his name. Unknown is a valid entry; do not search his pockets."
+      ],
+      "tags": ["bleeding", "gas_explosion", "amputation", "blast"]
+    },
+    {
+      "id": "bl_hidden_arm_bleed_01",
+      "title": "Hidden arm bleed under a heavy jacket, bus crash",
+      "ageGroup": "adult",
+      "pose": "slumped",
+      "look": { "skinTone": "light", "hair": "tied", "top": "jacket", "bottom": "trousers" },
+      "approach": "Young woman slumped against the wheel of an overturned bus in a heavy jacket. She is grey in the face and sweating, with a grazed right hand, and murmurs that she feels sick.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "half_closed" } },
+        { "overlay": "expression", "params": { "mood": "confused" } },
+        { "overlay": "speech", "params": { "text": "I feel sick... so cold" } },
+        { "overlay": "pallor" },
+        { "overlay": "sweating" }
+      ],
+      "identity": { "name": "Li Wei Chen", "age": 28, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Passenger on a tour bus that rolled on a bend; thrown against a window frame.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Healthy",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "voice",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [22, 26] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [112, 124] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": true,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bleed_arm_l",
+          "label": "Catastrophic bleeding, left upper arm, hidden under the jacket sleeve",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "left_upper_arm",
+          "params": { "severity": "catastrophic" },
+          "visible": false,
+          "revealedBy": "expose_check_bleeding",
+          "lifeThreat": "catastrophic_bleed"
+        },
+        {
+          "id": "graze_hand_r",
+          "label": "Grazed right hand",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_hand",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 100,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Uncontrolled bleed: loses the radial pulse and collapses onto her back.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [4, 5] },
+            "obeysCommands": false,
+            "responsive": "pain",
+            "canTalk": false
+          },
+          "pose": "supine",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "d2",
+          "atSeconds": 260,
+          "unless": ["apply_tourniquet", "direct_pressure", "instruct_bystander_pressure"],
+          "note": "Stops breathing and does not restart when the airway is opened.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "obeysCommands": false,
+            "canTalk": false,
+            "canWalk": false
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["apply_tourniquet"],
+        "traps": ["full_head_to_toe", "wrap_in_blanket", "clean_wound"],
+        "targetSeconds": 55
+      },
+      "teaching": [
+        "Heavy clothing can hide a catastrophic bleed: if someone is pale and sweaty and you can see no blood, expose and look.",
+        "Expose and look takes 15 seconds; a full head-to-toe check takes three minutes and is not part of the sieve.",
+        "Once you find it, put a tourniquet high on the upper arm and tag red."
+      ],
+      "tags": ["bleeding", "bus_crash", "hidden_injury", "tourniquet"]
+    },
+    {
+      "id": "bl_pelvic_fracture_01",
+      "title": "Pelvic injury with internal bleeding, stadium walkway collapse",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "long", "top": "tshirt", "bottom": "skirt" },
+      "approach": "Woman lying on her back on concrete terracing below a collapsed walkway, one hand pressed to her hip, with bruising over her pelvis. She is pale and sweating and her face is tight with pain.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "speech", "params": { "text": "My hips... please don't move me" } },
+        { "overlay": "guarding", "region": "pelvis" },
+        { "overlay": "pallor" },
+        { "overlay": "sweating" }
+      ],
+      "identity": { "name": "Kiri Waaka", "age": 41, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Fell about four metres when a walkway collapsed at the stadium.",
+        "allergies": "Penicillin",
+        "medications": "None",
+        "background": "None",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [20, 24] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": false, "rate": null },
+        "crtSeconds": { "range": [4, 5] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bruise_pelvis",
+          "label": "Bruising over the pelvis, tender, no external bleeding",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "pelvis",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "bruise_back",
+          "label": "Bruising across the lower back",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "back",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d_moved",
+          "afterAction": "move_casualty",
+          "delaySeconds": 20,
+          "note": "Dragging her shifts the injured pelvis and the bleeding increases; she stops following commands.",
+          "state": {
+            "crtSeconds": { "range": [5, 6] },
+            "obeysCommands": false,
+            "responsive": "pain",
+            "canTalk": false
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "d1",
+          "atSeconds": 150,
+          "note": "Internal bleeding continues: she drifts off and no longer follows commands. Nothing in the sieve can stop this.",
+          "state": {
+            "crtSeconds": { "range": [5, 6] },
+            "obeysCommands": false,
+            "responsive": "pain",
+            "canTalk": false,
+            "rr": { "range": [26, 30] }
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["apply_collar", "move_casualty", "give_water"],
+        "targetSeconds": 40
+      },
+      "teaching": [
+        "A broken pelvis can hide litres of blood inside the body, with nothing to see on the surface.",
+        "No radial pulse and slow capillary refill mean she is in shock: tag red even though she is awake and talking.",
+        "Do not drag or roll her; leave pelvic care and the move to the treatment team."
+      ],
+      "tags": ["bleeding", "stadium_collapse", "internal_bleeding", "pelvis"]
+    },
+    {
+      "id": "bl_abdominal_bleed_01",
+      "title": "Internal abdominal bleeding, train derailment",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "dark", "hair": "short", "top": "shirt", "bottom": "trousers" },
+      "approach": "Man sitting on the ground beside a derailed train carriage, holding his stomach. He is pale and sweating, with a bruise across his belly and a small cut on his left forearm.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "speech", "params": { "text": "My stomach hurts. I feel faint." } },
+        { "overlay": "guarding", "region": "abdomen" },
+        { "overlay": "pallor" },
+        { "overlay": "sweating" }
+      ],
+      "identity": { "name": "Rajesh Patel", "age": 58, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Thrown against a seat back when a commuter train derailed.",
+        "allergies": "None known",
+        "medications": "Aspirin daily",
+        "background": "Heart stent two years ago",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [22, 26] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [108, 118] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bruise_abdomen",
+          "label": "Bruising across the abdomen, tender",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "abdomen",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "cut_forearm_l",
+          "label": "Small cut, left forearm, minor bleeding",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "left_forearm",
+          "params": { "severity": "minor" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 180,
+          "note": "Internal bleeding continues: loses the radial pulse and slumps. Nothing in the sieve can stop this.",
+          "state": {
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [5, 6] },
+            "obeysCommands": false,
+            "responsive": "pain",
+            "canTalk": false
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["speech"]
+        },
+        {
+          "id": "d2",
+          "atSeconds": 420,
+          "note": "Stops breathing and does not restart when the airway is opened.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "obeysCommands": false,
+            "canTalk": false,
+            "canWalk": false
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["clean_wound", "give_water", "measure_bp"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Internal bleeding shows only as signs of shock: a fast pulse, slow capillary refill, and a pale, sweaty casualty.",
+        "A bruise across the belly after a crash is a warning sign, even when he is talking normally.",
+        "You cannot stop this bleed in the field; tag red so he reaches surgical care first.",
+        "The small forearm cut is a distraction; it can wait."
+      ],
+      "tags": ["bleeding", "train_crash", "internal_bleeding"]
+    },
+    {
+      "id": "bl_impaled_thigh_01",
+      "title": "Rebar impaled in thigh, car park collapse",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "tied", "top": "hi_vis", "bottom": "trousers" },
+      "approach": "Woman sitting on the ground beside a wrecked car park building with a length of rebar sticking out of her right thigh. She is sweating and shouting: 'Don't touch it!'",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "speech", "params": { "text": "Don't touch it! It's in my leg!" } },
+        { "overlay": "sweating" }
+      ],
+      "identity": { "name": "Georgia Morrison", "age": 31, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Fell from a first-floor deck onto a length of rebar when the car park building shook in the earthquake.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Healthy",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [16, 20] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [96, 104] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "impaled_thigh_r",
+          "label": "Rebar impaled in right thigh; object is plugging the wound",
+          "cardField": "injuries",
+          "overlay": "impaled_object",
+          "region": "right_thigh",
+          "params": { "object": "rebar" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d_removed",
+          "afterAction": "remove_impaled_object",
+          "delaySeconds": 20,
+          "note": "With the object out, nothing plugs the wound: the thigh bleeds heavily and her pulse races.",
+          "state": {
+            "catastrophicBleed": true,
+            "radialPulse": { "present": true, "rate": { "range": [128, 140] } },
+            "crtSeconds": { "range": [3, 4] },
+            "rr": { "range": [24, 28] }
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "expression", "params": { "mood": "panic" } },
+            { "overlay": "speech", "params": { "text": "It won't stop bleeding!" } }
+          ],
+          "addFindings": [
+            {
+              "id": "bleed_thigh_r_after_removal",
+              "label": "Catastrophic bleeding, right thigh, after the rebar was pulled out",
+              "cardField": "injuries",
+              "overlay": "bleed",
+              "region": "right_thigh",
+              "params": { "severity": "catastrophic" },
+              "visible": true,
+              "lifeThreat": "catastrophic_bleed"
+            }
+          ],
+          "expectedCategory": "red",
+          "removeFindings": ["impaled_thigh_r"]
+        },
+        {
+          "id": "d1",
+          "atSeconds": 480,
+          "note": "Slow bleeding around the object: capillary refill slows and she becomes pale.",
+          "state": {
+            "radialPulse": { "present": true, "rate": { "range": [108, 118] } },
+            "crtSeconds": { "range": [3, 4] }
+          },
+          "appearance": [
+            { "overlay": "pallor" }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["remove_impaled_object", "stay_and_comfort"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Never pull out an impaled object; it may be plugging a major bleed.",
+        "Count the capillary refill: exactly 2 seconds is not over 2, so with a pulse present she is orange on this step.",
+        "Re-triage her later: slow bleeding around the object can still push her to red."
+      ],
+      "tags": ["bleeding", "earthquake", "impaled_object"]
+    },
+    {
+      "id": "bl_scalp_laceration_01",
+      "title": "Dramatic scalp laceration, landslide",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "short", "top": "jacket", "bottom": "skirt" },
+      "approach": "Older woman sitting on a roadside bank beside a slip, soaked from the rain, with one hand held to her bloodied head and a swollen left foot.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "It looks worse than it is" } },
+        { "overlay": "guarding", "region": "head" },
+        { "overlay": "wet" }
+      ],
+      "identity": { "name": "Margaret Hodgson", "age": 71, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Struck on the head by a rock fragment through the car window when a slip came down on the coast road north of Kaikoura; twisted her left ankle getting out.",
+        "allergies": "None known",
+        "medications": "Aspirin daily",
+        "background": "Mild arthritis",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [28, 30] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [92, 100] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bleed_scalp",
+          "label": "Scalp laceration, heavy bleeding (major, not catastrophic)",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "head",
+          "params": { "severity": "major" },
+          "visible": true
+        },
+        {
+          "id": "swelling_foot_l",
+          "label": "Swollen left foot and ankle, cannot take weight",
+          "cardField": "injuries",
+          "overlay": "swelling",
+          "region": "left_foot",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["clean_wound", "direct_pressure", "stay_and_comfort"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "A scalp wound bleeds a lot but is rarely life-threatening: major bleeding is not catastrophic bleeding.",
+        "Count her breathing: 30 or under is not red, even when she is anxious and the wound looks dramatic.",
+        "Pulse, capillary refill and commands are all fine, so she is orange, not red. Leave dressing the wound to the treatment team."
+      ],
+      "tags": ["bleeding", "landslide", "scalp"]
+    }
+  ]
+}

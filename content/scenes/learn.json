@@ -1,0 +1,562 @@
+{
+  "scenes": [
+    {
+      "id": "sc_learn_walking_wounded",
+      "title": "Call them to you",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Lambton Quay, Wellington",
+        "type": "Earthquake, shop fronts and awnings collapsed",
+        "hazards": "Aftershocks, broken glass",
+        "access": "From the Willis Street end, on foot",
+        "number": "About 3 casualties here, more reported further along",
+        "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 10 minutes out"
+      },
+      "startClock": "10:20",
+      "targetSeconds": 150,
+      "casualties": [
+        { "ref": "wk_jacket_bleed_01", "position": [25, 65] },
+        { "ref": "wk_deaf_gesture_01", "position": [72, 60] },
+        { "ref": "en_bookshelf_leg_01", "position": [48, 28] }
+      ],
+      "teaching": [
+        "Call out 'If you can walk, come to me' before you go to anyone. Everyone who walks is green, and you only sieve the people left behind.",
+        "Walking is the first step of the sieve. A graze, a limp or a hand held to an arm does not change it.",
+        "Someone who does not answer may not have heard you. Beckon, point and mime walking before you decide they cannot follow instructions.",
+        "Green is green for now, not for good. Note the mechanism on the card and re-triage walkers when you have time.",
+        "The woman who stays put is trapped under a shelf. She cannot walk, so she is next on your sieve."
+      ],
+      "tags": ["earthquake", "walking_wounded", "green", "call_walking_wounded"]
+    },
+    {
+      "id": "sc_learn_not_breathing",
+      "title": "One try, then black",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Cuba Street, Wellington",
+        "type": "Earthquake, shop front and cafe ceiling collapsed",
+        "hazards": "Aftershocks, loose masonry",
+        "access": "From Dixon Street, on foot",
+        "number": "About 2 casualties in this stretch",
+        "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 15 minutes out"
+      },
+      "startClock": "10:25",
+      "targetSeconds": 110,
+      "casualties": [
+        { "ref": "br_not_breathing_black_01", "position": [38, 58] },
+        { "ref": "en_beam_arm_01", "position": [66, 36] }
+      ],
+      "bystanders": [
+        {
+          "id": "by_passer",
+          "description": "Man in a work jacket who found the casualty and is shaking",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "short", "top": "jacket", "bottom": "trousers" },
+          "behaviour": "panicking",
+          "canHelp": [],
+          "position": [34, 62],
+          "lines": ["I found him like this! Please, pump his chest!", "You can't just leave him!"]
+        }
+      ],
+      "events": [
+        {
+          "id": "ev_cpr_plea",
+          "atSeconds": 15,
+          "type": "bystander_interrupt",
+          "bystander": "by_passer",
+          "casualty": "br_not_breathing_black_01",
+          "description": "The man who found him shouts at you to start CPR.",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        }
+      ],
+      "teaching": [
+        "Open the airway once, then look, listen and feel for breathing for the full check.",
+        "Still not breathing after one airway opening means tag black, even though it feels wrong.",
+        "Do not start CPR in a mass casualty incident. It ties you to one casualty while others you can save wait.",
+        "A black tag is not giving up. It lets you reach the woman calling for help under the beam.",
+        "A bystander begging for CPR is understandable. Say briefly why you are moving on, tag black and keep going."
+      ],
+      "tags": ["earthquake", "airway", "not_breathing", "black", "cpr_trap"]
+    },
+    {
+      "id": "sc_learn_leg_bleed",
+      "title": "Stop the bleed first",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Cashel Mall, Christchurch",
+        "type": "Earthquake, shop front collapsed onto the footpath",
+        "hazards": "Aftershocks, falling glass",
+        "access": "From Colombo Street, south side",
+        "number": "1 casualty in view, more reported",
+        "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 10 minutes out"
+      },
+      "startClock": "10:30",
+      "targetSeconds": 60,
+      "casualties": [
+        { "ref": "bl_thigh_bleed_01", "position": [50, 55] }
+      ],
+      "teaching": [
+        "Catastrophic bleeding is the first question in the sieve. Stop it before you check anything else.",
+        "A tourniquet goes high on the thigh, above the wound, and is tightened until the bleeding stops. Write the time on the card.",
+        "Shouting does not mean he is fine. Pale, sweaty skin and a fast pulse point to heavy blood loss.",
+        "Once the bleed is controlled, tag red and move on. Do not stay to comfort him or give a drink."
+      ],
+      "tags": ["earthquake", "bleeding", "tourniquet", "red"]
+    },
+    {
+      "id": "sc_learn_head_injury",
+      "title": "Cannot follow a command",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "State Highway 1, north of Kaikōura",
+        "type": "Landslide onto the coast road, two vehicles hit",
+        "hazards": "Further slips, rockfall, heavy rain, wet road",
+        "access": "From the north, one lane open along the verge",
+        "number": "About 2 casualties here",
+        "emergencyServices": "Hato Hone St John from Kaikōura 20 minutes out, Fire and Emergency NZ 25 minutes"
+      },
+      "startClock": "14:05",
+      "targetSeconds": 120,
+      "casualties": [
+        { "ref": "bl_scalp_laceration_01", "position": [32, 38] },
+        { "ref": "br_unconscious_prone_01", "position": [64, 62] }
+      ],
+      "teaching": [
+        "Breathing and pulse can look fine in a casualty with a serious head injury. The command check is what finds it.",
+        "A casualty who breathes but cannot follow a simple command is red.",
+        "Put her in the recovery position to protect her airway, then move on.",
+        "The woman with the bleeding scalp talks and obeys, so she is orange. A dramatic scalp wound is not a red tag.",
+        "Quiet is not safe. The casualty who is not making a noise is often the one who needs you first."
+      ],
+      "tags": ["landslide", "head_injury", "commands", "recovery_position", "red"]
+    },
+    {
+      "id": "sc_learn_child_sieve",
+      "title": "Children breathe faster",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Area school, Blenheim",
+        "type": "Earthquake, classroom block ceiling and roof beam collapsed",
+        "hazards": "Aftershocks, unstable ceiling",
+        "access": "Through the school gate off High Street",
+        "number": "About 2 injured students here",
+        "emergencyServices": "Fire and Emergency NZ 10 minutes out, Hato Hone St John 15 minutes"
+      },
+      "startClock": "11:15",
+      "targetSeconds": 120,
+      "casualties": [
+        { "ref": "ch_trapped_fast_breather_01", "position": [36, 40] },
+        {
+          "ref": "ch_teen_adult_sieve_01",
+          "position": [66, 62],
+          "override": {
+            "approach": "Teenage girl in a school uniform sitting in the school courtyard, wincing with a hand pressed to her chest, her left lower leg bent out of line.",
+            "mechanism": "Thrown against the edge of a desk when the earthquake shook the classroom block."
+          }
+        }
+      ],
+      "bystanders": [
+        {
+          "id": "by_teacher",
+          "description": "Teacher in a lanyard, pale but steady",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "tied", "top": "shirt", "bottom": "skirt" },
+          "behaviour": "parent",
+          "canHelp": [],
+          "position": [44, 46],
+          "lines": [
+            "That's Hemi, he's nine. He's been stuck under that beam for over an hour.",
+            "The older girl is Grace. She's fourteen."
+          ]
+        }
+      ],
+      "teaching": [
+        "Children have their own breathing limits in the sieve. In the child sieve only a rate under 15 or over 45 is red.",
+        "Hemi breathes 42 to 44 times a minute. That is orange in a child, but the same rate would be red in an adult.",
+        "At 14, Grace goes through the adult sieve, where more than 30 breaths a minute is red.",
+        "Being trapped does not change the category. Sieve Hemi as normal, then flag him for medical before anyone frees him.",
+        "The teacher can give you names and ages. Ask her rather than questioning a frightened child."
+      ],
+      "tags": ["earthquake", "child", "child_sieve", "adult_sieve", "entrapment", "school"]
+    },
+    {
+      "id": "sc_learn_long_entrapment",
+      "title": "Do not lift it off",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Manchester Street, Christchurch",
+        "type": "Earthquake three hours ago, office building floors collapsed",
+        "hazards": "Aftershocks, unstable floors",
+        "access": "From Lichfield Street, through the cordon",
+        "number": "1 casualty trapped, more may be inside",
+        "emergencyServices": "Fire and Emergency NZ urban search and rescue and Hato Hone St John medics 15 minutes out"
+      },
+      "startClock": "15:50",
+      "targetSeconds": 80,
+      "casualties": [
+        { "ref": "en_slab_legs_01", "position": [48, 50] }
+      ],
+      "bystanders": [
+        {
+          "id": "by_lifter",
+          "description": "Man in a hard hat from the building next door",
+          "ageGroup": "adult",
+          "look": { "skinTone": "medium", "hair": "short", "top": "hi_vis", "bottom": "overalls" },
+          "behaviour": "obstructive",
+          "canHelp": [],
+          "position": [58, 46],
+          "lines": [
+            "We'll just lift it off him! Give me a hand!",
+            "He's been stuck for hours, we can't leave him!"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "id": "ev_lift",
+          "atSeconds": 20,
+          "type": "bystander_interrupt",
+          "bystander": "by_lifter",
+          "casualty": "en_slab_legs_01",
+          "description": "The man in the hard hat grabs the edge of the slab and tells you to help him lift it.",
+          "correctResponse": "flag_for_medical",
+          "deadlineSeconds": 30,
+          "penaltyIfWrong": "major"
+        },
+        {
+          "id": "ev_medics",
+          "atSeconds": 60,
+          "type": "radio_message",
+          "description": "Control: a medical team and a rescue crew are 15 minutes away. Hold any release until they arrive."
+        }
+      ],
+      "teaching": [
+        "Trapped but breathing normally, with a pulse and following commands, is orange.",
+        "After hours under a heavy load, lifting it off can release toxins into the blood and stop the heart.",
+        "Flag for medical before any release. Do not free him yourself and do not let a well-meaning bystander try.",
+        "However thirsty he is, nothing by mouth.",
+        "Tag orange, write on the card how long he has been trapped, and move on."
+      ],
+      "tags": ["earthquake", "entrapment", "crush", "orange", "flag_for_medical"]
+    },
+    {
+      "id": "sc_learn_quiet_one",
+      "title": "The quiet one",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Cashel Mall, Christchurch",
+        "type": "Earthquake, shop fronts collapsed",
+        "hazards": "Aftershocks, falling glass",
+        "access": "From Colombo Street, south side",
+        "number": "About 2 casualties here",
+        "emergencyServices": "Fire and ambulance 10 minutes out"
+      },
+      "startClock": "10:30",
+      "targetSeconds": 100,
+      "casualties": [
+        {
+          "ref": "wk_loud_forearm_01",
+          "position": [30, 52],
+          "override": {
+            "approach": "Man sitting on the footpath beside a collapsed shop front, shouting and moving about, holding his left forearm, which is visibly bent.",
+            "mechanism": "Fell as the shop awning came down in the earthquake, landing on his left arm."
+          }
+        },
+        {
+          "ref": "ne_quiet_head_01",
+          "position": [62, 70],
+          "override": {
+            "approach": "Man lying still on his back on the footpath in front of a collapsed shop front, eyes closed, with a cut on his head and bruising on his face.",
+            "mechanism": "Struck by falling masonry from the shop front when the earthquake hit. A passer-by saw him go down and he has not spoken since."
+          }
+        }
+      ],
+      "events": [
+        {
+          "id": "ev_loud_again",
+          "atSeconds": 25,
+          "type": "casualty_calls_out",
+          "casualty": "wk_loud_forearm_01",
+          "description": "The man with the bent arm shouts for you again: 'Hey! Over here! My arm!'",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        }
+      ],
+      "teaching": [
+        "The loudest casualty is rarely the sickest. Go to the quiet one first.",
+        "A casualty who is quiet and cannot follow a simple command is red, even when the breathing rate and pulse look fine.",
+        "The man with the bent forearm shouts but can walk, so he is green. Do not splint his arm in the first sweep.",
+        "A breathing casualty who is not obeying goes into the recovery position to keep the airway open.",
+        "Look at everyone before you commit. The quiet casualty is easy to walk past while others shout."
+      ],
+      "tags": ["earthquake", "quiet_casualty", "loud", "head_injury", "green", "red"]
+    },
+    {
+      "id": "sc_learn_panic",
+      "title": "Panic is not an injury",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Tsunami evacuation point, Bluff Hill, Napier",
+        "type": "Tsunami surge on the Marine Parade, evacuation under way",
+        "hazards": "Further surges, floating debris, crowding on the track",
+        "access": "On foot from Coote Road",
+        "number": "About 2 casualties, many evacuees",
+        "emergencyServices": "Hato Hone St John and Police 15 minutes out, Civil Defence centre opening"
+      },
+      "startClock": "16:40",
+      "targetSeconds": 100,
+      "casualties": [
+        { "ref": "wk_panic_uninjured_01", "position": [40, 52] },
+        { "ref": "ne_postictal_01", "position": [72, 66] }
+      ],
+      "events": [
+        {
+          "id": "ev_grab",
+          "atSeconds": 20,
+          "type": "casualty_calls_out",
+          "casualty": "wk_panic_uninjured_01",
+          "description": "The woman grabs your sleeve and tries to drag you toward the water: 'I have to get out! Let me go!'",
+          "correctResponse": "reassure",
+          "deadlineSeconds": 20,
+          "penaltyIfWrong": "minor"
+        }
+      ],
+      "teaching": [
+        "Panic is not an injury. If she can walk, she is green.",
+        "Give one short, firm instruction, such as 'Walk to the green area', instead of staying to calm her.",
+        "Fear can push the breathing rate to 28 to 30, but the walking step comes first and she is green.",
+        "The quiet woman on the grass is the one to worry about. Confused and not following commands makes her red until she can.",
+        "Do not stay with the panicking person. Ask a walking casualty to take her to the green area."
+      ],
+      "tags": ["tsunami", "panic", "uninjured", "green", "behaviour", "red"]
+    },
+    {
+      "id": "sc_learn_pulled_to_friend",
+      "title": "Not who shouts loudest",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "State Highway 1, south of Oamaru",
+        "type": "Tour coach rolled onto its side on a bend",
+        "hazards": "Passing traffic, steep bank",
+        "access": "From the north, along the verge",
+        "number": "About 2 casualties here, more on the bank",
+        "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 20 minutes out"
+      },
+      "startClock": "13:50",
+      "targetSeconds": 140,
+      "casualties": [
+        {
+          "ref": "ne_older_ankle_head_01",
+          "position": [36, 44],
+          "override": {
+            "approach": "Elderly man sitting on the gravel verge beside the overturned coach, restless and anxious, holding his head where there is a small cut with a little bleeding, his left lower leg bent at an odd angle.",
+            "mechanism": "Thrown from his seat when the coach rolled. He hit his head and twisted his left ankle."
+          }
+        },
+        { "ref": "bl_hidden_arm_bleed_01", "position": [68, 58] }
+      ],
+      "bystanders": [
+        {
+          "id": "by_mere",
+          "description": "Older woman in a green cardigan, Eru's wife",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "short", "top": "jacket", "bottom": "skirt" },
+          "behaviour": "pulls_to_friend",
+          "canHelp": [],
+          "position": [40, 48],
+          "lines": [
+            "Eru first, please! He's hurt his head!",
+            "You can't just walk past him!",
+            "Why are you going to her? He needs you!"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "id": "ev_mere_1",
+          "atSeconds": 20,
+          "type": "bystander_interrupt",
+          "bystander": "by_mere",
+          "casualty": "ne_older_ankle_head_01",
+          "description": "Mere grabs your arm: 'Eru first, please! He's bleeding from his head!'",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        },
+        {
+          "id": "ev_mere_2",
+          "atSeconds": 60,
+          "type": "bystander_interrupt",
+          "bystander": "by_mere",
+          "casualty": "ne_older_ankle_head_01",
+          "description": "Mere pulls you back as you turn away: 'You can't leave him! Stay with him!'",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        }
+      ],
+      "teaching": [
+        "A bystander's urgency is not a triage category. Sieve in the order you find people, not the order you are told.",
+        "Eru takes a short sieve: not walking, breathing rate normal, pulse fine, obeys commands. That is orange, and you move on.",
+        "The quiet woman slumped by the wheel is pale and sweaty with no blood in sight. Expose and look: a bleed under a heavy jacket needs a tourniquet in seconds.",
+        "Expose and look takes 15 seconds. A full head-to-toe check takes three minutes.",
+        "Do not argue. A calm 'I will be back for him' is enough, then carry on."
+      ],
+      "tags": ["bus_crash", "bystander", "pulls_to_friend", "hidden_bleed", "orange", "red"]
+    },
+    {
+      "id": "sc_learn_aftershock",
+      "title": "Safety first",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Builders' supplies store, Hutt Road, Petone",
+        "type": "Earthquake, mezzanine floor collapsed in the store",
+        "hazards": "Aftershocks, cracking brick wall, falling stock",
+        "access": "Through the loading bay on the east side",
+        "number": "About 2 casualties here",
+        "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 10 minutes out"
+      },
+      "startClock": "11:40",
+      "targetSeconds": 150,
+      "casualties": [
+        { "ref": "ne_spinal_fall_01", "position": [38, 52] },
+        {
+          "ref": "bl_impaled_thigh_01",
+          "position": [64, 44],
+          "override": {
+            "approach": "Woman sitting on the ground beside the collapsed mezzanine with a length of steel reinforcing bar sticking out of her right thigh. She is sweating and shouting: 'Don't touch it!'",
+            "mechanism": "Fell from the edge of the mezzanine onto a length of steel reinforcing bar stacked below when the floor gave way in the earthquake."
+          }
+        }
+      ],
+      "hazards": [
+        { "id": "hz_wall", "type": "cracking_wall", "position": [52, 18], "activeAtStart": false }
+      ],
+      "events": [
+        {
+          "id": "ev_aftershock",
+          "atSeconds": 40,
+          "type": "aftershock",
+          "hazard": "hz_wall",
+          "description": "A strong aftershock hits. The brick wall above you cracks and dust pours down.",
+          "correctResponse": ["drop_cover_hold", "withdraw"],
+          "deadlineSeconds": 15,
+          "penaltyIfWrong": "major"
+        }
+      ],
+      "teaching": [
+        "Check for danger first, and keep checking. A scene that looks safe can change in seconds.",
+        "When the ground shakes or a wall cracks, withdraw to safety straight away. You cannot help anyone if you are hurt.",
+        "Do not finish the casualty you are with first. Withdraw within seconds, report to Control and return when the area is cleared.",
+        "Leaving casualties is hard, but a rescuer who is injured becomes another casualty."
+      ],
+      "tags": ["earthquake", "aftershock", "withdraw", "scene_safety", "cracking_wall"]
+    },
+    {
+      "id": "sc_learn_junctional_bleed",
+      "title": "Tourniquets do not fit the groin",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Dairy factory, Te Rapa, Hamilton",
+        "type": "Industrial accident, drying equipment failure",
+        "hazards": "Loose metal panels, wet floor, noise",
+        "access": "Through the main gate, then the loading dock",
+        "number": "1 casualty here, others being checked",
+        "emergencyServices": "Hato Hone St John 8 minutes out, Fire and Emergency NZ 10 minutes"
+      },
+      "startClock": "09:15",
+      "targetSeconds": 80,
+      "casualties": [
+        { "ref": "bl_groin_bleed_01", "position": [48, 50] }
+      ],
+      "bystanders": [
+        {
+          "id": "by_coworker",
+          "description": "Factory worker in a hi-vis top and hard hat, calm",
+          "ageGroup": "adult",
+          "look": { "skinTone": "medium", "hair": "short", "top": "hi_vis", "bottom": "overalls" },
+          "behaviour": "helper",
+          "canHelp": ["instruct_bystander_pressure"],
+          "position": [58, 46],
+          "lines": ["He's my workmate. Tell me what to do.", "I can hold it, just show me where."]
+        }
+      ],
+      "events": [
+        {
+          "id": "ev_eta",
+          "atSeconds": 45,
+          "type": "radio_message",
+          "description": "Control: ambulance is 8 minutes out. Tell them about the groin bleed when they arrive."
+        }
+      ],
+      "teaching": [
+        "A tourniquet does not work on the groin. There is no limb segment above the wound for it to sit on.",
+        "Pack the wound and press hard. The groin, neck and armpit are junctional areas.",
+        "Ask the worker to hold firm pressure while you finish the sieve checks, then tag red.",
+        "He is shouting, pale and sweaty, which means heavy blood loss. Stop the bleed first, tag second."
+      ],
+      "tags": ["industrial_accident", "bleeding", "junctional", "pack_wound", "bystander_helper", "red"]
+    },
+    {
+      "id": "sc_learn_airway_opens",
+      "title": "Open the airway first",
+      "mode": "learn",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "State Highway 2, Rimutaka Hill Road",
+        "type": "Coach rolled on a bend",
+        "hazards": "Passing traffic, steep bank",
+        "access": "From the Featherston side, along the verge",
+        "number": "About 1 casualty here, more further down",
+        "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 20 minutes out"
+      },
+      "startClock": "12:30",
+      "targetSeconds": 70,
+      "casualties": [
+        { "ref": "br_airway_opens_red_01", "position": [48, 52] }
+      ],
+      "bystanders": [
+        {
+          "id": "by_passenger",
+          "description": "Man in a jacket crouched by the casualty, shaking",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "bald", "top": "jacket", "bottom": "trousers" },
+          "behaviour": "panicking",
+          "canHelp": [],
+          "position": [40, 56],
+          "lines": ["I found her like this. She hasn't moved. Is she dead?", "I think she's gone."]
+        }
+      ],
+      "events": [
+        {
+          "id": "ev_gone",
+          "atSeconds": 15,
+          "type": "bystander_interrupt",
+          "bystander": "by_passenger",
+          "casualty": "br_airway_opens_red_01",
+          "description": "The man beside her tells you she is dead and there is nothing to do.",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        }
+      ],
+      "teaching": [
+        "Always open the airway before you decide someone is not breathing. A blocked airway can look exactly like death.",
+        "Breathing that starts after the airway is opened is red, and opening the airway was the life-saving step.",
+        "Settle her in the recovery position before you move on, or the airway can close again.",
+        "A bystander saying she is dead is not a triage assessment. Check for yourself.",
+        "In the sieve the airway comes before spinal care, so a collar can wait for the treatment team."
+      ],
+      "tags": ["bus_crash", "airway", "recovery_position", "red", "bystander"]
+    }
+  ]
+}

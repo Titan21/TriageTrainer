@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "approved": false,
+  "notice": "PLACEHOLDER PROTOCOL. Thresholds and steps are common published values (UK triage sieve / START for adults, JumpSTART for children), not NZRT's. Replace before real practice. The app shows a banner while approved is false.",
+
+  "categories": [
+    { "id": "red", "label": "Immediate", "priority": 1, "colour": "#c62828" },
+    { "id": "orange", "label": "Urgent", "priority": 2, "colour": "#ef6c00" },
+    { "id": "green", "label": "Delayed / walking", "priority": 3, "colour": "#2e7d32" },
+    { "id": "black", "label": "Dead", "priority": 4, "colour": "#111111" }
+  ],
+
+  "scoring": {
+    "notes": "Penalty points by correct category (row) and assigned category (column). Under-triage costs more than over-triage; tagging a salvageable casualty black is the worst outcome.",
+    "triagePenalty": {
+      "red": { "red": 0, "orange": 6, "green": 10, "black": 15 },
+      "orange": { "red": 2, "orange": 0, "green": 6, "black": 15 },
+      "green": { "red": 3, "orange": 1, "green": 0, "black": 15 },
+      "black": { "red": 3, "orange": 3, "green": 3, "black": 0 }
+    },
+    "missedLifeSavingIntervention": 10,
+    "enteredOrStayedInDanger": 10,
+    "targetSecondsPerCasualty": 60,
+    "overtimePenaltyPer10Seconds": 1
+  },
+
+  "sieves": {
+    "adult": {
+      "steps": [
+        {
+          "id": "catastrophic_bleed",
+          "question": "Catastrophic bleeding?",
+          "when": { "all": [{ "field": "catastrophicBleed", "op": "eq", "value": true }, { "not": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": false }] } }] },
+          "category": "red",
+          "checks": [],
+          "note": "Control it first (tourniquet, packing, pressure), then tag red. Does not apply to someone who is not breathing even with the airway opened; they fall through to black."
+        },
+        {
+          "id": "walking",
+          "question": "Can they walk?",
+          "when": { "field": "canWalk", "op": "eq", "value": true },
+          "category": "green",
+          "checks": [["ask_to_walk", "call_walking_wounded"]],
+          "ruleOutChecks": []
+        },
+        {
+          "id": "not_breathing_after_airway",
+          "question": "Not breathing even after the airway is opened?",
+          "when": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": false }] },
+          "category": "black",
+          "checks": ["check_breathing", "open_airway"],
+          "ruleOutChecks": ["check_breathing"]
+        },
+        {
+          "id": "breathing_after_airway",
+          "question": "Breathing only after the airway is opened?",
+          "when": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": true }] },
+          "category": "red",
+          "checks": ["check_breathing", "open_airway"],
+          "ruleOutChecks": ["check_breathing"],
+          "note": "Keep the airway open (recovery position) and tag red."
+        },
+        {
+          "id": "respiratory_rate",
+          "question": "Breathing rate under 10 or over 30?",
+          "when": { "any": [{ "field": "rr", "op": "lt", "value": 10 }, { "field": "rr", "op": "gt", "value": 30 }] },
+          "category": "red",
+          "checks": ["check_breathing"]
+        },
+        {
+          "id": "circulation",
+          "question": "No radial pulse, or capillary refill over 2 seconds?",
+          "when": { "any": [{ "field": "radialPulse.present", "op": "eq", "value": false }, { "field": "crtSeconds", "op": "gt", "value": 2 }] },
+          "category": "red",
+          "checks": [["check_radial_pulse", "check_crt"]]
+        },
+        {
+          "id": "commands",
+          "question": "Unable to follow simple commands?",
+          "when": { "field": "obeysCommands", "op": "eq", "value": false },
+          "category": "red",
+          "checks": ["give_command"]
+        },
+        {
+          "id": "otherwise",
+          "question": "None of the above",
+          "when": true,
+          "category": "orange",
+          "checks": []
+        }
+      ]
+    },
+    "child": {
+      "steps": [
+        {
+          "id": "catastrophic_bleed",
+          "question": "Catastrophic bleeding?",
+          "when": { "all": [{ "field": "catastrophicBleed", "op": "eq", "value": true }, { "not": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": false }, { "not": { "field": "breathesAfterRescueBreaths", "op": "eq", "value": true } }] } }] },
+          "category": "red",
+          "checks": []
+        },
+        {
+          "id": "walking",
+          "question": "Can they walk?",
+          "when": { "field": "canWalk", "op": "eq", "value": true },
+          "category": "green",
+          "checks": [["ask_to_walk", "call_walking_wounded"]],
+          "ruleOutChecks": []
+        },
+        {
+          "id": "breathing_after_airway",
+          "question": "Breathing only after the airway is opened?",
+          "when": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": true }] },
+          "category": "red",
+          "checks": ["check_breathing", "open_airway"],
+          "ruleOutChecks": ["check_breathing"]
+        },
+        {
+          "id": "no_pulse_no_breathing",
+          "question": "Still not breathing and no pulse?",
+          "when": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": false }, { "field": "radialPulse.present", "op": "eq", "value": false }] },
+          "category": "black",
+          "checks": ["check_breathing", "open_airway", "check_radial_pulse"],
+          "ruleOutChecks": ["check_breathing"]
+        },
+        {
+          "id": "breathing_after_rescue_breaths",
+          "question": "Has a pulse and breathes after 5 rescue breaths?",
+          "when": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": false }, { "field": "breathesAfterRescueBreaths", "op": "eq", "value": true }] },
+          "category": "red",
+          "checks": ["check_breathing", "open_airway", "check_radial_pulse", "rescue_breaths"],
+          "ruleOutChecks": ["check_breathing"]
+        },
+        {
+          "id": "not_breathing_after_rescue_breaths",
+          "question": "Has a pulse but still not breathing after rescue breaths?",
+          "when": { "all": [{ "field": "breathing", "op": "eq", "value": false }, { "field": "breathesAfterAirwayOpen", "op": "eq", "value": false }] },
+          "category": "black",
+          "checks": ["check_breathing", "open_airway", "check_radial_pulse", "rescue_breaths"],
+          "ruleOutChecks": ["check_breathing"]
+        },
+        {
+          "id": "respiratory_rate",
+          "question": "Breathing rate under 15 or over 45?",
+          "when": { "any": [{ "field": "rr", "op": "lt", "value": 15 }, { "field": "rr", "op": "gt", "value": 45 }] },
+          "category": "red",
+          "checks": ["check_breathing"]
+        },
+        {
+          "id": "circulation",
+          "question": "No palpable radial pulse?",
+          "when": { "field": "radialPulse.present", "op": "eq", "value": false },
+          "category": "red",
+          "checks": ["check_radial_pulse"]
+        },
+        {
+          "id": "responsiveness",
+          "question": "Unresponsive, or responds to pain inappropriately?",
+          "when": { "any": [{ "field": "responsive", "op": "eq", "value": "unresponsive" }, { "all": [{ "field": "responsive", "op": "eq", "value": "pain" }, { "field": "painResponseAppropriate", "op": "eq", "value": false }] }] },
+          "category": "red",
+          "checks": ["check_response"]
+        },
+        {
+          "id": "otherwise",
+          "question": "None of the above",
+          "when": true,
+          "category": "orange",
+          "checks": []
+        }
+      ]
+    }
+  }
+}

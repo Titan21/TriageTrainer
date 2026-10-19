@@ -1,0 +1,891 @@
+{
+  "prefix": "vr_",
+  "theme": "Walking wounded and scene filler variants",
+  "casualties": [
+    {
+      "id": "vr_wet_cut_hand_01",
+      "title": "Wet teenager with a cut hand",
+      "ageGroup": "adult",
+      "pose": "standing",
+      "look": { "skinTone": "medium", "hair": "tied", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Teenage girl standing in soaked, dripping clothes, holding her right forearm and looking upset, with a cut across her right hand and a little bleeding.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "wet" },
+        { "overlay": "guarding", "region": "right_forearm" },
+        { "overlay": "speech", "params": { "text": "I cut it on a fence in the water!" } }
+      ],
+      "identity": { "name": "Mereana Tamihana", "age": 17, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Waded out of knee-deep flood water along her street and cut her right hand on a broken fence while steadying herself.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Fit and well",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [20, 24] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [96, 106] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "cut_hand_r",
+          "label": "Cut across the right hand",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_hand",
+          "params": { "type": "laceration" },
+          "visible": true
+        },
+        {
+          "id": "ooze_hand_r",
+          "label": "Minor bleeding from the right hand",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "right_hand",
+          "params": { "severity": "minor" },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["clean_wound", "wrap_in_blanket"],
+        "targetSeconds": 20
+      },
+      "teaching": [
+        "Anyone who can walk is green, even when a cut is bleeding a little.",
+        "Only catastrophic bleeding is treated during the sieve, so do not stop to clean or dress this cut.",
+        "Being soaked is a reason to ask a helper for a blanket later, not to stop and wrap her now.",
+        "Ask her to walk to the green area, tag green and move on."
+      ],
+      "tags": ["walking_wounded", "flood", "wet", "minor_bleed", "teen"]
+    },
+    {
+      "id": "vr_wet_hidden_ribs_01",
+      "title": "Wet man who is just winded",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "dark", "hair": "short", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Man sitting on the road in soaked, dripping clothes, calm, with a graze on his left forearm, saying he is only winded.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "calm" } },
+        { "overlay": "wet" },
+        { "overlay": "speech", "params": { "text": "Just winded. Give me a minute." } }
+      ],
+      "identity": { "name": "Viliami Moala", "age": 61, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Ran from the tsunami surge and was knocked over by it, landing on his right side against a fence post.",
+        "allergies": "None known",
+        "medications": "Blood pressure tablet",
+        "background": "High blood pressure",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [18, 22] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [86, 94] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_forearm_l",
+          "label": "Graze on the left forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "bruise_chest_r",
+          "label": "Bruising over the right ribs, tender to touch",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 330,
+          "unless": [],
+          "note": "A hidden chest injury declares itself: breathing fast and shallow, pale and sweaty, cannot stand.",
+          "state": {
+            "canWalk": false,
+            "rr": { "range": [32, 35] },
+            "breathingDepth": "shallow",
+            "radialPulse": { "rate": { "range": [112, 120] } },
+            "crtSeconds": { "range": [3, 4] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "sweating" },
+            { "overlay": "expression", "params": { "mood": "distress" } },
+            { "overlay": "guarding", "region": "chest" },
+            { "overlay": "speech", "params": { "text": "I can't get my breath." } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["full_head_to_toe", "clean_wound"],
+        "targetSeconds": 25
+      },
+      "teaching": [
+        "He walks and talks, so he is green in the first sweep, even though he was knocked down hard by the surge.",
+        "Chest injuries can declare themselves late: fast, shallow breathing and a struggle to stand mean red.",
+        "Re-triage walking casualties who took a hard blow to the chest or belly, and expose the area to look for bruising."
+      ],
+      "tags": ["walking_wounded", "tsunami", "wet", "hidden_injury", "chest", "re_triage"]
+    },
+    {
+      "id": "vr_dust_cafe_burn_01",
+      "title": "Dusty woman with a small burn",
+      "ageGroup": "adult",
+      "pose": "standing",
+      "look": { "skinTone": "medium", "hair": "long", "top": "shirt", "bottom": "skirt" },
+      "approach": "Woman standing covered in grey dust, holding her right forearm, where there is a pink burn patch, and looking pained.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "dust" },
+        { "overlay": "guarding", "region": "right_forearm" },
+        { "overlay": "speech", "params": { "text": "Hot water went all over my arm!" } }
+      ],
+      "identity": { "name": "Anjali Reddy", "age": 41, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Hot water from the cafe coffee machine splashed her right arm when the building shook; she walked out through the dust.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Fit and well",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [20, 24] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [98, 108] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "burn_forearm_r",
+          "label": "Superficial burn, right forearm (pink, no blisters)",
+          "cardField": "injuries",
+          "overlay": "burn",
+          "region": "right_forearm",
+          "params": { "depth": "superficial" },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["cool_burn", "stay_and_comfort"],
+        "targetSeconds": 20
+      },
+      "teaching": [
+        "A small burn on one arm does not change the sieve: if she can walk, she is green.",
+        "Cooling a burn is good first aid but takes about 20 minutes, so it is not done during the sieve.",
+        "Tell her where the green area is, and ask her to cool the burn there if a helper has water."
+      ],
+      "tags": ["walking_wounded", "earthquake", "dust", "burn", "cbd"]
+    },
+    {
+      "id": "vr_dust_older_heart_01",
+      "title": "Dusty older man with a bruised shoulder",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "bald", "top": "jacket", "bottom": "trousers" },
+      "approach": "Elderly man sitting on the kerb covered in grey dust, calm, holding his left upper arm, where there is bruising, with a walking stick beside him.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "calm" } },
+        { "overlay": "dust" },
+        { "overlay": "mobility_aid", "params": { "type": "walking_stick", "condition": "intact" } },
+        { "overlay": "guarding", "region": "left_upper_arm" },
+        { "overlay": "speech", "params": { "text": "Just a bump. I'm all right." } }
+      ],
+      "identity": { "name": "Ronald McKenzie", "age": 83, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Thrown against a shop doorframe by the shaking while walking along the street, then walked out with his stick as the dust came down.",
+        "allergies": "None known",
+        "medications": "Aspirin and a heart tablet",
+        "background": "Heart disease, stent four years ago",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [16, 20] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [78, 86] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bruise_arm_l",
+          "label": "Bruising, left upper arm and shoulder",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "left_upper_arm",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 300,
+          "unless": [],
+          "note": "The shock brings on a heart attack: tight chest, pale, sweaty, slumped, cannot stand.",
+          "state": {
+            "canWalk": false,
+            "rr": { "range": [22, 26] },
+            "radialPulse": { "rate": { "range": [104, 112] } },
+            "crtSeconds": { "range": [3, 4] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "sweating" },
+            { "overlay": "expression", "params": { "mood": "distress" } },
+            { "overlay": "speech", "params": { "text": "My chest is so tight." } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["stay_and_comfort", "wrap_in_blanket"],
+        "targetSeconds": 25
+      },
+      "teaching": [
+        "He can walk, even with his stick, so he is green in the first sweep.",
+        "Older people with heart disease can collapse after a shock with no injury that explains it, so re-triage them.",
+        "Pale, sweaty, a tight chest and capillary refill over 2 seconds make him red on re-triage.",
+        "Ask about medical history during re-triage, not in the first sweep."
+      ],
+      "tags": ["walking_wounded", "earthquake", "dust", "older_person", "heart", "re_triage"]
+    },
+    {
+      "id": "vr_stand_nosebleed_01",
+      "title": "Woman with a nosebleed after the stand collapse",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "short", "top": "jacket", "bottom": "trousers" },
+      "approach": "Woman sitting on the ground beside the broken stand, looking shaken, with blood on her face and a swollen cheek.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "My nose won't stop bleeding." } }
+      ],
+      "identity": { "name": "Hine Tapsell", "age": 58, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Thrown face-first into the bench in front of her when the grandstand tilted at the rugby match.",
+        "allergies": "None known",
+        "medications": "Blood pressure tablet",
+        "background": "High blood pressure",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [18, 22] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [88, 96] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "nosebleed",
+          "label": "Nosebleed, slow ooze",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "face",
+          "params": { "severity": "minor" },
+          "visible": true
+        },
+        {
+          "id": "swelling_cheek",
+          "label": "Swollen cheek",
+          "cardField": "injuries",
+          "overlay": "swelling",
+          "region": "face",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d_water",
+          "afterAction": "give_water",
+          "delaySeconds": 30,
+          "unless": [],
+          "note": "Chokes and vomits after the drink. Breathing is noisy and fast, and she slumps and cannot stand.",
+          "state": {
+            "canWalk": false,
+            "rr": { "range": [32, 35] },
+            "breathingDepth": "noisy",
+            "radialPulse": { "rate": { "range": [108, 116] } },
+            "crtSeconds": { "range": [3, 4] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "expression", "params": { "mood": "panic" } },
+            { "overlay": "cyanosis" },
+            { "overlay": "speech", "params": { "text": "Can't breathe... choking." } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["give_water", "clean_wound"],
+        "targetSeconds": 20
+      },
+      "teaching": [
+        "A nosebleed looks dramatic but is a minor bleed, and she can walk, so she is green.",
+        "Only catastrophic bleeding is treated during the sieve, so do not stop to clean her face.",
+        "Nothing by mouth: a swollen, bleeding face makes choking and vomiting more likely if she is given a drink."
+      ],
+      "tags": ["walking_wounded", "stand_collapse", "minor_bleed", "face", "trap_consequence"]
+    },
+    {
+      "id": "vr_bus_seatbelt_01",
+      "title": "Coach passenger with a seatbelt mark",
+      "ageGroup": "adult",
+      "pose": "standing",
+      "look": { "skinTone": "light", "hair": "short", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Young man standing beside the crashed coach, calm, holding a hand to his chest, with a graze on his right hand.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "calm" } },
+        { "overlay": "guarding", "region": "chest" },
+        { "overlay": "speech", "params": { "text": "I'm okay. Just sore here." } }
+      ],
+      "identity": { "name": "Kenji Watanabe", "age": 22, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Passenger on a tour coach that slid off the state highway in the rain and hit a bank; he was wearing a seatbelt and was jolted against it.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Fit and well",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [18, 22] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [84, 92] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_hand_r",
+          "label": "Graze on the right hand",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_hand",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "seatbelt_bruise_chest",
+          "label": "Seatbelt bruise across the chest and left shoulder, tender",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["full_head_to_toe", "clean_wound"],
+        "targetSeconds": 20
+      },
+      "teaching": [
+        "He walked off the coach, so he is green; a seatbelt mark does not change the sieve.",
+        "Write the mechanism on the card so the next team knows to look at his chest again.",
+        "Green means he can wait, not that he is cleared: re-triage him once the red and orange casualties are dealt with."
+      ],
+      "tags": ["walking_wounded", "bus_crash", "seatbelt", "chest", "re_triage"]
+    },
+    {
+      "id": "vr_child_wrist_01",
+      "title": "Crying boy with a sore wrist",
+      "ageGroup": "child",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "short", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Boy sitting on the grass near the collapsed stand, crying, holding his right wrist, which looks swollen.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "guarding", "region": "right_forearm" },
+        { "overlay": "speech", "params": { "text": "My wrist hurts! I want Mum!" } }
+      ],
+      "identity": { "name": "Isaac Hohaia", "age": 8, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Fell off the bench onto his outstretched right hand when the stand collapsed at the school rugby day.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Fit and well",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [22, 26] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [100, 112] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "swelling_wrist_r",
+          "label": "Swollen, tender right wrist (likely sprain or fracture)",
+          "cardField": "injuries",
+          "overlay": "swelling",
+          "region": "right_forearm",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "traps": ["splint_limb", "stay_and_comfort"],
+        "targetSeconds": 20
+      },
+      "teaching": [
+        "A child who can walk is green, even when they are crying and holding an injured wrist.",
+        "Use a calm, simple instruction such as \"Can you walk over to me?\" and point to the green area.",
+        "Do not splint the wrist in the sieve; a helper or parent can sit with him in the green area."
+      ],
+      "tags": ["walking_wounded", "child", "stand_collapse", "sprain"]
+    },
+    {
+      "id": "vr_wet_drowned_01",
+      "title": "Drowned man pulled from the water",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "dark", "hair": "short", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Man lying on his back on the road in soaked, dripping clothes, eyes closed, face blank with blue-grey lips, not moving, with a graze on his right forearm.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } },
+        { "overlay": "wet" },
+        { "overlay": "cyanosis" }
+      ],
+      "identity": { "name": "Tamati Heke", "age": 54, "sex": "male", "source": "bystander" },
+      "history": {
+        "mechanism": "Pulled from the water by neighbours after the surge swept through his street; he was under for several minutes.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "unresponsive",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": false,
+        "breathesAfterAirwayOpen": false,
+        "rr": 0,
+        "breathingDepth": "none",
+        "radialPulse": { "present": false, "rate": null },
+        "crtSeconds": { "range": [6, 8] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_forearm_r",
+          "label": "Graze on the right forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "black",
+        "lifeSavingInterventions": [],
+        "traps": ["start_cpr", "stay_and_comfort"],
+        "targetSeconds": 30
+      },
+      "teaching": [
+        "Open the airway once, then look, listen and feel for breathing; still none, with no pulse, means black.",
+        "Do not start CPR in a mass casualty incident, even after a drowning; it ties you to one casualty while others wait.",
+        "A black tag lets you reach the casualties who can still be saved, so tag and move on."
+      ],
+      "tags": ["not_breathing", "drowning", "flood", "tsunami", "wet"]
+    },
+    {
+      "id": "vr_road_ejected_01",
+      "title": "Woman thrown from a car on the highway",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "light", "hair": "long", "top": "jacket", "bottom": "trousers" },
+      "approach": "Woman lying on her back on the road shoulder beside the overturned car, eyes closed, face blank, not moving, with a graze on her forehead and her left lower leg bent at an angle.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } }
+      ],
+      "identity": { "name": null, "age": 31, "sex": "female", "source": "none" },
+      "history": {
+        "mechanism": "Found on the verge beside the state highway; she was thrown from the car when it rolled. Nobody saw it happen.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "none"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "unresponsive",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": false,
+        "breathesAfterAirwayOpen": false,
+        "rr": 0,
+        "breathingDepth": "none",
+        "radialPulse": { "present": false, "rate": null },
+        "crtSeconds": { "range": [6, 8] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_forehead",
+          "label": "Graze on the forehead",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "deformity_leg_l",
+          "label": "Closed deformity, left lower leg",
+          "cardField": "injuries",
+          "overlay": "deformity",
+          "region": "left_lower_leg",
+          "params": { "open": false },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "black",
+        "lifeSavingInterventions": [],
+        "traps": ["start_cpr", "splint_limb"],
+        "targetSeconds": 30
+      },
+      "teaching": [
+        "Open the airway once and check breathing; if there is none, tag black.",
+        "A bent leg does not matter when someone is not breathing after the airway is opened.",
+        "Do not start CPR in a mass casualty incident; the treatable casualties are the priority."
+      ],
+      "tags": ["not_breathing", "road_crash", "ejected", "highway"]
+    },
+    {
+      "id": "vr_wet_hip_01",
+      "title": "Older woman who fell during the flood evacuation",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "dark", "hair": "tied", "top": "jacket", "bottom": "skirt" },
+      "approach": "Older woman sitting on the footpath in soaked, dripping clothes, grimacing and holding her hip, with a walking frame lying beside her and bruising over her hip.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "wet" },
+        { "overlay": "mobility_aid", "params": { "type": "walking_frame", "condition": "intact" } },
+        { "overlay": "guarding", "region": "pelvis" },
+        { "overlay": "speech", "params": { "text": "My hip! I can't get up." } }
+      ],
+      "identity": { "name": "Sina Faleafa", "age": 79, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Slipped on the wet road while hurrying to higher ground in the flood evacuation and fell onto her left hip.",
+        "allergies": "Penicillin",
+        "medications": "Blood pressure tablet",
+        "background": "Osteoporosis; uses a walking frame",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [22, 26] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [92, 100] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bruise_hip_l",
+          "label": "Bruised, painful left hip (suspected hip fracture)",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "pelvis",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["splint_limb", "wrap_in_blanket", "stay_and_comfort"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "She cannot get up, so she is not green; with normal breathing, pulse and refill, and obeying commands, she is orange.",
+        "A fall can break an older person's hip with very little to see; pain and being unable to stand are the clues.",
+        "She is wet and cold, so ask a helper for a blanket after tagging instead of stopping to wrap her."
+      ],
+      "tags": ["fracture", "flood", "wet", "older_person", "hip"]
+    },
+    {
+      "id": "vr_bus_femur_01",
+      "title": "Coach passenger with a broken thigh",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "short", "top": "shirt", "bottom": "trousers" },
+      "approach": "Man lying on his back on the grass beside the crashed bus, sweating and grimacing, his right thigh swollen and bent.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "sweating" },
+        { "overlay": "speech", "params": { "text": "My leg! I can't move it!" } }
+      ],
+      "identity": { "name": "Gurpreet Dhillon", "age": 47, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Passenger on a coach that left the state highway and hit a bank; he was thrown against the seat frame in front of him.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Fit and well",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [22, 26] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [100, 108] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "deformity_thigh_r",
+          "label": "Closed deformity, right thigh (likely fractured femur)",
+          "cardField": "injuries",
+          "overlay": "deformity",
+          "region": "right_thigh",
+          "params": { "open": false },
+          "visible": true
+        },
+        {
+          "id": "swelling_thigh_r",
+          "label": "Swollen right thigh",
+          "cardField": "injuries",
+          "overlay": "swelling",
+          "region": "right_thigh",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 420,
+          "unless": [],
+          "note": "Blood loss into the thigh: pale, fast pulse, slow capillary refill.",
+          "state": {
+            "rr": { "range": [24, 28] },
+            "radialPulse": { "rate": { "range": [124, 132] } },
+            "crtSeconds": { "range": [3, 4] }
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "expression", "params": { "mood": "distress" } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["splint_limb", "give_water", "stay_and_comfort"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "He cannot walk, and his breathing, pulse, refill and commands are normal, so he is orange.",
+        "A broken thigh bone can bleed a lot inside the thigh; re-triage him, because a fast pulse and refill over 2 seconds make him red.",
+        "Splinting is not part of the sieve; tag him and leave the traction splint to the treatment team."
+      ],
+      "tags": ["fracture", "femur", "bus_crash", "re_triage"]
+    },
+    {
+      "id": "vr_stand_back_pain_01",
+      "title": "Woman who cannot stand after the stand collapse",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "long", "top": "jacket", "bottom": "trousers" },
+      "approach": "Woman lying on her back among broken seating, grimacing and very still, with a graze on her left forearm.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "speech", "params": { "text": "Don't move me! My back!" } }
+      ],
+      "identity": { "name": "Tania Rauhihi", "age": 44, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Fell about two metres between collapsing rows of the grandstand and landed on her back on the concrete below.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Fit and well",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [20, 24] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [88, 96] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_forearm_l",
+          "label": "Graze on the left forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "bruise_back",
+          "label": "Bruising over the lower back, tender",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "back",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["apply_collar", "full_head_to_toe", "stay_and_comfort"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Back pain and being unable to stand mean she is not green; with normal breathing, pulse and commands she is orange.",
+        "Do not sit her up or drag her; keep her still and write the mechanism on the card for the treatment team.",
+        "Collars and spinal boards belong in the treatment area, not the sieve."
+      ],
+      "tags": ["back_pain", "spinal", "stand_collapse", "fall"]
+    }
+  ]
+}

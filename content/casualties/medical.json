@@ -1,0 +1,345 @@
+{
+  "prefix": "md_",
+  "theme": "Medical conditions and disability",
+  "casualties": [
+    {
+      "id": "md_wheelchair_broken_01",
+      "title": "Wheelchair user, chair wrecked, otherwise well",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "short", "top": "jacket", "bottom": "trousers" },
+      "approach": "Man sitting on the footpath with dust on his clothes, calm, with his wheelchair wrecked and tipped on its side beside him, saying he is not hurt.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "mobility_aid", "params": { "type": "wheelchair", "condition": "broken" } },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "calm" } },
+        { "overlay": "speech", "params": { "text": "I'm not hurt. My chair's wrecked." } }
+      ],
+      "identity": { "name": "Callum Reid", "age": 38, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "He was tipped out of his wheelchair onto the footpath when the earthquake hit, and a falling shop sign crushed the chair. He pulled himself clear and is not hurt.",
+        "allergies": "None known",
+        "medications": "Baclofen (muscle spasm tablets)",
+        "background": "Paraplegia from a spinal injury 15 years ago; uses a manual wheelchair every day and has no feeling below the waist.",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [16, 20] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [76, 84] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 600,
+          "note": "Left on the cold ground for a long time. He is chilled and uncomfortable, and he cannot feel pressure building under him. Vitals are unchanged, so he is still orange.",
+          "state": {},
+          "appearance": [
+            { "overlay": "motion", "params": { "type": "shaking" } },
+            { "overlay": "speech", "params": { "text": "I've been on cold ground a while now." } }
+          ],
+          "expectedCategory": "orange"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "keyActions": [],
+        "traps": ["move_casualty", "stay_and_comfort", "wrap_in_blanket"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Not being able to walk because of a disability is not an injury, but he cannot reach the walking-wounded point, so the placeholder sieve tags him orange (NZRT to confirm).",
+        "Ask how he usually gets around and what he needs; he knows his body and his equipment better than you do.",
+        "Never lift or drag him without asking how he wants to be moved.",
+        "Keep his chair or its parts with him so the next team can use them, and tell them he should not sit on cold ground for long."
+      ],
+      "tags": ["disability", "mobility", "wheelchair", "orange", "earthquake", "not_injured"]
+    },
+    {
+      "id": "md_wheelchair_self_propel_01",
+      "title": "Wheelchair user who can get to the collection point",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "dark", "hair": "curly", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Woman sitting in her wheelchair at the roadside, calm, with grazes on both palms, saying she can get herself to the point.",
+      "appearance": [
+        { "overlay": "mobility_aid", "params": { "type": "wheelchair", "condition": "intact" } },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "calm" } },
+        { "overlay": "speech", "params": { "text": "I can get myself to the point." } }
+      ],
+      "identity": { "name": "Losana Tuilagi", "age": 58, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Left her flat in the tsunami warning and pushed her wheelchair up the hill road over fallen branches and gravel. She grazed both palms on the wheels.",
+        "allergies": "None known",
+        "medications": "Paracetamol when needed",
+        "background": "Spina bifida; uses a manual wheelchair full time.",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [16, 20] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [84, 92] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_hand_l",
+          "label": "Grazed left palm from pushing the wheel",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_hand",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "graze_hand_r",
+          "label": "Grazed right palm from pushing the wheel",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_hand",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "keyActions": [],
+        "traps": ["clean_wound", "move_casualty"],
+        "targetSeconds": 25
+      },
+      "teaching": [
+        "A wheelchair user who can get herself to the collection point is walking wounded under the placeholder rules, so she is green (NZRT to confirm).",
+        "Ask what she can do, such as getting herself to the point, instead of telling her to stand up and walk.",
+        "Her hands are how she moves, so tell the walking-wounded team to look at the grazes early.",
+        "Offer help over rough ground, but ask before you take hold of her chair."
+      ],
+      "tags": ["disability", "mobility", "wheelchair", "walking_wounded", "green", "tsunami"]
+    },
+    {
+      "id": "md_hypo_walking_01",
+      "title": "Shaky walker with type 1 diabetes, sugar early",
+      "ageGroup": "adult",
+      "pose": "standing",
+      "look": { "skinTone": "light", "hair": "tied", "top": "jacket", "bottom": "trousers" },
+      "approach": "Woman standing in wet clothes at the evacuation point, shaking, pale and sweating, looking distressed and saying she is fine, just shaky.",
+      "appearance": [
+        { "overlay": "wet" },
+        { "overlay": "pallor" },
+        { "overlay": "sweating" },
+        { "overlay": "motion", "params": { "type": "shaking" } },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "I'm fine, stop fussing. Just shaky." } }
+      ],
+      "identity": { "name": "Ji-woo Park", "age": 31, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Evacuated from the flooded streets at midday and held at the crossing for hours. She took her insulin this morning but has not eaten since breakfast.",
+        "allergies": "None known",
+        "medications": "Insulin by pen",
+        "background": "Type 1 diabetes since age 12",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": true,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [18, 22] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [100, 108] } },
+        "crtSeconds": 2,
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 240,
+          "unless": ["give_oral_glucose"],
+          "note": "Blood sugar keeps falling. She becomes confused, sits down, cannot stand and stops following commands.",
+          "state": {
+            "canWalk": false,
+            "obeysCommands": false,
+            "radialPulse": { "rate": { "range": [112, 120] } }
+          },
+          "pose": "sitting",
+          "appearance": [
+            { "overlay": "expression", "params": { "mood": "confused" } },
+            { "overlay": "speech", "params": { "text": "Where am I? What's happening?" } }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 480,
+          "unless": ["give_oral_glucose"],
+          "note": "She becomes drowsy and now responds only to voice. She is no longer talking sensibly.",
+          "state": {
+            "responsive": "voice",
+            "canTalk": false,
+            "obeysCommands": false,
+            "rr": { "range": [16, 20] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "removeAppearance": ["speech", "motion"],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "green",
+        "lifeSavingInterventions": [],
+        "keyActions": ["give_oral_glucose"],
+        "traps": ["give_water", "detailed_history", "stay_and_comfort"],
+        "targetSeconds": 40
+      },
+      "teaching": [
+        "Shaky, pale and sweaty while still walking and talking can be low blood sugar, not just cold, so ask if she has diabetes.",
+        "Give sugar by mouth early, and only while she is awake, following commands and able to swallow safely.",
+        "Once she is confused or drowsy she is red, and nothing goes by mouth because it can enter the airway.",
+        "Low blood sugar can look like a head injury or being drunk, so think of it in any confused casualty."
+      ],
+      "tags": [
+        "medical",
+        "diabetic",
+        "hypoglycaemia",
+        "flood",
+        "walking_wounded",
+        "re_triage",
+        "deterioration"
+      ]
+    },
+    {
+      "id": "md_asthma_severe_01",
+      "title": "Severe asthma in a dusty evacuation hall, own inhaler",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "short", "top": "jacket", "bottom": "trousers" },
+      "approach": "Teenage boy sitting on the floor of a dusty school hall, one hand on his chest, sweating and speaking only a few words at a time, saying his puffer is in his pocket.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "sweating" },
+        { "overlay": "guarding", "region": "chest" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "panic" } },
+        { "overlay": "speech", "params": { "text": "Can't breathe... puffer... pocket" } }
+      ],
+      "identity": { "name": "Tane Rangihuna", "age": 17, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Ceiling tiles fell in the school hall during the earthquake. Dust and fright set off a severe asthma attack; he is too breathless to get his reliever out.",
+        "allergies": "Dust mites",
+        "medications": "Blue salbutamol reliever inhaler (in his jacket pocket) and a daily preventer",
+        "background": "Asthma since primary school; admitted to hospital once",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [32, 36] },
+        "breathingDepth": "noisy",
+        "radialPulse": { "present": true, "rate": { "range": [120, 130] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 180,
+          "unless": ["help_use_inhaler"],
+          "note": "Exhaustion. His breathing rate falls to 8 or 9 and his chest goes quiet. He is drowsy, responds only to voice and no longer follows commands. This is worse, not better.",
+          "state": {
+            "canTalk": false,
+            "responsive": "voice",
+            "obeysCommands": false,
+            "rr": { "range": [8, 9] },
+            "breathingDepth": "shallow",
+            "radialPulse": { "rate": { "range": [56, 64] } },
+            "crtSeconds": { "range": [3, 4] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "cyanosis" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "removeAppearance": ["speech", "guarding"],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 360,
+          "unless": ["help_use_inhaler"],
+          "note": "He tires completely and stops breathing. There is no breathing after the airway is opened.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "canTalk": false,
+            "obeysCommands": false,
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [6, 8] }
+          },
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } }
+          ],
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "keyActions": ["help_use_inhaler"],
+        "traps": ["stay_and_comfort", "detailed_history", "give_water"],
+        "targetSeconds": 40
+      },
+      "teaching": [
+        "Speaking only a few words at a time and breathing over 30 a minute is a severe asthma attack, so he is red.",
+        "Help him use his own reliever straight away; it takes seconds and can stop the attack getting worse.",
+        "In severe asthma a breathing rate that falls to 8 or 9 with a quiet chest and drowsiness means exhaustion, so keep him red and re-check rather than down-triage.",
+        "Check severe asthma casualties again soon, because a tired casualty can stop breathing quickly."
+      ],
+      "tags": ["breathing", "asthma", "medical", "earthquake", "red", "deterioration", "re_triage"]
+    }
+  ]
+}

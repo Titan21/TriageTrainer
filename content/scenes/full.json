@@ -1,0 +1,530 @@
+{
+  "scenes": [
+    {
+      "id": "sc_full_cbd_collapse",
+      "title": "Colombo Street collapse",
+      "mode": "full_scene",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Colombo Street and Hereford Street, Christchurch CBD",
+        "type": "Earthquake, two shop fronts and part of a car park building collapsed",
+        "hazards": "Aftershocks, cracking walls, falling glass, possible gas leak",
+        "access": "From Colombo Street, north side, through the cordon",
+        "number": "About 10 casualties, more may be inside",
+        "emergencyServices": "Fire and Emergency NZ urban search and rescue 20 minutes out. Hato Hone St John staging at Latimer Square, 10 minutes out"
+      },
+      "startClock": "12:25",
+      "targetSeconds": 700,
+      "casualties": [
+        { "ref": "bl_thigh_bleed_01", "position": [40, 46] },
+        { "ref": "br_not_breathing_black_01", "position": [50, 52] },
+        {
+          "ref": "ne_quiet_head_01",
+          "position": [90, 76],
+          "override": {
+            "approach": "Man lying still on his back at the edge of the footpath behind a toppled planter box, eyes closed, with a cut on his head and bruising on his face.",
+            "mechanism": "Struck by falling masonry from a shop front when the earthquake hit. A passer-by saw him go down and he has not spoken since."
+          }
+        },
+        { "ref": "en_bookshelf_leg_01", "position": [58, 28] },
+        { "ref": "bl_impaled_thigh_01", "position": [70, 54] },
+        { "ref": "md_wheelchair_broken_01", "position": [80, 64] },
+        { "ref": "wk_jacket_bleed_01", "position": [18, 66] },
+        { "ref": "wk_deaf_gesture_01", "position": [28, 80] },
+        { "ref": "vr_dust_cafe_burn_01", "position": [12, 54] },
+        { "ref": "vr_dust_older_heart_01", "position": [24, 58] }
+      ],
+      "bystanders": [
+        {
+          "id": "by_helper",
+          "description": "Man in a work shirt and lanyard, calm and steady",
+          "ageGroup": "adult",
+          "look": { "skinTone": "medium", "hair": "short", "top": "shirt", "bottom": "trousers" },
+          "behaviour": "helper",
+          "canHelp": ["instruct_bystander_pressure"],
+          "position": [46, 43],
+          "lines": ["I did a first aid course last year. Tell me what to do.", "I've got it. I'll keep pressing."]
+        },
+        {
+          "id": "by_friend",
+          "description": "Woman in a green coat, gripping her phone",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "long", "top": "jacket", "bottom": "trousers" },
+          "behaviour": "pulls_to_friend",
+          "canHelp": [],
+          "position": [62, 31],
+          "lines": ["Fatima first, please! She's only stuck under a shelf!", "Can't you just lift it off her?"]
+        },
+        {
+          "id": "by_film",
+          "description": "Young man in a hoodie holding up his phone",
+          "ageGroup": "adult",
+          "look": { "skinTone": "dark", "hair": "short", "top": "hoodie", "bottom": "trousers" },
+          "behaviour": "filming",
+          "canHelp": [],
+          "position": [30, 56],
+          "lines": ["This is crazy, I'm live-streaming this.", "Can you say something to the camera?"]
+        }
+      ],
+      "hazards": [
+        { "id": "hz_wall", "type": "cracking_wall", "position": [66, 22], "activeAtStart": false },
+        { "id": "hz_gas", "type": "gas_smell", "position": [36, 40], "activeAtStart": false }
+      ],
+      "events": [
+        {
+          "id": "ev_radio",
+          "atSeconds": 90,
+          "type": "radio_message",
+          "description": "Control: urban search and rescue is about 20 minutes away. Keep walking casualties together away from the buildings."
+        },
+        {
+          "id": "ev_friend",
+          "atSeconds": 200,
+          "type": "bystander_interrupt",
+          "bystander": "by_friend",
+          "casualty": "en_bookshelf_leg_01",
+          "description": "The woman in the green coat grabs your sleeve and demands you free her friend Fatima first.",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        },
+        {
+          "id": "ev_aftershock",
+          "atSeconds": 300,
+          "type": "aftershock",
+          "hazard": "hz_wall",
+          "description": "A strong aftershock. The shop wall above the footpath cracks and dust pours down.",
+          "correctResponse": ["drop_cover_hold", "withdraw"],
+          "deadlineSeconds": 20,
+          "penaltyIfWrong": "major"
+        },
+        {
+          "id": "ev_gas",
+          "atSeconds": 480,
+          "type": "hazard_appears",
+          "hazard": "hz_gas",
+          "description": "A strong smell of gas drifts across the footpath. Fire and Emergency NZ calls for everyone to move back.",
+          "correctResponse": "withdraw",
+          "deadlineSeconds": 25,
+          "penaltyIfWrong": "major"
+        }
+      ],
+      "teaching": [
+        "Call out for walking wounded first so the green casualties leave the building area, then sieve the people left behind.",
+        "Look at everyone before you commit. The quiet man behind the planter is easy to miss, and he is red.",
+        "Not breathing after one airway opening is black. Do not start CPR while red and orange casualties wait.",
+        "When the ground shakes, drop, cover and hold, then withdraw. When you smell gas, withdraw first and go back when the danger has passed.",
+        "Flag trapped casualties for medical and leave lifting to the rescue crews. A friend demanding a release does not change the order.",
+        "A wheelchair user who is not hurt still cannot join the walking wounded. Ask how he wants to be moved and keep his chair with him."
+      ],
+      "tags": ["earthquake", "building_collapse", "cbd", "christchurch", "mixed_casualties"]
+    },
+    {
+      "id": "sc_full_coach_crash",
+      "title": "Lindis Pass coach crash",
+      "mode": "full_scene",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "State Highway 8, Lindis Pass, Central Otago",
+        "type": "Coach carrying tourists and a school sports group swerved off the road, hit a bank and rolled onto its side. A car it swerved to avoid also overturned",
+        "hazards": "Passing traffic, smoke from the engine bay, steep bank",
+        "access": "From the Tarras side. Park well back and walk in along the verge",
+        "number": "About 35 on board plus the car occupants, at least 9 injured",
+        "emergencyServices": "Fire and Emergency NZ from Omarama and Hato Hone St John from Cromwell, 30 minutes out. Rescue helicopter requested"
+      },
+      "startClock": "14:40",
+      "targetSeconds": 620,
+      "casualties": [
+        { "ref": "en_bus_chest_01", "position": [54, 33] },
+        { "ref": "bl_hidden_arm_bleed_01", "position": [34, 40] },
+        { "ref": "vr_road_ejected_01", "position": [88, 30] },
+        { "ref": "vr_bus_femur_01", "position": [46, 48] },
+        {
+          "ref": "ne_older_ankle_head_01",
+          "position": [70, 44],
+          "override": {
+            "approach": "Elderly man sitting on the gravel verge beside the overturned coach, restless and anxious, holding his head where there is a small cut with a little bleeding, his left lower leg bent at an odd angle.",
+            "mechanism": "Thrown from his seat when the coach rolled. He hit his head and twisted his left ankle."
+          }
+        },
+        {
+          "ref": "wk_loud_forearm_01",
+          "position": [62, 58],
+          "override": {
+            "approach": "Man sitting on the gravel verge beside the overturned coach, shouting and moving about, holding his left forearm, which is visibly bent.",
+            "mechanism": "Thrown across the aisle when the coach rolled, landing on his left arm."
+          }
+        },
+        {
+          "ref": "wk_hidden_abdo_01",
+          "position": [78, 60],
+          "override": {
+            "approach": "Man sitting on the road verge near the overturned coach, calm, saying he is fine, with a graze on his left forearm."
+          }
+        },
+        {
+          "ref": "vr_bus_seatbelt_01",
+          "position": [56, 66],
+          "override": {
+            "mechanism": "Passenger on a tour coach that swerved off the state highway and hit a bank. He was wearing a seatbelt and was jolted against it."
+          }
+        },
+        {
+          "ref": "ch_lost_walker_01",
+          "position": [86, 74],
+          "override": {
+            "approach": "Girl in a school uniform sitting on the grass bank beside the road, crying and calling for her mum, with a scraped right shin.",
+            "mechanism": "Scraped her shin climbing out of the coach through an emergency window. She lost her mum in the confusion on the roadside."
+          }
+        }
+      ],
+      "bystanders": [
+        {
+          "id": "by_driver",
+          "description": "Truck driver in a hi-vis top who stopped to help",
+          "ageGroup": "adult",
+          "look": { "skinTone": "medium", "hair": "short", "top": "hi_vis", "bottom": "trousers" },
+          "behaviour": "helper",
+          "canHelp": ["instruct_bystander_pressure"],
+          "position": [40, 46],
+          "lines": ["I'm a truckie, I stopped when I saw it. What do you need?", "Tell me where to press and I'll hold it."]
+        },
+        {
+          "id": "by_mere",
+          "description": "Older woman in a green cardigan, Eru's wife",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "short", "top": "jacket", "bottom": "skirt" },
+          "behaviour": "pulls_to_friend",
+          "canHelp": [],
+          "position": [68, 48],
+          "lines": ["Eru first, please! He's hurt his head!", "You can't just walk past him!"]
+        },
+        {
+          "id": "by_mum",
+          "description": "Woman in a fleece searching along the verge",
+          "ageGroup": "adult",
+          "look": { "skinTone": "medium", "hair": "tied", "top": "jacket", "bottom": "trousers" },
+          "behaviour": "parent",
+          "canHelp": [],
+          "position": [90, 66],
+          "lines": ["Aroha? Has anyone seen my daughter, Aroha?", "She's six, in a school uniform."]
+        }
+      ],
+      "hazards": [
+        { "id": "hz_smoke", "type": "fire_smoke", "position": [58, 28], "activeAtStart": false }
+      ],
+      "events": [
+        {
+          "id": "ev_radio",
+          "atSeconds": 75,
+          "type": "radio_message",
+          "description": "Control: crews are 30 minutes out and the helicopter is on its way. Keep a clear landing area on the flat paddock below the road."
+        },
+        {
+          "id": "ev_mere",
+          "atSeconds": 150,
+          "type": "bystander_interrupt",
+          "bystander": "by_mere",
+          "casualty": "ne_older_ankle_head_01",
+          "description": "Mere grabs your arm and insists you stay with her husband Eru.",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        },
+        {
+          "id": "ev_smoke",
+          "atSeconds": 270,
+          "type": "hazard_appears",
+          "hazard": "hz_smoke",
+          "description": "Thick smoke starts pouring from the engine bay at the front of the coach.",
+          "correctResponse": "withdraw",
+          "deadlineSeconds": 20,
+          "penaltyIfWrong": "major"
+        },
+        {
+          "id": "ev_crews",
+          "atSeconds": 400,
+          "type": "resources_arrive",
+          "description": "The first Fire and Emergency NZ appliance arrives from Omarama and the crew starts to extinguish the engine bay."
+        }
+      ],
+      "teaching": [
+        "A pale, sweaty passenger with no visible blood needs expose and look. A hidden bleed under a jacket needs a tourniquet in seconds.",
+        "Use your bystanders. The truck driver can hold pressure while you carry on, and a parent can give a child's name and history.",
+        "A worried relative pulling you to one casualty does not change the order. Sieve everyone and come back.",
+        "Smoke from the engine bay means withdraw. Go back when the crew says it is safe.",
+        "Trapped, breathing fast, blue-grey lips: red. Flag for medical and do not try to cut him out yourself.",
+        "The woman thrown from the car is not breathing after one airway opening: black. Tag her and keep moving."
+      ],
+      "tags": ["bus_crash", "road_crash", "state_highway", "rural", "central_otago", "mixed_casualties"]
+    },
+    {
+      "id": "sc_full_grandstand_collapse",
+      "title": "Grandstand collapse",
+      "mode": "full_scene",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Community rugby ground, Hastings, Hawke's Bay",
+        "type": "Earthquake, temporary grandstand partly collapsed during a school sports and rugby day",
+        "hazards": "Aftershocks, unstable terraces, loose seating overhead",
+        "access": "Through the gate off the car park, then across the field",
+        "number": "About 10 casualties here, more reported near the exit",
+        "emergencyServices": "Hato Hone St John event medics on site. Fire and Emergency NZ and ambulances 10 minutes out"
+      },
+      "startClock": "15:10",
+      "targetSeconds": 680,
+      "casualties": [
+        { "ref": "en_trapped_bleed_01", "position": [40, 22] },
+        { "ref": "ch_forearm_bleed_01", "position": [26, 34] },
+        {
+          "ref": "en_beam_arm_01",
+          "position": [58, 20],
+          "override": {
+            "approach": "Woman sitting upright on the terracing with her right arm pinned under a fallen steel beam from the stand roof, dusty, looking frightened.",
+            "mechanism": "Part of the stand roof came down and a beam fell across her right arm about ten minutes ago."
+          }
+        },
+        {
+          "ref": "ch_toddler_cant_walk_01",
+          "position": [64, 38],
+          "override": {
+            "approach": "Toddler sitting on the concrete among broken seats, dusty and crying.",
+            "mechanism": "Seating fell onto the lower rows when the stand collapsed. His dad saw him sit up and cry straight away."
+          }
+        },
+        { "ref": "vr_stand_back_pain_01", "position": [50, 38] },
+        { "ref": "vr_stand_nosebleed_01", "position": [30, 44] },
+        { "ref": "vr_child_wrist_01", "position": [46, 58] },
+        { "ref": "wk_concussed_walker_01", "position": [38, 62] },
+        {
+          "ref": "md_wheelchair_self_propel_01",
+          "position": [20, 50],
+          "override": {
+            "approach": "Woman sitting in her wheelchair at the edge of the field, calm, with grazes on both palms, saying she can get herself to the point.",
+            "mechanism": "Was in the accessible seating at the front of the stand when it collapsed. She wheeled herself clear across the gravel and grazed both palms on the wheels."
+          }
+        },
+        {
+          "ref": "wk_ash_wheeze_01",
+          "position": [28, 68],
+          "override": {
+            "approach": "Woman standing, dusted grey with concrete dust, a pink burn mark on her right forearm, looking distressed and saying she cannot stop coughing.",
+            "mechanism": "Caught in the dust cloud when the stand came down. She was scalded on the forearm by a spilled hot water urn from the canteen behind the stand.",
+            "teaching": [
+              "A casualty who can walk is green in the first sweep, even with a cough and a small burn.",
+              "Dust irritates the airways for a while: her rate of 28 to 30 is close to the cut-off, so count it again at re-triage.",
+              "If she can no longer walk and breathes faster than 30, she is red.",
+              "Ask about asthma and medicines at re-triage, not in the first sweep."
+            ]
+          }
+        }
+      ],
+      "bystanders": [
+        {
+          "id": "by_dad",
+          "description": "Man in a club jersey holding a baby bag",
+          "ageGroup": "adult",
+          "look": { "skinTone": "medium", "hair": "short", "top": "tshirt", "bottom": "shorts" },
+          "behaviour": "parent",
+          "canHelp": [],
+          "position": [68, 41],
+          "lines": ["That's Ethan, he's one. He was on my knee and then everything came down.", "He just sat up and started crying."]
+        },
+        {
+          "id": "by_helper",
+          "description": "Woman in a first aid vest who was spectating, calm",
+          "ageGroup": "adult",
+          "look": { "skinTone": "dark", "hair": "curly", "top": "jacket", "bottom": "trousers" },
+          "behaviour": "helper",
+          "canHelp": ["instruct_bystander_pressure"],
+          "position": [33, 38],
+          "lines": ["I'm a first aider. Tell me what you want me to do.", "I'll keep the pressure on."]
+        },
+        {
+          "id": "by_film",
+          "description": "Teenage boy holding up a phone",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "short", "top": "hoodie", "bottom": "shorts" },
+          "behaviour": "filming",
+          "canHelp": [],
+          "position": [78, 56],
+          "lines": ["Did you see that? It just came down!", "Can you tell the camera what's happening?"]
+        }
+      ],
+      "hazards": [
+        { "id": "hz_terrace", "type": "unstable_floor", "position": [50, 12], "activeAtStart": false }
+      ],
+      "events": [
+        {
+          "id": "ev_medics",
+          "atSeconds": 100,
+          "type": "resources_arrive",
+          "description": "Hato Hone St John event medics arrive from the first aid post and offer to take the green casualties to the centre of the field."
+        },
+        {
+          "id": "ev_boy_cries",
+          "atSeconds": 200,
+          "type": "casualty_calls_out",
+          "casualty": "vr_child_wrist_01",
+          "description": "The boy with the sore wrist cries out again, loudly: 'My wrist! I want Mum!'",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        },
+        {
+          "id": "ev_aftershock",
+          "atSeconds": 380,
+          "type": "aftershock",
+          "hazard": "hz_terrace",
+          "description": "An aftershock. The remaining rows of the stand creak and the upper terrace sags above you.",
+          "correctResponse": ["drop_cover_hold", "withdraw"],
+          "deadlineSeconds": 20,
+          "penaltyIfWrong": "major"
+        },
+        {
+          "id": "ev_radio",
+          "atSeconds": 480,
+          "type": "radio_message",
+          "description": "Control: the rescue helicopter lands in 10 minutes on the far side of the field. Keep that area clear."
+        }
+      ],
+      "teaching": [
+        "Two catastrophic bleeds, one on an adult and one on a child: stop each one before anything else, then tag red.",
+        "Use the child sieve for all three children. A child who can walk is green even when crying. A child who cannot walk because of age cannot be cleared as green.",
+        "Crying and shouting are not signs of serious injury. Hand the green casualties to the helpers and move on.",
+        "A wheelchair user who can reach the walking-wounded point is green. Ask what she can do rather than telling her to stand.",
+        "When the terrace sags, drop, cover and hold, then withdraw. Go back when the danger is cleared."
+      ],
+      "tags": ["earthquake", "stand_collapse", "stadium", "child", "disability", "mixed_casualties"]
+    },
+    {
+      "id": "sc_full_river_flood",
+      "title": "Riverbank Road flood",
+      "mode": "full_scene",
+      "briefing": {
+        "major": "Major incident declared",
+        "exactLocation": "Riverbank Road, Edgecumbe, Bay of Plenty",
+        "type": "River flood, stopbank breached, street being evacuated to the school hall on high ground",
+        "hazards": "Rising water, fast current, floating debris",
+        "access": "On foot along the raised road from the school hall end. Stay out of the water",
+        "number": "About 9 casualties here, more being brought out by boat",
+        "emergencyServices": "Fire and Emergency NZ swift-water rescue 20 minutes out. Hato Hone St John 15 minutes out. Police and Civil Defence setting up at the school hall"
+      },
+      "startClock": "07:10",
+      "targetSeconds": 620,
+      "casualties": [
+        {
+          "ref": "vr_wet_drowned_01",
+          "position": [24, 60],
+          "override": {
+            "mechanism": "Pulled from the flood water by neighbours after the river swept through his street. He was under for several minutes."
+          }
+        },
+        { "ref": "ch_rescue_breaths_01", "position": [44, 40] },
+        { "ref": "br_near_drowning_01", "position": [30, 68] },
+        { "ref": "vr_wet_hip_01", "position": [56, 62] },
+        {
+          "ref": "en_prone_debris_01",
+          "position": [18, 46],
+          "override": {
+            "mechanism": "Fast flood water swept debris down the street. A timber beam fell across his left leg and he landed face down."
+          }
+        },
+        {
+          "ref": "wk_panic_uninjured_01",
+          "position": [70, 50],
+          "override": {
+            "mechanism": "A surge of flood water ran up the street when the stopbank gave way. She was knocked off her feet and scrambled out unhurt."
+          }
+        },
+        { "ref": "vr_wet_cut_hand_01", "position": [76, 66] },
+        {
+          "ref": "vr_wet_hidden_ribs_01",
+          "position": [64, 74],
+          "override": {
+            "mechanism": "Ran for higher ground and was knocked over by a surge of flood water, landing on his right side against a fence post.",
+            "teaching": [
+              "He walks and talks, so he is green in the first sweep, even though the current knocked him down hard.",
+              "Chest injuries can declare themselves late: fast, shallow breathing and a struggle to stand mean red.",
+              "Re-triage walking casualties who took a hard blow to the chest or belly, and expose the area to look for bruising."
+            ]
+          }
+        },
+        { "ref": "md_hypo_walking_01", "position": [84, 56] }
+      ],
+      "bystanders": [
+        {
+          "id": "by_neighbour",
+          "description": "Man in a wet hoodie who pulled the child out of the water",
+          "ageGroup": "adult",
+          "look": { "skinTone": "medium", "hair": "short", "top": "hoodie", "bottom": "shorts" },
+          "behaviour": "helper",
+          "canHelp": [],
+          "position": [40, 44],
+          "lines": ["I pulled her out of the water. She wasn't breathing.", "What can I do? Tell me and I'll do it."]
+        },
+        {
+          "id": "by_parent",
+          "description": "Man in soaked work clothes searching along the road",
+          "ageGroup": "adult",
+          "look": { "skinTone": "dark", "hair": "short", "top": "shirt", "bottom": "trousers" },
+          "behaviour": "parent",
+          "canHelp": [],
+          "position": [52, 30],
+          "lines": ["Mele? Has anyone seen Mele? She's four!", "She was right beside me when the water came."]
+        },
+        {
+          "id": "by_film",
+          "description": "Man on the stopbank filming the water on his phone",
+          "ageGroup": "adult",
+          "look": { "skinTone": "light", "hair": "bald", "top": "jacket", "bottom": "trousers" },
+          "behaviour": "filming",
+          "canHelp": [],
+          "position": [82, 28],
+          "lines": ["Look at that current! Nobody will believe this.", "Hey, come and look at this!"]
+        }
+      ],
+      "hazards": [
+        { "id": "hz_water", "type": "rising_water", "position": [14, 56], "activeAtStart": false }
+      ],
+      "events": [
+        {
+          "id": "ev_radio",
+          "atSeconds": 70,
+          "type": "radio_message",
+          "description": "Control: the stopbank has breached upstream and the river is still rising. Swift-water crews are about 20 minutes away."
+        },
+        {
+          "id": "ev_film",
+          "atSeconds": 150,
+          "type": "bystander_interrupt",
+          "bystander": "by_film",
+          "description": "The man on the stopbank calls you over to film the water surging down the street.",
+          "correctResponse": "ignore",
+          "penaltyIfWrong": "minor"
+        },
+        {
+          "id": "ev_water",
+          "atSeconds": 300,
+          "type": "hazard_appears",
+          "hazard": "hz_water",
+          "description": "Water surges over the road at the low end of the street and rises quickly toward the casualties.",
+          "correctResponse": "withdraw",
+          "deadlineSeconds": 25,
+          "penaltyIfWrong": "major"
+        },
+        {
+          "id": "ev_boat",
+          "atSeconds": 430,
+          "type": "resources_arrive",
+          "description": "A Fire and Emergency NZ swift-water crew arrives by boat at the school hall end and starts bringing more people out."
+        }
+      ],
+      "teaching": [
+        "Most casualties walk out of a flood. Call out for the walking wounded first, then sieve the people left behind.",
+        "A child who is not breathing but has a pulse gets five rescue breaths after the airway is opened. If she is still not breathing, or has no pulse, she is black.",
+        "Count the breaths on the near-drowned man: more than 30 a minute is red, even though he is awake and talking.",
+        "A casualty who cannot get up is orange even when nothing looks broken. Ask a walking casualty or a helper to bring a blanket.",
+        "When the water starts rising over the road, withdraw to high ground. Do not go back for the trapped man until the swift-water crew says it is safe."
+      ],
+      "tags": ["flood", "river", "evacuation", "wet", "rising_water", "mixed_casualties"]
+    }
+  ]
+}

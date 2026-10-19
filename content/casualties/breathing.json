@@ -1,0 +1,668 @@
+{
+  "prefix": "br_",
+  "theme": "Airway and breathing",
+  "casualties": [
+    {
+      "id": "br_not_breathing_black_01",
+      "title": "Not breathing after the airway is opened",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "light", "hair": "bald", "top": "jacket", "bottom": "trousers" },
+      "approach": "Man lying on his back beside a collapsed shop front, eyes closed, covered in dust, with a graze on his forehead.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } },
+        { "overlay": "dust" }
+      ],
+      "identity": { "name": null, "age": 62, "sex": "male", "source": "none" },
+      "history": {
+        "mechanism": "Found beside the collapsed shop front after the earthquake; nobody saw what happened.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "none"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "unresponsive",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": false,
+        "breathesAfterAirwayOpen": false,
+        "rr": 0,
+        "breathingDepth": "none",
+        "radialPulse": { "present": false, "rate": null },
+        "crtSeconds": { "range": [5, 7] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_forehead",
+          "label": "Graze on the forehead",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "black",
+        "lifeSavingInterventions": [],
+        "traps": ["start_cpr", "stay_and_comfort"],
+        "targetSeconds": 30
+      },
+      "teaching": [
+        "Open the airway once, then look, listen and feel for breathing for the full check.",
+        "Still not breathing after one airway opening means tag black, even though it feels wrong.",
+        "Do not start CPR in a mass casualty incident; it ties you to one casualty while others you could save wait.",
+        "A black tag is not giving up on someone; it lets you reach the casualties you can still save."
+      ],
+      "tags": ["airway", "not_breathing", "earthquake"]
+    },
+    {
+      "id": "br_airway_opens_red_01",
+      "title": "Breathes only once the airway is opened",
+      "ageGroup": "adult",
+      "pose": "slumped",
+      "look": { "skinTone": "medium", "hair": "long", "top": "jacket", "bottom": "trousers" },
+      "approach": "Woman slumped forward beside an overturned coach, head down, eyes closed, with bruising on her cheek.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } }
+      ],
+      "identity": { "name": "Aroha Ngata", "age": 41, "sex": "female", "source": "bystander" },
+      "history": {
+        "mechanism": "Passenger on a coach that rolled on a rural road; another passenger found her unresponsive.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "unresponsive",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": false,
+        "breathesAfterAirwayOpen": true,
+        "rr": { "range": [14, 18] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [104, 112] } },
+        "crtSeconds": { "range": [2, 3] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bruise_cheek",
+          "label": "Bruising on the cheek",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "face",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "bruise_seatbelt_chest",
+          "label": "Seatbelt bruising across the chest",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 180,
+          "unless": ["recovery_position"],
+          "note": "The airway blocks again with her head forward. Without air for minutes, her breathing and pulse stop and opening the airway no longer helps.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [6, 8] }
+          },
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "cyanosis" }
+          ],
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["open_airway"],
+        "traps": ["start_cpr", "apply_collar"],
+        "targetSeconds": 40,
+        "keyActions": ["recovery_position"]
+      },
+      "teaching": [
+        "Always open the airway before deciding someone is not breathing; a blocked airway can look exactly like death.",
+        "Breathing that starts after the airway is opened is a red tag, and opening the airway is the life-saving step.",
+        "Settle her in the recovery position before you move on, or the airway can close again and she can stop breathing for good.",
+        "In the sieve the airway comes before spinal care, so a collar can wait for the treatment team."
+      ],
+      "tags": ["airway", "bus_crash", "deterioration"]
+    },
+    {
+      "id": "br_unconscious_prone_01",
+      "title": "Unconscious but breathing, face down",
+      "ageGroup": "adult",
+      "pose": "prone",
+      "look": { "skinTone": "dark", "hair": "curly", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Woman lying face down below a landslide, clothes soaked and not moving, with a cut on the back of her head and bruising across her back.",
+      "appearance": [
+        { "overlay": "wet" }
+      ],
+      "identity": { "name": "Mele Fifita", "age": 38, "sex": "female", "source": "bystander" },
+      "history": {
+        "mechanism": "Caught by a slip on a hillside road in heavy rain; a neighbour found her face down and she has not spoken.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "pain",
+        "painResponseAppropriate": null,
+        "obeysCommands": false,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [14, 18] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [82, 92] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "laceration_head",
+          "label": "Cut on the back of the head",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "laceration" },
+          "visible": true
+        },
+        {
+          "id": "bruise_back",
+          "label": "Bruising across the back",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "back",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "graze_forearm_r",
+          "label": "Grazes on the right forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_forearm",
+          "params": { "type": "abrasion" },
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 150,
+          "unless": ["recovery_position"],
+          "note": "Her tongue and secretions partly block the airway; breathing becomes noisy and slow.",
+          "state": { "rr": { "range": [8, 9] }, "breathingDepth": "noisy" },
+          "appearance": [
+            { "overlay": "pallor" }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 360,
+          "unless": ["recovery_position"],
+          "note": "Prolonged airway blockage: breathing and pulse stop.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": false,
+            "rr": 0,
+            "breathingDepth": "none",
+            "responsive": "unresponsive",
+            "radialPulse": { "present": false, "rate": null },
+            "crtSeconds": { "range": [6, 8] }
+          },
+          "expectedCategory": "black"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["recovery_position"],
+        "traps": ["apply_collar", "clean_wound", "full_head_to_toe"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "A casualty who is breathing but cannot follow a command is red.",
+        "Put them in the recovery position so the tongue and fluids cannot block the airway, then move on.",
+        "Left alone, an unconscious casualty can lose their airway within minutes; the recovery position buys time.",
+        "A head wound and a bruised back wait; leave the cleaning and the collar for the treatment team."
+      ],
+      "tags": ["airway", "recovery_position", "landslide", "deterioration"]
+    },
+    {
+      "id": "br_chest_injury_01",
+      "title": "Chest injury with fast shallow breathing",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "short", "top": "shirt", "bottom": "trousers" },
+      "approach": "Man sitting against a wall outside a damaged cafe, dust on his clothes, sweating and holding his chest. He says it hurts to breathe. There is a large bruise on his chest and grazes on his left forearm.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "sweating" },
+        { "overlay": "dust" },
+        { "overlay": "guarding", "region": "chest" },
+        { "overlay": "speech", "params": { "text": "It hurts to breathe" } }
+      ],
+      "identity": { "name": "Wei Zhang", "age": 47, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Thrown against a wall by the gas explosion in the cafe kitchen.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "None",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [31, 34] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [112, 124] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "bruise_chest",
+          "label": "Large bruise over the chest",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "graze_forearm_l",
+          "label": "Grazes on the left forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 240,
+          "note": "He tires and his oxygen level falls: faster, shallower breathing, faint and no longer following commands. Nothing in the sieve prevents this.",
+          "state": {
+            "rr": { "range": [38, 42] },
+            "radialPulse": { "rate": { "range": [128, 140] } },
+            "crtSeconds": { "range": [4, 5] },
+            "responsive": "voice",
+            "obeysCommands": false
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "pallor" },
+            { "overlay": "cyanosis" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "speech", "params": { "text": "I feel faint..." } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["apply_collar", "measure_bp"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Count the breaths for the full check; more than 30 a minute is red even when the casualty is awake and talking.",
+        "Fast, shallow breathing with a hand held to the chest points to a chest injury.",
+        "A talking casualty can tire out quickly, so re-check them if you pass again."
+      ],
+      "tags": ["breathing", "chest", "gas_explosion", "deterioration"]
+    },
+    {
+      "id": "br_smoke_inhalation_01",
+      "title": "Smoke inhalation, breathing rate climbing",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "short", "top": "shirt", "bottom": "skirt" },
+      "approach": "Woman sitting on the pavement outside a burning block of flats, distressed and saying she cannot stop coughing. There is soot around her nose and mouth, and the back of her right hand is pink.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "I can't stop coughing" } }
+      ],
+      "identity": { "name": "Joan Mitchell", "age": 68, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Escaped a fire in a block of flats after several minutes in a smoky corridor.",
+        "allergies": "Penicillin",
+        "medications": "Blood pressure tablet",
+        "background": "High blood pressure",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [25, 29] },
+        "breathingDepth": "noisy",
+        "radialPulse": { "present": true, "rate": { "range": [96, 106] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "soot_face",
+          "label": "Soot around the nose and mouth",
+          "cardField": "signs",
+          "overlay": "soot",
+          "region": "face",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "burn_hand_r",
+          "label": "Superficial burn on the back of the right hand",
+          "cardField": "injuries",
+          "overlay": "burn",
+          "region": "right_hand",
+          "params": { "depth": "superficial" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 120,
+          "note": "Her airway is starting to swell: the voice is hoarse and the rate creeps up, but it is still not over 30.",
+          "state": { "rr": { "range": [29, 30] } },
+          "appearance": [
+            { "overlay": "sweating" },
+            { "overlay": "speech", "params": { "text": "My throat feels tight" } }
+          ],
+          "expectedCategory": "orange"
+        },
+        {
+          "id": "d2",
+          "atSeconds": 300,
+          "note": "Swelling and low oxygen: fast noisy breathing, drowsy and confused, no longer following commands.",
+          "state": {
+            "rr": { "range": [32, 35] },
+            "radialPulse": { "rate": { "range": [116, 124] } },
+            "crtSeconds": { "range": [3, 4] },
+            "responsive": "voice",
+            "obeysCommands": false
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "cyanosis" },
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "confused" } },
+            { "overlay": "speech", "params": { "text": "Can't... breathe..." } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["cool_burn", "give_water"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "Soot around the nose and mouth means they have breathed in smoke, so the airway can swell over minutes.",
+        "Her rate is under the red cut-off so she is orange now, but it is climbing; tag orange and re-triage her early.",
+        "A small pink burn on the hand looks dramatic but waits; breathing comes first.",
+        "A reading is only true for the moment you took it, so count again each time you re-check."
+      ],
+      "tags": ["breathing", "smoke", "building_fire", "deterioration"]
+    },
+    {
+      "id": "br_slow_breathing_01",
+      "title": "Slow breathing after strong painkillers",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "short", "top": "tshirt", "bottom": "trousers" },
+      "approach": "Man sitting on the ground against a fence outside a damaged house, eyes half closed, his left lower leg bent out of line. He says he is thirsty.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "half_closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } },
+        { "overlay": "speech", "params": { "text": "So thirsty... any water?" } }
+      ],
+      "identity": { "name": "Nikhil Sharma", "age": 44, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Fell from a ladder in the earthquake and hurt his left leg, then took extra pain tablets.",
+        "allergies": "None known",
+        "medications": "Slow-release oxycodone for back pain; took several extra tablets after the fall",
+        "background": "Long-term back pain",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "voice",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [8, 9] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [56, 62] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "deformity_lower_leg_l",
+          "label": "Left lower leg bent out of line, no open wound",
+          "cardField": "injuries",
+          "overlay": "deformity",
+          "region": "left_lower_leg",
+          "params": { "open": false },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "afterAction": "give_water",
+          "delaySeconds": 20,
+          "note": "He coughs and chokes on the water, loses consciousness and stops breathing until the airway is opened.",
+          "state": {
+            "responsive": "unresponsive",
+            "canTalk": false,
+            "obeysCommands": false,
+            "breathing": false,
+            "breathesAfterAirwayOpen": true,
+            "rr": { "range": [6, 8] },
+            "breathingDepth": "noisy"
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "cyanosis" },
+            { "overlay": "eyes", "params": { "state": "closed" } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["give_water", "splint_limb"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "A breathing rate under 10 is red even when the casualty is awake, calm and talking to you.",
+        "Strong painkillers can slow breathing until it stops, so tag red and tell the treatment team about the tablets.",
+        "Give nothing by mouth to a drowsy casualty; water can be inhaled and block the airway.",
+        "A bent leg looks urgent, but splinting is not part of the sieve."
+      ],
+      "tags": ["breathing", "slow_breathing", "medication", "earthquake", "deterioration"]
+    },
+    {
+      "id": "br_asthma_ash_01",
+      "title": "Asthma attack in volcanic ash, count the rate",
+      "ageGroup": "adult",
+      "pose": "slumped",
+      "look": { "skinTone": "medium", "hair": "tied", "top": "hoodie", "bottom": "trousers" },
+      "approach": "Woman slumped forward on the kerb with her head down, ash on her clothes, sweating and distressed. She says her puffer has run out.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "sweating" },
+        { "overlay": "dust" },
+        { "overlay": "speech", "params": { "text": "My puffer's run out" } }
+      ],
+      "identity": { "name": "Hana Rewiri", "age": 26, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Caught outside in a heavy ash fall after the eruption; her reliever puffer ran empty.",
+        "allergies": "None known",
+        "medications": "Salbutamol reliever puffer (empty) and a preventer puffer at home",
+        "background": "Asthma since childhood",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [28, 30] },
+        "breathingDepth": "noisy",
+        "radialPulse": { "present": true, "rate": { "range": [108, 116] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 240,
+          "note": "The attack worsens without her reliever: faster breathing and a racing pulse. Nothing in the sieve prevents this.",
+          "state": { "rr": { "range": [32, 34] }, "radialPulse": { "rate": { "range": [124, 132] } } },
+          "appearance": [
+            { "overlay": "expression", "params": { "mood": "panic" } },
+            { "overlay": "speech", "params": { "text": "I can't get any air" } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["stay_and_comfort", "detailed_history"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Count, don't guess: 28 to 30 breaths a minute is not over 30, so she is orange.",
+        "An anxious, talkative casualty can still be sick; only the count separates orange from red.",
+        "She is close to the cut-off and tiring, so say so when you tag her and re-check early."
+      ],
+      "tags": ["breathing", "asthma", "volcanic_ash", "medical", "near_threshold", "deterioration"]
+    },
+    {
+      "id": "br_near_drowning_01",
+      "title": "Near-drowning in a flood",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "light", "hair": "short", "top": "tshirt", "bottom": "shorts" },
+      "approach": "Man lying on his back on a footpath, soaked from the flood water, lips bluish and looking distressed. He says he swallowed a lot of water, and there are grazes on his right forearm.",
+      "appearance": [
+        { "overlay": "wet" },
+        { "overlay": "cyanosis" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "I swallowed so much water" } }
+      ],
+      "identity": { "name": "Josh Morrison", "age": 29, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Swept off his feet by flood water in a street and pulled out by neighbours after being under briefly.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "None",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "painResponseAppropriate": null,
+        "obeysCommands": true,
+        "breathing": true,
+        "breathesAfterAirwayOpen": null,
+        "rr": { "range": [32, 35] },
+        "breathingDepth": "noisy",
+        "radialPulse": { "present": true, "rate": { "range": [112, 122] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "graze_forearm_r",
+          "label": "Grazes on the right forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["wrap_in_blanket", "stay_and_comfort"],
+        "targetSeconds": 40
+      },
+      "teaching": [
+        "Fast, wet-sounding breathing with blue lips after near-drowning means water in the lungs; over 30 breaths a minute is red.",
+        "A cold, wet casualty makes you want to wrap and comfort them, but a helper can do that after the sieve.",
+        "Near-drowning casualties can look better and then get worse, so re-triage them when you can."
+      ],
+      "tags": ["breathing", "near_drowning", "flood"]
+    }
+  ]
+}

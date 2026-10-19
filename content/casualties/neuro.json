@@ -1,0 +1,747 @@
+{
+  "prefix": "ne_",
+  "theme": "Head injury, burns, environmental and medical",
+  "casualties": [
+    {
+      "id": "ne_quiet_head_01",
+      "title": "The quiet one: head injury, not obeying",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "short", "top": "jacket", "bottom": "trousers" },
+      "approach": "Man lying still on his back on the verge beside the overturned bus, eyes closed, with a cut on his head and bruising on his face.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "closed" } },
+        { "overlay": "expression", "params": { "mood": "blank" } }
+      ],
+      "identity": { "name": "Rangi Parata", "age": 44, "sex": "male", "source": "bystander" },
+      "history": {
+        "mechanism": "The bus rolled onto its side on the highway. A passenger saw him thrown against the window, and he has not spoken since.",
+        "allergies": "Unknown",
+        "medications": "Unknown",
+        "background": "Unknown",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": false,
+        "responsive": "pain",
+        "obeysCommands": false,
+        "breathing": true,
+        "rr": { "range": [14, 18] },
+        "breathingDepth": "noisy",
+        "radialPulse": { "present": true, "rate": { "range": [62, 70] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "scalp_cut",
+          "label": "Scalp cut, not a catastrophic bleed",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "laceration" },
+          "visible": true
+        },
+        {
+          "id": "face_bruise",
+          "label": "Bruising over the cheek and eye",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "face",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "chest_bruise",
+          "label": "Bruising across the chest from the seat belt",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "chest",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 240,
+          "unless": ["recovery_position", "open_airway"],
+          "note": "His tongue falls back and blocks the airway. He now breathes only when the airway is opened, and his lips turn blue-grey.",
+          "state": {
+            "breathing": false,
+            "breathesAfterAirwayOpen": true,
+            "responsive": "unresponsive",
+            "rr": { "range": [10, 12] },
+            "breathingDepth": "shallow",
+            "obeysCommands": false,
+            "canTalk": false
+          },
+          "appearance": [
+            { "overlay": "cyanosis" }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": ["recovery_position", "open_airway"],
+        "traps": ["apply_collar", "full_head_to_toe"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "A casualty who is quiet and cannot follow a simple command is red, even when breathing rate and pulse look fine.",
+        "Always give the command check; a normal rate and pulse do not rule out a serious head injury.",
+        "A breathing casualty who is not obeying goes into the recovery position to keep the airway open.",
+        "The quiet casualty is easy to walk past while others shout, so look at everyone."
+      ],
+      "tags": ["head_injury", "bus_crash", "quiet_casualty"]
+    },
+    {
+      "id": "ne_lucid_interval_01",
+      "title": "Lucid interval after a rock strike",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "tied", "top": "jacket", "bottom": "trousers" },
+      "approach": "Young woman sitting against a rock wall on the walkway, grey with volcanic ash, holding her head, with a cut and a swollen lump on her head and a pained face.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "guarding", "region": "head" }
+      ],
+      "identity": { "name": "Hannah Mitchell", "age": 27, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Hit on the head by a flying rock during the eruption. She was knocked out for about a minute, then woke up. She tried to stand but felt dizzy and sat back down.",
+        "allergies": "None known",
+        "medications": "Contraceptive pill",
+        "background": "Nil",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "obeysCommands": true,
+        "breathing": true,
+        "rr": { "range": [18, 22] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [88, 96] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "head_cut",
+          "label": "Cut on the side of the head",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "laceration" },
+          "visible": true
+        },
+        {
+          "id": "head_lump",
+          "label": "Swollen lump over the same spot",
+          "cardField": "injuries",
+          "overlay": "swelling",
+          "region": "head",
+          "params": {},
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d_water",
+          "afterAction": "give_water",
+          "delaySeconds": 45,
+          "note": "She vomits after the drink and is now coughing, drowsy and breathing fast.",
+          "state": {
+            "responsive": "voice",
+            "obeysCommands": false,
+            "canTalk": true,
+            "rr": { "range": [32, 36] },
+            "breathingDepth": "noisy",
+            "radialPulse": { "rate": { "range": [108, 116] } }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "distress" } }
+          ],
+          "expectedCategory": "red"
+        },
+        {
+          "id": "d1",
+          "atSeconds": 360,
+          "note": "The lucid interval ends. She becomes drowsy, mumbles, and no longer follows commands. Her pulse slows.",
+          "state": {
+            "responsive": "voice",
+            "obeysCommands": false,
+            "radialPulse": { "rate": { "range": [58, 64] } }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "half_closed" } },
+            { "overlay": "expression", "params": { "mood": "confused" } },
+            { "overlay": "speech", "params": { "text": "Mmm... so sleepy..." } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["give_water", "stay_and_comfort"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Talking and obeying commands now does not make a head injury safe; a period of unconsciousness can be followed by a sudden drop.",
+        "Write the mechanism and the loss of consciousness on the card, and re-triage her in 10 to 15 minutes.",
+        "Nothing by mouth: a drink can make a head-injured casualty vomit and breathe it in."
+      ],
+      "tags": ["head_injury", "volcanic_eruption", "lucid_interval"]
+    },
+    {
+      "id": "ne_spinal_fall_01",
+      "title": "Spinal injury after a fall",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "dark", "hair": "short", "top": "hi_vis", "bottom": "trousers" },
+      "approach": "Man lying flat on his back on a concrete floor under a collapsed mezzanine, covered in dust, eyes open and frightened, with a graze on his right forearm and a bruise on his head.",
+      "appearance": [
+        { "overlay": "dust" },
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "speech", "params": { "text": "I can't move my legs!" } }
+      ],
+      "identity": { "name": "Sione Faleolo", "age": 33, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Fell about three metres onto concrete when the mezzanine floor gave way in the earthquake. He landed on his back and has not been able to move his legs since.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Fit and well",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "obeysCommands": true,
+        "breathing": true,
+        "rr": { "range": [20, 24] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [64, 72] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "forearm_graze",
+          "label": "Graze on the right forearm",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "head_bruise",
+          "label": "Bruise on the head",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "head",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "back_bruise",
+          "label": "Large bruise over the lower back",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "back",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d_moved",
+          "afterAction": "move_casualty",
+          "delaySeconds": 30,
+          "note": "Dragged without spinal care. The injury worsens: his breathing becomes slow and shallow and his pulse slows.",
+          "state": {
+            "rr": { "range": [8, 9] },
+            "breathingDepth": "shallow",
+            "radialPulse": { "rate": { "range": [46, 52] } }
+          },
+          "appearance": [
+            { "overlay": "expression", "params": { "mood": "panic" } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["move_casualty", "apply_collar"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "He obeys commands and his breathing and circulation are fine, but he cannot walk, so he is orange.",
+        "With a suspected spinal injury keep him still; do not drag him unless there is an immediate danger.",
+        "Collars and log-rolls belong to the treatment area; in the sieve, note the mechanism, tag and move on."
+      ],
+      "tags": ["spinal", "earthquake", "fall"]
+    },
+    {
+      "id": "ne_postictal_01",
+      "title": "Post-seizure, confused",
+      "ageGroup": "adult",
+      "pose": "supine",
+      "look": { "skinTone": "medium", "hair": "long", "top": "tshirt", "bottom": "trousers" },
+      "approach": "Woman lying on her back on the grass at the tsunami evacuation point, eyes half closed and looking dazed, with a graze on her left forearm.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "half_closed" } },
+        { "overlay": "expression", "params": { "mood": "confused" } }
+      ],
+      "identity": { "name": "Priya Naidoo", "age": 31, "sex": "female", "source": "bystander" },
+      "history": {
+        "mechanism": "Had a seizure in the crowd while evacuating from the tsunami warning zone and fell to the ground. A friend says it lasted about two minutes.",
+        "allergies": "None known",
+        "medications": "Epilepsy tablets (levetiracetam); missed her morning dose",
+        "background": "Epilepsy since her teens",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "voice",
+        "obeysCommands": false,
+        "breathing": true,
+        "rr": { "range": [20, 24] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [104, 112] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "forearm_graze",
+          "label": "Graze on the left forearm from the fall",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_forearm",
+          "params": { "type": "abrasion" },
+          "visible": true
+        },
+        {
+          "id": "thigh_bruise",
+          "label": "Bruise on the right thigh",
+          "cardField": "injuries",
+          "overlay": "bruising",
+          "region": "right_thigh",
+          "params": {},
+          "visible": false,
+          "revealedBy": "expose_check_bleeding"
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 420,
+          "note": "The post-seizure state clears. She wakes up, follows commands and talks sensibly, but is still too unsteady to stand.",
+          "state": {
+            "responsive": "alert",
+            "obeysCommands": true,
+            "canTalk": true,
+            "canWalk": false,
+            "rr": { "range": [16, 20] },
+            "radialPulse": { "rate": { "range": [88, 96] } }
+          },
+          "pose": "sitting",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "open" } },
+            { "overlay": "expression", "params": { "mood": "distress" } }
+          ],
+          "expectedCategory": "orange"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["detailed_history", "stay_and_comfort"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Drowsy and confused after a seizure is normal, but a casualty who cannot follow commands is red until she can.",
+        "You cannot tell a seizure from a head injury by looking, so use the sieve, not a guess.",
+        "Most people recover within minutes; re-triage her and downgrade when she obeys commands."
+      ],
+      "tags": ["medical", "seizure", "tsunami"]
+    },
+    {
+      "id": "ne_hypoglycaemia_01",
+      "title": "Low blood sugar after a long wait",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "bald", "top": "shirt", "bottom": "trousers" },
+      "approach": "Older man sitting against a retaining wall at the roadside, pale and sweating, eyes half closed, looking confused, with a grazed right hand.",
+      "appearance": [
+        { "overlay": "pallor" },
+        { "overlay": "sweating" },
+        { "overlay": "eyes", "params": { "state": "half_closed" } },
+        { "overlay": "expression", "params": { "mood": "confused" } }
+      ],
+      "identity": { "name": "Kevin Liu", "age": 62, "sex": "male", "source": "bystander" },
+      "history": {
+        "mechanism": "Stranded in his car for seven hours when a landslide cut the road. His wife says he has not eaten since breakfast and he scraped his hand climbing out.",
+        "allergies": "None known",
+        "medications": "Insulin",
+        "background": "Type 1 diabetes for 30 years",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "voice",
+        "obeysCommands": false,
+        "breathing": true,
+        "rr": { "range": [20, 24] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [110, 120] } },
+        "crtSeconds": { "range": [2, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "hand_graze",
+          "label": "Graze on the right hand",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "right_hand",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 300,
+          "note": "Blood sugar keeps falling. He slumps, stops talking and responds only to pain.",
+          "state": {
+            "responsive": "pain",
+            "canTalk": false,
+            "obeysCommands": false,
+            "rr": { "range": [14, 18] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["give_water", "measure_bp", "give_oral_glucose"],
+        "targetSeconds": 45
+      },
+      "teaching": [
+        "Confused and sweaty with a history of diabetes: if he cannot follow a command he is red, whatever the vitals say.",
+        "A fast pulse and pale, sweaty skin with normal breathing can look like shock, so ask about diabetes.",
+        "Nothing by mouth for a casualty who cannot follow commands, even a sugary drink: it can go into the airway."
+      ],
+      "tags": ["medical", "diabetic", "landslide"]
+    },
+    {
+      "id": "ne_burns_explosion_01",
+      "title": "Facial burns and soot after a gas explosion",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "dark", "hair": "tied", "top": "tshirt", "bottom": "trousers" },
+      "approach": "Woman sitting in the doorway of the wrecked kitchen after the gas explosion, soot around her nose and mouth, blistered burns on her face, both forearms and right shin, holding her left forearm, saying her throat is burning.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "pain" } },
+        { "overlay": "guarding", "region": "left_forearm" },
+        { "overlay": "speech", "params": { "text": "My throat is burning!" } }
+      ],
+      "identity": { "name": "Mele Havili", "age": 41, "sex": "female", "source": "self" },
+      "history": {
+        "mechanism": "Gas explosion in the restaurant kitchen. A flash of flame reached her face and arms before she got out through the doorway.",
+        "allergies": "None known",
+        "medications": "None",
+        "background": "Nil",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "obeysCommands": true,
+        "breathing": true,
+        "rr": { "range": [28, 30] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [112, 120] } },
+        "crtSeconds": { "range": [2, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "burn_face",
+          "label": "Partial-thickness burns to the face",
+          "cardField": "injuries",
+          "overlay": "burn",
+          "region": "face",
+          "params": { "depth": "partial" },
+          "visible": true
+        },
+        {
+          "id": "soot_face",
+          "label": "Soot around the nose and mouth: possible airway burn",
+          "cardField": "injuries",
+          "overlay": "soot",
+          "region": "face",
+          "params": {},
+          "visible": true
+        },
+        {
+          "id": "burn_forearm_l",
+          "label": "Partial-thickness burn to the left forearm",
+          "cardField": "injuries",
+          "overlay": "burn",
+          "region": "left_forearm",
+          "params": { "depth": "partial" },
+          "visible": true
+        },
+        {
+          "id": "burn_forearm_r",
+          "label": "Partial-thickness burn to the right forearm",
+          "cardField": "injuries",
+          "overlay": "burn",
+          "region": "right_forearm",
+          "params": { "depth": "partial" },
+          "visible": true
+        },
+        {
+          "id": "burn_shin_r",
+          "label": "Partial-thickness burn to the right shin",
+          "cardField": "injuries",
+          "overlay": "burn",
+          "region": "right_lower_leg",
+          "params": { "depth": "partial" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 180,
+          "note": "Airway swelling: her face and lips swell, and her breathing becomes fast and noisy.",
+          "state": {
+            "rr": { "range": [32, 36] },
+            "breathingDepth": "noisy",
+            "radialPulse": { "rate": { "range": [124, 132] } }
+          },
+          "appearance": [
+            { "overlay": "expression", "params": { "mood": "panic" } }
+          ],
+          "addFindings": [
+            {
+              "id": "swelling_face",
+              "label": "Swelling of the face and lips",
+              "cardField": "injuries",
+              "overlay": "swelling",
+              "region": "face",
+              "params": {},
+              "visible": true
+            }
+          ],
+          "expectedCategory": "red"
+        }
+      ],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["cool_burn", "clean_wound"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "Count the breaths: 28 to 30 a minute is not over 30, so she is orange now, but she will not stay that way.",
+        "Soot around the nose and mouth with facial burns means the airway may swell; re-triage her soon.",
+        "Cooling the burns is right first aid but takes 20 minutes; ask a helper to do it while you sieve."
+      ],
+      "tags": ["burns", "gas_explosion", "airway"]
+    },
+    {
+      "id": "ne_hypothermia_01",
+      "title": "Cold, slow and confused after the flood",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "light", "hair": "short", "top": "jacket", "bottom": "trousers" },
+      "approach": "Older woman sitting on the flood bank in soaked clothes, shivering and pale, eyes half closed and looking confused, with a grazed left hand.",
+      "appearance": [
+        { "overlay": "wet" },
+        { "overlay": "pallor" },
+        { "overlay": "motion", "params": { "type": "shaking" } },
+        { "overlay": "eyes", "params": { "state": "half_closed" } },
+        { "overlay": "expression", "params": { "mood": "confused" } }
+      ],
+      "identity": { "name": "Margaret Hutchinson", "age": 68, "sex": "female", "source": "bystander" },
+      "history": {
+        "mechanism": "Stood in waist-deep flood water for over an hour waiting for a boat. The rescue crew pulled her out and knew her from the street.",
+        "allergies": "Unknown",
+        "medications": "Blood pressure tablets",
+        "background": "High blood pressure",
+        "source": "bystander"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "voice",
+        "obeysCommands": false,
+        "breathing": true,
+        "rr": { "range": [10, 11] },
+        "breathingDepth": "shallow",
+        "radialPulse": { "present": true, "rate": { "range": [54, 60] } },
+        "crtSeconds": { "range": [3, 4] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "hand_graze",
+          "label": "Graze on the left hand",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "left_hand",
+          "params": { "type": "abrasion" },
+          "visible": true
+        }
+      ],
+      "deterioration": [
+        {
+          "id": "d1",
+          "atSeconds": 300,
+          "note": "She keeps cooling. She slumps, can no longer talk, and responds only to pain. Her breathing and pulse slow further.",
+          "state": {
+            "responsive": "pain",
+            "canTalk": false,
+            "obeysCommands": false,
+            "rr": { "range": [8, 9] },
+            "radialPulse": { "rate": { "range": [40, 46] } },
+            "crtSeconds": { "range": [4, 5] }
+          },
+          "pose": "slumped",
+          "appearance": [
+            { "overlay": "eyes", "params": { "state": "closed" } },
+            { "overlay": "expression", "params": { "mood": "blank" } }
+          ],
+          "expectedCategory": "red",
+          "removeAppearance": ["motion"]
+        }
+      ],
+      "expected": {
+        "category": "red",
+        "lifeSavingInterventions": [],
+        "traps": ["wrap_in_blanket", "stay_and_comfort"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "Cold, wet, slow and confused is red: she cannot follow commands, and slow circulation from cold skin confirms it.",
+        "A breathing rate of 10 or 11 is not under 10, so count the full minute before you decide.",
+        "Warming matters, but it comes after the sieve; ask a helper to wrap her."
+      ],
+      "tags": ["environmental", "hypothermia", "flood"]
+    },
+    {
+      "id": "ne_older_ankle_head_01",
+      "title": "Anxious older man with a head cut and a deformed ankle",
+      "ageGroup": "adult",
+      "pose": "sitting",
+      "look": { "skinTone": "medium", "hair": "bald", "top": "shirt", "bottom": "trousers" },
+      "approach": "Elderly man sitting on the footpath outside the burning building, restless and anxious, holding his head where there is a small cut with a little bleeding, his left lower leg bent at an odd angle.",
+      "appearance": [
+        { "overlay": "eyes", "params": { "state": "open" } },
+        { "overlay": "expression", "params": { "mood": "distress" } },
+        { "overlay": "motion", "params": { "type": "agitated" } },
+        { "overlay": "guarding", "region": "head" },
+        { "overlay": "speech", "params": { "text": "I can't stand up! Where's Mere?" } }
+      ],
+      "identity": { "name": "Eru Hapi", "age": 74, "sex": "male", "source": "self" },
+      "history": {
+        "mechanism": "Tripped and fell on the stairs while escaping the building fire. He hit his head and twisted his left ankle.",
+        "allergies": "Penicillin",
+        "medications": "Aspirin and blood pressure tablets",
+        "background": "High blood pressure; heart stent two years ago",
+        "source": "self"
+      },
+      "state": {
+        "canWalk": false,
+        "canTalk": true,
+        "responsive": "alert",
+        "obeysCommands": true,
+        "breathing": true,
+        "rr": { "range": [27, 30] },
+        "breathingDepth": "normal",
+        "radialPulse": { "present": true, "rate": { "range": [100, 110] } },
+        "crtSeconds": { "range": [1, 2] },
+        "catastrophicBleed": false,
+        "entrapped": false
+      },
+      "findings": [
+        {
+          "id": "scalp_cut",
+          "label": "Small scalp cut",
+          "cardField": "injuries",
+          "overlay": "wound",
+          "region": "head",
+          "params": { "type": "laceration" },
+          "visible": true
+        },
+        {
+          "id": "scalp_ooze",
+          "label": "Minor bleeding from the scalp cut",
+          "cardField": "injuries",
+          "overlay": "bleed",
+          "region": "head",
+          "params": { "severity": "minor" },
+          "visible": true
+        },
+        {
+          "id": "ankle_deformity",
+          "label": "Deformed left lower leg and ankle, closed",
+          "cardField": "injuries",
+          "overlay": "deformity",
+          "region": "left_lower_leg",
+          "params": { "open": false },
+          "visible": true
+        }
+      ],
+      "deterioration": [],
+      "expected": {
+        "category": "orange",
+        "lifeSavingInterventions": [],
+        "traps": ["splint_limb", "clean_wound", "stay_and_comfort"],
+        "targetSeconds": 50
+      },
+      "teaching": [
+        "Anxious but alert and obeying, with a rate of 27 to 30 and a good pulse, he is orange: the rate is not over 30.",
+        "A scalp cut can bleed a lot and look dramatic, but a minor bleed does not change the tag.",
+        "The deformed ankle is why he cannot walk; leave the splint and dressing to the treatment team."
+      ],
+      "tags": ["head_injury", "building_fire", "older_person", "fracture"]
+    }
+  ]
+}

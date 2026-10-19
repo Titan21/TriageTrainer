@@ -1,0 +1,230 @@
+# Triage Trainer — Game Plan
+
+A browser game for practising mass casualty incident (MCI) triage before an NZRT exercise. The player approaches casualties, picks actions (correct, plausible-but-wrong and a few silly ones), uncovers findings, does life-saving interventions, and tags each casualty **red, orange, green or black**. Hosted on GitHub Pages and played on a phone.
+
+> **Protocol status:** the triage rules in `content/triage-rules.json` are a placeholder (UK sieve / START for adults, JumpSTART-style for children), not NZRT's. `"approved": false` makes the app show a banner until NZRT's protocol replaces them.
+
+## Where things stand (2026-10-19)
+
+Built so far. There is no app yet; this is the content and the systems the app will run on:
+
+| Path | What it is |
+|---|---|
+| `content/FORMAT.md` | The content contract: how casualties, deterioration and scenes are written. Start here. |
+| `content/vocab.json` | Illustration vocabulary: poses, body regions, overlays, mobility aids, hazards, bystander behaviours, scene events |
+| `content/actions.json` | 52 actions with time cost, effect, when each is correct, and feedback when it isn't |
+| `content/triage-rules.json` | Categories, penalty matrix and the sieve steps per age group (placeholder) |
+| `content/casualties/*.json` | 64 casualties in 8 themed files |
+| `content/scenes/*.json` | 12 Learn scenes and 4 Full scenes |
+| `src/engine/rules.js` | Rules engine: computes the correct category from a casualty's true state, and which checks the player needed to justify it |
+| `src/art/` | SVG illustration system driven entirely by `vocab.json` |
+| `tools/validate.mjs` | Content validator (`npm run validate`) |
+| `tools/render-preview.mjs` | Contact sheet of every pose, overlay and casualty (`npm run preview:art` → `preview/index.html`) |
+
+The casualties and scenes were drafted by several parallel agents against the shared contract. The validator checks every file, and every casualty was spot-checked for text vs picture and clinical sense. They still need a review by an NZRT clinician (see [Content review notes](#content-review-notes)).
+
+## Goals
+- Build the habit of a fast, ordered triage sieve (roughly 30–60 s per casualty), not a full single-casualty DRSABCD.
+- Make it obvious what is visible at a glance versus what you only learn by checking.
+- Teach through feedback: every wrong choice gets a short explanation in the debrief.
+
+## Decisions
+- **Hosting: GitHub Pages**, deployed by GitHub Actions on every push to `main`. The workflow runs the validator first, so broken content never deploys (see [Hosting and deployment](#hosting-and-deployment)).
+- **Stack:** Vite + TypeScript, no framework, no backend. The engine and art are pure ES modules with no DOM or Node APIs, so the app, the validator and the preview share them.
+- **Content is JSON imported at build time.** It's bundled and precached for offline play; edits deploy through the same Action.
+- **Offline:** PWA via `vite-plugin-pwa` (Pages serves HTTPS, so the service worker works).
+- **The truth is computed, never hard-coded.** The rules engine derives the correct category from a casualty's state at the moment of tagging. Each casualty's expected categories are assertions the validator checks, so a rules change immediately shows which casualties change outcome.
+- **Randomised vitals use a seeded RNG,** so a debrief or bug report can replay the exact run.
+- **Placeholder banner** while `triage-rules.json` has `"approved": false`.
+
+## Core loop (single casualty)
+1. **Briefing:** short METHANE summary.
+2. **Approach:** the picture shows only the pose, look, appearance and visible findings.
+3. **Act:** the core sieve actions are always on screen in a fixed order (walk, breathing, airway, pulse/CRT, command, expose, life-saving interventions), plus 2–3 rotating extras drawn from traps and silly options. Fixed positions build the habit; the extras test judgement.
+4. Each action costs game time. It reveals state or findings, applies an intervention, or triggers a consequence (an action-triggered deterioration stage).
+5. **Tag** at any point. Tagging ends the sieve for that casualty.
+6. **Re-triage** (Full scene): casualties are revisited. Vitals change only when re-checked; visible changes (pallor, slumping) show automatically.
+7. **Handover** (later milestone): IMISTAMBO from the card.
+8. **Debrief:**
+   - correct category at the moment of tagging
+   - checks the player skipped (from the engine's `requiredChecks`)
+   - missed life-saving and key actions
+   - traps taken, with their feedback
+   - time against target
+   - the full picture with missed findings highlighted
+
+## Data model
+Full spec: [content/FORMAT.md](content/FORMAT.md). The key ideas:
+
+- **`state`** is the casualty's true physiology: walking, talking, AVPU, obeys commands, breathing (spontaneous / after airway opening / after rescue breaths), RR, depth, radial pulse, CRT, catastrophic bleed, entrapped. The rules engine reads only `state`.
+- **Vital signs are revealed generically** by the assessment actions, which also draw their probe overlays. Authors never write findings for vital signs.
+- **`findings`** are what can be seen or uncovered: injuries, entrapment, soot, etc. Each maps to exactly one vocab overlay on an allowed region, is visible on approach or revealed by an action, and fills one triage card field.
+- **`appearance`** is how the casualty looks overall: eyes, expression, pallor, speech, motion, guarding, mobility aid.
+- **`deterioration`** stages change state, pose, appearance and findings:
+  - Time stages (`atSeconds`) can be prevented by named actions (`unless`), so a tourniquet or the recovery position has a visible effect in play.
+  - Action stages (`afterAction`) model trap consequences: crush syndrome after release, choking after a drink, bleeding after pulling out an impaled object.
+  - Stages can also remove appearance or findings.
+- **`expected`** holds the correct category at the start and after each stage, life-saving interventions, key actions (e.g. `flag_for_medical`), traps it tempts, and a target time.
+- **Scenes** place casualties on a 0–100 map with bystanders, hazards and timed events. A scene can override a casualty's approach, mechanism, speech and teaching text so one casualty can be reused in another incident.
+
+## Triage rules (placeholder)
+`content/triage-rules.json` holds the categories, the penalty matrix and an ordered sieve per age group. Each step has a condition, a category, the actions needed to evaluate it (`checks`) and the actions needed to rule it out (`ruleOutChecks`).
+
+**Adult:**
+1. Catastrophic bleeding (in someone still alive) → red, after controlling it
+2. Can walk (or get themselves to the collection point) → green
+3. Not breathing even after the airway is opened → black
+4. Breathing only after the airway is opened → red
+5. RR < 10 or > 30 → red
+6. No radial pulse or CRT > 2 s → red
+7. Can't follow simple commands → red
+8. Otherwise → orange
+
+**Child** (JumpSTART-like): catastrophic bleed → red; walking → green; breathes only after airway opening → red; no breathing and no pulse → black; with a pulse, 5 rescue breaths decide red or black; RR < 15 or > 45 → red; no palpable pulse → red; unresponsive or inappropriate pain response → red; otherwise orange.
+
+Fixes from the first draft:
+- added the "breathes only after airway opening → red" step
+- added the RR lower bound (the old deterioration example went from red to orange)
+- added catastrophic bleed as a rule (scenario 3 had no rule making it red)
+- the child sieve differs in structure, not just thresholds
+
+Scoring uses a penalty matrix by correct vs assigned category. Under-triage costs more than over-triage, and tagging a salvageable casualty black is the worst outcome.
+
+## Illustration system
+__ART_SECTION__
+
+## Triage card (IMISTAMBO)
+The findings panel is the team's triage card in IMISTAMBO order. Confirm field names and layout against the real NZRT card.
+
+- **I – Identification:** name, age, sex, from the casualty, a bystander or ID. "Unknown" is valid; searching pockets is a trap.
+- **M – Mechanism:** from the briefing, a bystander or asking.
+- **I – Injuries:** visible and exposed findings.
+- **S – Signs:** each vital as checked, with time. Re-checks add entries, never overwrite.
+- **T – Treatment and trends:** interventions with time ("Tourniquet left thigh 10:42") and changes on re-check ("RR 34 → 38").
+- **A, M, B – Allergies, medications, background:** greyed out during the first sweep and active in re-triage and handover. Asking during the sieve is a time trap, and blank greyed fields shouldn't read as mistakes. Confirm this matches team practice.
+- **O – Other:** scene notes, e.g. "Trapped — medical needed before release".
+
+Tapping a card field highlights the body region; tapping a callout jumps to its card field. Card completeness is scored per phase: sieve fields during the sieve, everything at handover.
+
+**Handover step (later):** put card items in IMISTAMBO order and pick the right values, with distractors (an outdated vital, another casualty's injury). Scored on order, accuracy and using the latest vitals.
+
+## Actions
+`content/actions.json` has 52 actions in six groups. Each has a time cost, one effect from a fixed set implemented in code (`scene`, `reveal_state`, `reveal_findings`, `ask`, `intervene`, `set_pose`, `tag`, `waste`), a `correctWhen` condition and feedback.
+
+- **Scene and self:** check danger, gloves, call walking wounded, withdraw, drop/cover/hold, make safe, METHANE.
+- **Assessment:** make your own way to me, response, breathing and rate, radial pulse, CRT, simple command, expose.
+- **Life-saving and key interventions:** open airway, recovery position, tourniquet, direct pressure, packing, get a bystander to press, self-pressure, rescue breaths (child), oral glucose and own reliever inhaler (only where the casualty lists them), flag for medical before release.
+- **Communication:** name and age, what happened, AMB (a sieve trap), reassure, tag, move on.
+- **Traps:** CPR, splint, water, full head-to-toe, detailed history, release from entrapment, stay and comfort, drag to safety, pull out impaled object, collar, cool burn, blanket, search for ID, blood pressure, clean wounds.
+- **Silly:** call mum, check phone, selfie, snacks, post on social media.
+
+Walking actions are wheelchair-inclusive: "make your own way to the collection point". A wheelchair user who self-propels keeps their seated pose.
+
+## Content library
+**64 casualties** with 66 deterioration stages (13 triggered by traps): 17 green, 19 orange, 24 red and 4 black at the start, 56 adults and 8 children. Learn mode is deliberately red-heavy; the full scenes use realistic mixes.
+
+| File | Theme | Count | Start mix | Highlights |
+|---|---|---|---|---|
+| `walking.json` (`wk_`) | Walking wounded, behaviour | 8 | 7 G, 1 O | Loud broken arm, panicking uninjured, Deaf man who follows gestures, walker who collapses on re-triage, older person who lost her frame |
+| `variety.json` (`vr_`) | Scene fillers | 12 | 7 G, 3 O, 2 B | Wet, dusty and clean greens for each incident type; hidden rib and heart problems on re-triage; drowned and ejected blacks |
+| `breathing.json` (`br_`) | Airway and breathing | 8 | 5 R, 2 O, 1 B | Black after one airway attempt (CPR trap), breathes only with the airway open, prone unconscious, RR 8–9 and 31–38, smoke, near-drowning |
+| `bleeding.json` (`bl_`) | Bleeding and circulation | 8 | 6 R, 2 O | Thigh and arm tourniquets, groin packing (tourniquet is the trap), blast amputation, bleed hidden under a jacket, pelvic and abdominal bleeding, rebar left in place, dramatic but minor scalp cut |
+| `neuro.json` (`ne_`) | Head, burns, environmental, medical | 8 | 4 R, 4 O | The quiet head injury, lucid interval, spinal (collar and drag traps), postictal, low blood sugar (confused), partial burns with airway swelling, hypothermia |
+| `entrapment.json` (`en_`) | Entrapment and crush | 8 | 4 R, 4 O | Hours under a slab (flag, don't release), arm under a beam, chest wedged in a bus, landslide, trapped with an arm bleed, bookshelf |
+| `children.json` (`ch_`) | Children | 8 | 4 R, 2 O, 1 G, 1 B | Lost walker, toddler who can't walk by age, rescue breaths, no pulse, RR 42–44 vs 50, abnormal pain response, forearm tourniquet, a 14-year-old on the adult sieve |
+| `medical.json` (`md_`) | Medical and disability | 4 | 2 G, 1 O, 1 R | Wheelchair user with a wrecked chair, self-propelling wheelchair user, low blood sugar while still walking (sugar early), severe asthma with own reliever (falling RR means exhaustion) |
+
+**Scenes:**
+- **Learn (12):**
+  - walking wounded self-sort
+  - not breathing → black (CPR trap)
+  - leg bleed
+  - head injury not obeying
+  - child sieve
+  - long entrapment
+  - the quiet one
+  - panic
+  - bystander pulling you to their friend
+  - aftershock mid-scene (drop, cover, hold, then withdraw)
+  - junctional bleed with a helper bystander
+  - airway opens
+- **Full (4), 9–10 casualties each, no casualty repeated between them:**
+
+  | Scene | Mix | Events |
+  |---|---|---|
+  | Christchurch CBD collapse | 4 G, 3 O, 2 R, 1 B | Aftershock and gas leak |
+  | Coach crash on a state highway | 4 G, 2 O, 2 R, 1 B | Smoke hazard |
+  | Grandstand collapse | 5 G, 3 O, 2 R | Aftershock, three children |
+  | Edgecumbe river flood | 4 G, 2 O, 2 R, 1 B | Rising water, rescue boat |
+
+**Gaps to fill next:**
+- More face-down and slumped casualties: only 7 of 64. These are the poses where the chest is hidden or the airway is at risk.
+- More blacks in varied settings.
+- Infants.
+- Crowd crush, chemical exposure and electrical injury.
+- A shortened, rotated leg overlay for hip fractures (currently pelvis bruising plus guarding).
+
+## Scoring
+- Category penalty matrix (`triage-rules.json`): under-triage costs more than over-triage; a salvageable casualty tagged black is the maximum.
+- Missed life-saving intervention: major penalty. Missed key action (e.g. not flagging an entrapment): smaller penalty.
+- Skipped required checks (tagged before checking breathing, tagged black without opening the airway): process penalty and debrief note.
+- Entering or staying in danger, or missing a hazard deadline: major penalty.
+- Time over target reduces score.
+- Card completeness per phase, and handover accuracy (order, latest vitals).
+
+## Modes
+1. **Learn:** one to three casualties, hints available, the 12 Learn scenes.
+2. **Full scene:** 8–10 casualties on a simple map (4 scenes so far), against the clock, with bystanders, hazards, deterioration and re-triage.
+3. **Exercise mode (later):** mimic how the real exercise presents injuries (e.g. casualty cards).
+
+## Build order
+1. ✅ Content contract, rules engine, validator, casualty library and scenes.
+2. ✅ Illustration system prototype and contact sheet.
+3. Scaffold the Vite + TS app. Create the GitHub repo and the Pages workflow (validate → build → deploy), placeholder banner and seeded RNG.
+4. Learn mode, text-first with the existing art: action panel, game clock, reveals, triage card, tagging, debrief with process checks.
+5. Deterioration and interventions in play (time and action stages), re-triage.
+6. Scoring and the debrief view: full picture with missed findings highlighted.
+7. Full-scene mode: map, moving between casualties, bystanders, hazards and events.
+8. Handover builder.
+9. Mobile polish and offline (PWA).
+10. Swap in NZRT's protocol and card. The validator then lists every casualty whose expected category changes, so content and rules are updated together.
+
+## Hosting and deployment
+- **GitHub Pages from a GitHub Actions workflow** (Pages source: "GitHub Actions"). On push to `main` the workflow:
+  1. runs `npm ci`
+  2. runs `npm run validate` and fails on any content error
+  3. runs `vite build`
+  4. builds the contact sheet into `dist/preview/`
+  5. uploads the Pages artifact and deploys it
+- **Base path:** Vite `base` set to `/<repo-name>/`, with PWA scope matching. A custom domain later would change it to `/`.
+- **Public repo recommended:** Pages on a private repo needs a paid GitHub plan. The content has no personal data (all casualties are fictional).
+- **Editing content without code:** edit a JSON file on github.com and commit. The Action validates it, and the error log names the casualty and field if something's wrong.
+- **The contact sheet is published** at `<site>/preview/` so an NZRT clinician can review every casualty's picture, text and stages without installing anything.
+
+## Open questions
+- NZRT triage steps, thresholds and category names/colours. Many tag systems use yellow rather than orange, and white rather than black.
+- The child sieve: age cut-off (the library uses the adult sieve from about 12), and how infants who can't walk by age are tagged (placeholder: orange).
+- Disability: is a well casualty who can't walk (broken wheelchair, lost frame) orange? Does a self-propelling wheelchair user count as walking wounded (placeholder: yes)?
+- Exact fields and layout of the NZRT triage card (a photo of a blank card would help).
+- Does catastrophic bleeding stay red after it is controlled (placeholder: yes)?
+- Are oral glucose for a known low blood sugar, and helping with someone's own reliever inhaler, acceptable during the sieve (placeholder: yes, when quick)?
+- Clock model: game time from action costs only, or also real-time pressure in Full scene?
+- Communication barriers: a Deaf casualty who writes or signs is modelled as `canTalk: false`; should identity and history be obtainable by gesture or writing?
+- How will the exercise present injuries: moulage, cards or role-players?
+- GitHub repo name and owner (sets the Pages base path).
+
+## Content review notes
+Drafted by agents and checked for consistency, but not yet clinically reviewed. Ask an NZRT clinician to look at:
+
+- **Crush syndrome:** release consequences and timing. `en_slab_legs_01` ends red, `en_landslide_buried_01` and `ch_trapped_fast_breather_01` collapse quickly.
+- **No radial pulse while alert and talking:** `bl_pelvic_fracture_01`, deliberately teaching that talking isn't the same as well.
+- **Hypothermia tagged red through CRT:** CRT is unreliable in the cold (`ne_hypothermia_01`).
+- **Smoke and airway burns** are orange at RR 25–30 under the placeholder rules (`br_smoke_inhalation_01`, `ne_burns_explosion_01`); clinically they may warrant red.
+- **Tourniquet placement:**
+  - below-knee amputation (`bl_blast_amputation_01`); the art places the tourniquet at the body end of the injured segment, but practice is often "high and tight"
+  - a child's forearm (`ch_forearm_bleed_01`)
+- **Game-paced timings,** not physiological: for example, airway obstruction to arrest in 3–6 minutes.
+- **Trap consequences that are teaching devices,** not strict cause and effect: a drink leading to vomiting or choking (`wk_hidden_abdo_01`, `ne_lucid_interval_01`, `br_slow_breathing_01`, `ch_toddler_cant_walk_01`, `vr_stand_nosebleed_01`).
+- **Slow pulse in asthma exhaustion** (`md_asthma_severe_01`) and in a drowned child with a pulse (`ch_rescue_breaths_01`).
+- **Teaching text quotes thresholds** ("over 30"). If NZRT's numbers differ, update the text, or switch it to placeholders filled from `triage-rules.json`.
+- **Medication and history details** are illustrative.

@@ -1,0 +1,654 @@
+{
+  "version": 1,
+  "notes": [
+    "Action catalogue. Every action the player can pick, with time cost, effect and when it is correct.",
+    "Effect types are a fixed set implemented in code: scene, reveal_state, reveal_findings, ask, intervene, set_pose, tag, waste.",
+    "correctWhen uses the condition language in content/FORMAT.md. Time costs are placeholders to tune in play-testing.",
+    "listedForCasualty is true when the action appears in the casualty's expected.lifeSavingInterventions or expected.keyActions. Use it for presentation-specific help (glucose, inhaler) so authors decide where it applies.",
+    "onTrue.keepPoseWithAid: when the casualty has a mobility_aid of one of these types, keep their pose (a wheelchair user moves in their chair) and only add the motion overlay."
+  ],
+  "groups": {
+    "scene": "Scene and self",
+    "communication": "Communication",
+    "assessment": "Assessment",
+    "intervention": "Life-saving interventions",
+    "trap": "Plausible but wrong in an MCI sieve",
+    "silly": "Silly distractors"
+  },
+  "actions": [
+    {
+      "id": "check_danger",
+      "label": "Check for danger",
+      "group": "scene",
+      "timeCostSeconds": 5,
+      "effect": { "type": "scene", "do": "check_danger" },
+      "correctWhen": true
+    },
+    {
+      "id": "don_gloves",
+      "label": "Put on gloves",
+      "group": "scene",
+      "timeCostSeconds": 10,
+      "effect": { "type": "scene", "do": "don_gloves" },
+      "correctWhen": { "not": { "field": "done.don_gloves", "op": "eq", "value": true } },
+      "feedbackWrong": "You already had gloves on."
+    },
+    {
+      "id": "call_walking_wounded",
+      "label": "Call out: \"If you can walk or get yourself over here, come to me\"",
+      "group": "scene",
+      "timeCostSeconds": 10,
+      "effect": {
+        "type": "reveal_state",
+        "fields": ["canWalk"],
+        "scope": "scene",
+        "onTrue": {
+          "pose": "standing",
+          "appearance": [
+            { "overlay": "motion", "params": { "type": "walking" } }
+          ],
+          "keepPoseWithAid": ["wheelchair"]
+        },
+        "card": { "field": "signs", "template": "Mobile: {canWalk}" }
+      },
+      "correctWhen": true
+    },
+    {
+      "id": "withdraw",
+      "label": "Withdraw to safety",
+      "group": "scene",
+      "timeCostSeconds": 20,
+      "effect": { "type": "scene", "do": "withdraw" },
+      "correctWhen": { "field": "hazardActive", "op": "eq", "value": true },
+      "feedbackWrong": "Nothing on scene required withdrawing, so you lost time and left casualties untriaged."
+    },
+    {
+      "id": "drop_cover_hold",
+      "label": "Drop, cover and hold",
+      "group": "scene",
+      "timeCostSeconds": 10,
+      "effect": { "type": "scene", "do": "drop_cover_hold" },
+      "correctWhen": { "field": "hazardActive", "op": "eq", "value": true },
+      "feedbackWrong": "Nothing was shaking or falling, so taking cover cost time."
+    },
+    {
+      "id": "make_safe",
+      "label": "Make the area safe (stop traffic, cones, isolate the hazard)",
+      "group": "scene",
+      "timeCostSeconds": 30,
+      "effect": { "type": "scene", "do": "make_safe" },
+      "correctWhen": { "field": "hazardActive", "op": "eq", "value": true },
+      "feedbackWrong": "There was no hazard you could make safe, so this cost time."
+    },
+    {
+      "id": "radio_methane",
+      "label": "Radio a METHANE report",
+      "group": "communication",
+      "timeCostSeconds": 30,
+      "effect": { "type": "scene", "do": "radio_methane" },
+      "correctWhen": { "not": { "field": "done.radio_methane", "op": "eq", "value": true } },
+      "feedbackWrong": "One METHANE report is enough; repeat it only when something changes."
+    },
+    {
+      "id": "call_for_help",
+      "label": "Call for help",
+      "group": "communication",
+      "timeCostSeconds": 5,
+      "effect": { "type": "scene", "do": "call_for_help" },
+      "correctWhen": true
+    },
+    {
+      "id": "ask_to_walk",
+      "label": "Ask them to make their own way to the collection point",
+      "group": "assessment",
+      "timeCostSeconds": 5,
+      "effect": {
+        "type": "reveal_state",
+        "fields": ["canWalk"],
+        "onTrue": {
+          "pose": "standing",
+          "appearance": [
+            { "overlay": "motion", "params": { "type": "walking" } }
+          ],
+          "keepPoseWithAid": ["wheelchair"]
+        },
+        "card": { "field": "signs", "template": "Mobile: {canWalk}" }
+      },
+      "correctWhen": {
+        "all": [
+          { "field": "obeysCommands", "op": "eq", "value": true },
+          { "field": "entrapped", "op": "eq", "value": false }
+        ]
+      },
+      "feedbackWrong": "They could not follow the request (unresponsive or trapped), so asking cost time without telling you anything new."
+    },
+    {
+      "id": "check_response",
+      "label": "Check response (talk and tap)",
+      "group": "assessment",
+      "timeCostSeconds": 5,
+      "effect": {
+        "type": "reveal_state",
+        "fields": ["responsive", "painResponseAppropriate"],
+        "probe": "response_bubble",
+        "region": "face",
+        "card": { "field": "signs", "template": "Response: {responsive}" }
+      },
+      "correctWhen": true
+    },
+    {
+      "id": "open_airway",
+      "label": "Open the airway (head tilt, chin lift)",
+      "group": "intervention",
+      "timeCostSeconds": 10,
+      "effect": {
+        "type": "intervene",
+        "overlay": "airway_open",
+        "region": "head",
+        "sets": { "airwayOpened": true },
+        "card": { "field": "treatment", "template": "Airway opened {time}" }
+      },
+      "correctWhen": {
+        "any": [
+          { "field": "breathing", "op": "eq", "value": false },
+          { "field": "responsive", "op": "in", "value": ["pain", "unresponsive"] }
+        ]
+      },
+      "feedbackWrong": "They were talking or breathing without help, so the airway was already open."
+    },
+    {
+      "id": "check_breathing",
+      "label": "Look, listen and feel for breathing; count the rate",
+      "group": "assessment",
+      "timeCostSeconds": 15,
+      "effect": {
+        "type": "reveal_state",
+        "fields": ["breathing", "rr", "breathingDepth"],
+        "probe": "breathing_animation",
+        "region": "chest",
+        "card": { "field": "signs", "template": "{breathingText} {time}" },
+        "fallbackRegion": "back"
+      },
+      "correctWhen": true
+    },
+    {
+      "id": "check_radial_pulse",
+      "label": "Check radial pulse",
+      "group": "assessment",
+      "timeCostSeconds": 10,
+      "effect": {
+        "type": "reveal_state",
+        "fields": ["radialPulse"],
+        "probe": "pulse_marker",
+        "region": "right_hand",
+        "card": { "field": "signs", "template": "Radial pulse {pulseText} {time}" }
+      },
+      "correctWhen": true
+    },
+    {
+      "id": "check_crt",
+      "label": "Check capillary refill",
+      "group": "assessment",
+      "timeCostSeconds": 5,
+      "effect": {
+        "type": "reveal_state",
+        "fields": ["crtSeconds"],
+        "probe": "crt_marker",
+        "region": "left_hand",
+        "card": { "field": "signs", "template": "CRT {crtSeconds} s {time}" }
+      },
+      "correctWhen": true
+    },
+    {
+      "id": "give_command",
+      "label": "Give a simple command (\"squeeze my hand\")",
+      "group": "assessment",
+      "timeCostSeconds": 5,
+      "effect": {
+        "type": "reveal_state",
+        "fields": ["obeysCommands"],
+        "probe": "response_bubble",
+        "region": "face",
+        "card": { "field": "signs", "template": "Obeys commands: {obeysCommands} {time}" }
+      },
+      "correctWhen": true
+    },
+    {
+      "id": "expose_check_bleeding",
+      "label": "Expose and look for bleeding",
+      "group": "assessment",
+      "timeCostSeconds": 15,
+      "effect": { "type": "reveal_findings" },
+      "correctWhen": true
+    },
+    {
+      "id": "rescue_breaths",
+      "label": "Give 5 rescue breaths",
+      "group": "intervention",
+      "timeCostSeconds": 15,
+      "effect": {
+        "type": "intervene",
+        "sets": { "rescueBreathsGiven": true },
+        "card": { "field": "treatment", "template": "5 rescue breaths {time}" }
+      },
+      "correctWhen": {
+        "all": [
+          { "field": "ageGroup", "op": "eq", "value": "child" },
+          { "field": "breathing", "op": "eq", "value": false },
+          { "field": "breathesAfterAirwayOpen", "op": "eq", "value": false },
+          { "field": "radialPulse.present", "op": "eq", "value": true }
+        ]
+      },
+      "feedbackWrong": "Rescue breaths in the sieve are only for a child who is still not breathing after the airway is opened but has a pulse."
+    },
+    {
+      "id": "ask_name_age",
+      "label": "Ask name and age",
+      "group": "communication",
+      "timeCostSeconds": 10,
+      "effect": { "type": "ask", "info": "identity", "requires": "canTalk" },
+      "correctWhen": { "field": "canTalk", "op": "eq", "value": true },
+      "feedbackWrong": "They could not talk, so asking cost time. \"Unknown\" is a valid entry."
+    },
+    {
+      "id": "ask_what_happened",
+      "label": "Ask what happened",
+      "group": "communication",
+      "timeCostSeconds": 10,
+      "effect": { "type": "ask", "info": "mechanism", "requires": "canTalk" },
+      "correctWhen": { "field": "canTalk", "op": "eq", "value": true },
+      "feedbackWrong": "They could not talk, so asking cost time. Use the scene briefing or a bystander."
+    },
+    {
+      "id": "ask_amb",
+      "label": "Ask about allergies, medications and medical history",
+      "group": "communication",
+      "timeCostSeconds": 30,
+      "effect": { "type": "ask", "info": "amb", "requires": "canTalk" },
+      "correctWhen": { "field": "phase", "op": "in", "value": ["re_triage", "handover"] },
+      "feedbackWrong": "Allergies, medications and history belong in re-triage or just before handover, not the first sweep."
+    },
+    {
+      "id": "reassure",
+      "label": "Reassure them briefly: help is coming",
+      "group": "communication",
+      "timeCostSeconds": 5,
+      "effect": { "type": "scene", "do": "reassure" },
+      "correctWhen": { "field": "canTalk", "op": "eq", "value": true },
+      "feedbackWrong": "They could not hear or respond; reassurance can wait for someone who can."
+    },
+    {
+      "id": "instruct_bystander_pressure",
+      "label": "Get a bystander to hold pressure on the wound",
+      "group": "intervention",
+      "timeCostSeconds": 15,
+      "effect": {
+        "type": "intervene",
+        "overlay": "hand_pressure",
+        "params": { "by": "bystander" },
+        "target": "catastrophic_bleed",
+        "card": { "field": "treatment", "template": "Bystander holding pressure {time}" }
+      },
+      "correctWhen": {
+        "all": [
+          { "field": "bystanderPresent", "op": "eq", "value": true },
+          { "field": "catastrophicBleed", "op": "eq", "value": true }
+        ]
+      },
+      "feedbackWrong": "There was either no bystander to help or no bleed that needed pressure."
+    },
+    {
+      "id": "tag_casualty",
+      "label": "Tag the casualty",
+      "group": "communication",
+      "timeCostSeconds": 5,
+      "effect": { "type": "tag", "overlay": "triage_tag", "region": "right_hand" },
+      "correctWhen": true
+    },
+    {
+      "id": "move_on",
+      "label": "Move on to the next casualty",
+      "group": "scene",
+      "timeCostSeconds": 0,
+      "effect": { "type": "scene", "do": "move_on" },
+      "correctWhen": { "field": "done.tag_casualty", "op": "eq", "value": true },
+      "feedbackWrong": "Tag the casualty before moving on, so the next team knows their priority."
+    },
+    {
+      "id": "apply_tourniquet",
+      "label": "Apply a tourniquet",
+      "group": "intervention",
+      "timeCostSeconds": 20,
+      "effect": {
+        "type": "intervene",
+        "overlay": "tourniquet",
+        "target": "catastrophic_bleed",
+        "card": { "field": "treatment", "template": "Tourniquet {region} {time}" }
+      },
+      "correctWhen": { "field": "catastrophicBleedSite", "op": "eq", "value": "tourniquet_site" },
+      "feedbackWrong": "A tourniquet only helps a catastrophic bleed on an arm or leg. Pack and press on junctional bleeds."
+    },
+    {
+      "id": "direct_pressure",
+      "label": "Apply firm direct pressure",
+      "group": "intervention",
+      "timeCostSeconds": 10,
+      "effect": {
+        "type": "intervene",
+        "overlay": "hand_pressure",
+        "params": { "by": "rescuer" },
+        "target": "catastrophic_bleed",
+        "card": { "field": "treatment", "template": "Direct pressure {region} {time}" }
+      },
+      "correctWhen": { "field": "catastrophicBleed", "op": "eq", "value": true },
+      "feedbackWrong": "Only a catastrophic bleed needs you to stop and press during the sieve. Minor bleeding can wait."
+    },
+    {
+      "id": "pack_wound",
+      "label": "Pack the wound and press",
+      "group": "intervention",
+      "timeCostSeconds": 30,
+      "effect": {
+        "type": "intervene",
+        "overlay": "wound_packing",
+        "target": "catastrophic_bleed",
+        "card": { "field": "treatment", "template": "Wound packed {region} {time}" }
+      },
+      "correctWhen": { "field": "catastrophicBleedSite", "op": "in", "value": ["junctional", "other"] },
+      "feedbackWrong": "Packing is for catastrophic bleeds where a tourniquet won't fit (groin, neck, armpit). On a limb a tourniquet is faster."
+    },
+    {
+      "id": "self_pressure",
+      "label": "Ask them to press firmly on their own wound",
+      "group": "intervention",
+      "timeCostSeconds": 5,
+      "effect": {
+        "type": "intervene",
+        "overlay": "hand_pressure",
+        "params": { "by": "self" },
+        "target": "major_bleed",
+        "card": { "field": "treatment", "template": "Self-pressure {region} {time}" }
+      },
+      "correctWhen": {
+        "all": [
+          { "field": "obeysCommands", "op": "eq", "value": true },
+          { "field": "majorBleed", "op": "eq", "value": true }
+        ]
+      },
+      "feedbackWrong": "Self-pressure only works for a major bleed in someone who can follow instructions. A catastrophic bleed needs you."
+    },
+    {
+      "id": "give_oral_glucose",
+      "label": "Give them something sugary to eat or drink",
+      "group": "intervention",
+      "timeCostSeconds": 15,
+      "effect": {
+        "type": "intervene",
+        "sets": { "glucoseGiven": true },
+        "card": { "field": "treatment", "template": "Oral glucose {time}" }
+      },
+      "correctWhen": {
+        "all": [
+          { "field": "listedForCasualty", "op": "eq", "value": true },
+          { "field": "obeysCommands", "op": "eq", "value": true },
+          { "field": "canTalk", "op": "eq", "value": true }
+        ]
+      },
+      "feedbackWrong": "Sugar by mouth is only for a known low blood sugar in someone awake enough to swallow safely. Never give anything by mouth to a drowsy or confused casualty."
+    },
+    {
+      "id": "help_use_inhaler",
+      "label": "Help them use their own reliever inhaler",
+      "group": "intervention",
+      "timeCostSeconds": 20,
+      "effect": {
+        "type": "intervene",
+        "sets": { "inhalerUsed": true },
+        "card": { "field": "treatment", "template": "Own reliever inhaler {time}" }
+      },
+      "correctWhen": {
+        "all": [
+          { "field": "listedForCasualty", "op": "eq", "value": true },
+          { "field": "obeysCommands", "op": "eq", "value": true }
+        ]
+      },
+      "feedbackWrong": "Only helpful for someone with asthma who has their own reliever and can still follow instructions."
+    },
+    {
+      "id": "recovery_position",
+      "label": "Put them in the recovery position",
+      "group": "intervention",
+      "timeCostSeconds": 15,
+      "effect": {
+        "type": "set_pose",
+        "pose": "recovery",
+        "card": { "field": "treatment", "template": "Recovery position {time}" }
+      },
+      "correctWhen": {
+        "all": [
+          {
+            "any": [
+              { "field": "breathing", "op": "eq", "value": true },
+              { "field": "breathesAfterAirwayOpen", "op": "eq", "value": true }
+            ]
+          },
+          { "field": "responsive", "op": "in", "value": ["pain", "unresponsive"] },
+          { "field": "entrapped", "op": "eq", "value": false }
+        ]
+      },
+      "feedbackWrong": "The recovery position is for someone who is breathing (on their own or once the airway is opened) but only responds to pain or not at all. They were awake, not breathing, or trapped."
+    },
+    {
+      "id": "start_cpr",
+      "label": "Start CPR",
+      "group": "trap",
+      "timeCostSeconds": 120,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "In an MCI, someone not breathing after one airway attempt is tagged dead. CPR ties a rescuer to one casualty while others who could be saved wait."
+    },
+    {
+      "id": "splint_limb",
+      "label": "Splint the injured limb",
+      "group": "trap",
+      "timeCostSeconds": 90,
+      "effect": {
+        "type": "intervene",
+        "overlay": "splint",
+        "target": "deformity",
+        "card": { "field": "treatment", "template": "Splinted {region} {time}" }
+      },
+      "correctWhen": false,
+      "feedbackWrong": "Splinting is good first aid but not part of the sieve. Tag and move on; treatment teams splint later."
+    },
+    {
+      "id": "give_water",
+      "label": "Give them a drink of water",
+      "group": "trap",
+      "timeCostSeconds": 15,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Injured casualties may need surgery or may vomit; nothing by mouth. It also costs time."
+    },
+    {
+      "id": "full_head_to_toe",
+      "label": "Do a full head-to-toe check",
+      "group": "trap",
+      "timeCostSeconds": 180,
+      "effect": { "type": "reveal_findings", "all": true },
+      "correctWhen": false,
+      "feedbackWrong": "A full survey finds everything but takes minutes. The sieve needs only walking, breathing, circulation and commands."
+    },
+    {
+      "id": "detailed_history",
+      "label": "Take a detailed history",
+      "group": "trap",
+      "timeCostSeconds": 120,
+      "effect": { "type": "ask", "info": "all", "requires": "canTalk" },
+      "correctWhen": false,
+      "feedbackWrong": "A detailed history belongs to the treatment area, not the first sweep."
+    },
+    {
+      "id": "release_from_entrapment",
+      "label": "Lift the debris off and pull them free",
+      "group": "trap",
+      "timeCostSeconds": 120,
+      "effect": {
+        "type": "intervene",
+        "sets": { "entrapped": false },
+        "card": { "field": "other", "template": "Released from entrapment {time}" }
+      },
+      "correctWhen": false,
+      "feedbackWrong": "Releasing a long-trapped casualty without medical support can cause sudden collapse (crush syndrome). Flag them for medical before release."
+    },
+    {
+      "id": "flag_for_medical",
+      "label": "Flag for medical before release",
+      "group": "communication",
+      "timeCostSeconds": 10,
+      "effect": {
+        "type": "scene",
+        "do": "flag_for_medical",
+        "card": { "field": "other", "template": "Trapped - medical needed before release {time}" }
+      },
+      "correctWhen": { "field": "entrapped", "op": "eq", "value": true },
+      "feedbackWrong": "They were not trapped, so there was nothing to flag."
+    },
+    {
+      "id": "stay_and_comfort",
+      "label": "Stay with them and keep them company",
+      "group": "trap",
+      "timeCostSeconds": 60,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Kind, but every minute here is a minute another casualty waits to be triaged."
+    },
+    {
+      "id": "move_casualty",
+      "label": "Drag them to a safer spot",
+      "group": "trap",
+      "timeCostSeconds": 30,
+      "effect": { "type": "scene", "do": "move_casualty" },
+      "correctWhen": {
+        "all": [
+          { "field": "hazardActive", "op": "eq", "value": true },
+          { "field": "entrapped", "op": "eq", "value": false }
+        ]
+      },
+      "feedbackWrong": "Moving a casualty without an immediate hazard risks worsening injuries and takes you away from the sieve."
+    },
+    {
+      "id": "remove_impaled_object",
+      "label": "Pull out the impaled object",
+      "group": "trap",
+      "timeCostSeconds": 20,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Never remove an impaled object; it may be plugging a major bleed. Pad around it and leave it."
+    },
+    {
+      "id": "apply_collar",
+      "label": "Apply a cervical collar",
+      "group": "trap",
+      "timeCostSeconds": 60,
+      "effect": {
+        "type": "intervene",
+        "overlay": "cervical_collar",
+        "region": "neck",
+        "card": { "field": "treatment", "template": "Collar applied {time}" }
+      },
+      "correctWhen": false,
+      "feedbackWrong": "Spinal care is not part of the sieve; note the mechanism and move on."
+    },
+    {
+      "id": "cool_burn",
+      "label": "Cool the burn with running water",
+      "group": "trap",
+      "timeCostSeconds": 120,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Cooling is correct first aid but takes 20 minutes. In the sieve, tag and get a walking wounded or treatment team to cool."
+    },
+    {
+      "id": "wrap_in_blanket",
+      "label": "Wrap them in a blanket",
+      "group": "trap",
+      "timeCostSeconds": 30,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Warmth matters, but it comes after the sieve. Ask a walking wounded or bystander to do it."
+    },
+    {
+      "id": "search_for_id",
+      "label": "Search their pockets for ID",
+      "group": "trap",
+      "timeCostSeconds": 20,
+      "effect": { "type": "ask", "info": "identity", "requires": "none" },
+      "correctWhen": false,
+      "feedbackWrong": "\"Unknown\" is a valid entry. Searching for ID costs time you need for the sieve."
+    },
+    {
+      "id": "measure_bp",
+      "label": "Measure blood pressure",
+      "group": "trap",
+      "timeCostSeconds": 60,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Blood pressure isn't part of the sieve; radial pulse and capillary refill tell you enough."
+    },
+    {
+      "id": "clean_wound",
+      "label": "Clean and dress the cuts",
+      "group": "trap",
+      "timeCostSeconds": 60,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Minor wounds wait. Only catastrophic bleeding is treated during the sieve."
+    },
+    {
+      "id": "call_mum",
+      "label": "Call your mum",
+      "group": "silly",
+      "timeCostSeconds": 60,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "She'd be proud you volunteered, but maybe call after the exercise."
+    },
+    {
+      "id": "check_phone",
+      "label": "Check your phone",
+      "group": "silly",
+      "timeCostSeconds": 30,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Nothing on your phone is more urgent than the casualty in front of you."
+    },
+    {
+      "id": "take_selfie",
+      "label": "Take a selfie with the casualty",
+      "group": "silly",
+      "timeCostSeconds": 15,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Please don't. Privacy and dignity apply in a disaster too."
+    },
+    {
+      "id": "look_for_snacks",
+      "label": "Look for snacks",
+      "group": "silly",
+      "timeCostSeconds": 45,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Eat at the rest break, not mid-sieve."
+    },
+    {
+      "id": "post_update",
+      "label": "Post an update on social media",
+      "group": "silly",
+      "timeCostSeconds": 30,
+      "effect": { "type": "waste" },
+      "correctWhen": false,
+      "feedbackWrong": "Information goes through the incident controller, not your socials."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "nzrt-triage-trainer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "validate": "node tools/validate.mjs",
+    "preview:art": "node tools/render-preview.mjs"
+  }
+}
