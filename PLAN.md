@@ -77,7 +77,9 @@ Full spec: [content/FORMAT.md](content/FORMAT.md). The key ideas:
 - **Scenes** place casualties on a 0–100 map with bystanders, hazards and timed events. A scene can override a casualty's approach, mechanism, speech and teaching text so one casualty can be reused in another incident.
 
 ## Triage rules (placeholder)
-`content/triage-rules.json` holds the categories, the penalty matrix and an ordered sieve per age group. Each step has a condition, a category, the actions needed to evaluate it (`checks`) and the actions needed to rule it out (`ruleOutChecks`).
+`content/triage-rules.json` holds the categories, the penalty matrix, the named `thresholds` and an ordered sieve per age group. Each step has a condition, a category, the actions needed to evaluate it (`checks`) and the actions needed to rule it out (`ruleOutChecks`).
+
+**Thresholds live in one place.** Conditions refer to named thresholds (`adult.rrLow` 10, `adult.rrHigh` 30, `adult.crtMax` 2, `child.rrLow` 15, `child.rrHigh` 45) and every text quotes them as `{{adult.rrHigh}}`, filled in when content loads. Swapping in NZRT's numbers is a change to `thresholds`; the validator then lists every casualty whose expected category changes, and no teaching text goes stale.
 
 **Adult:**
 1. Catastrophic bleeding (in someone still alive) → red, after controlling it
@@ -242,6 +244,10 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 - **Public repo recommended:** Pages on a private repo needs a paid GitHub plan. The content has no personal data (all casualties are fictional).
 - **Editing content without code:** edit a JSON file on github.com and commit. The Action validates it, and the error log names the casualty and field if something's wrong.
 - **The contact sheet is published** at `<site>/preview/` so an NZRT clinician can review every casualty's picture, text and stages without installing anything.
+
+## Ideal run and team challenges
+- **Ideal run.** The debrief shows, for each casualty, the shortest correct sequence from the state they were in when you reached them: danger check, catastrophic bleed control (exposing first if it is hidden), the sieve checks in rule order (looking again after opening the airway), life-saving and key actions, then the tag with the sieve question that decides it. Each step is marked done or missed, with its time, next to your own time at that casualty. The simulator plays every casualty and scene by following the ideal run and requires it to be flawless.
+- **Team challenges.** A challenge link fixes the scene, the seed and the hints and quick-time settings, so everyone gets the same casualties, vitals and random events and can compare scores. The debrief can share the run and a one-line result.
 
 ## Progress tracking
 The home screen shows how many Learn and Full scenes you have completed, your best score per scene (and best without hints), plays, and a suggested next scene. The debrief says when you beat your best. Progress can be reset.

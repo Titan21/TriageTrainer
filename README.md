@@ -29,6 +29,9 @@ See [PLAN.md](PLAN.md) for the design, the build order and the open questions.
    - interventions you missed
    - traps you fell for, and why they matter in an MCI
    - what you did well for safety (being careful is never penalised)
+   - the ideal run for each casualty: the shortest correct sequence, step by step, against your own
+
+**Team challenges:** share a link and everyone plays the same casualties, vitals and events with the same settings, so you can compare scores.
 
 Optional **quick-time events** pause the game for an aftershock, a gas smell or a whistle signal: you have 12 seconds to read the situation and respond. The home screen tracks which scenes you've completed and your best scores, on this device only.
 
