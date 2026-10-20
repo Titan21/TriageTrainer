@@ -602,7 +602,7 @@ for (const file of sceneFiles) {
       if (ev.penaltyIfWrong && !['major', 'minor'].includes(ev.penaltyIfWrong)) err(ew, 'penaltyIfWrong must be major or minor');
       if (ev.type === 'signal' && !signalIds.includes(ev.signal)) err(ew, `signal "${ev.signal}" is not in vocab.signals`);
       if (ev.qte != null && !isBool(ev.qte)) err(ew, 'qte must be true/false');
-      if (ev.qteSeconds != null && !(isNum(ev.qteSeconds) && ev.qteSeconds >= 2)) err(ew, 'qteSeconds must be at least 2');
+      if (ev.qteSeconds != null && !(isNum(ev.qteSeconds) && ev.qteSeconds >= 8)) err(ew, 'qteSeconds must be at least 8 (time to notice, read the options and choose)');
       if (QTE_TYPES.includes(ev.type) && ev.type !== 'signal' && [ev.correctResponse ?? []].flat().some((r) => r !== 'ignore')) {
         if (typeof ev.cue !== 'string' || !ev.cue.trim()) warn(ew, 'add a cue (what the player senses) so this can run as a quick-time event without giving the answer away');
         else checkCueGivesNothingAway(ew, ev.cue);

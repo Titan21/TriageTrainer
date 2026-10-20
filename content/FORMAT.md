@@ -243,7 +243,7 @@ Safety actions (`check_danger`, `don_gloves`, `make_safe`, `withdraw`, `drop_cov
 
 ### Quick-time events and signals
 
-When the player turns quick-time events on, every `aftershock`, `hazard_appears` and `signal` event that has a `correctResponse` pauses play and asks for a response against a real-time limit (`qteSeconds`, default 5). The player sees only the `cue`, never the description, and picks from the same six answers every time (drop, cover and hold; leave the zone; evacuate; stop and stay quiet; resume work; keep working).
+When the player turns quick-time events on, every `aftershock`, `hazard_appears` and `signal` event that has a `correctResponse` pauses play and asks for a response against a real-time limit (`qteSeconds`, default 12 s, minimum 8; a right answer within twice the limit still counts, as slow). The player sees only the `cue`, never the description, and picks from the same six answers every time (drop, cover and hold; leave the zone; evacuate; stop and stay quiet; resume work; keep working).
 
 - `cue`: what the player senses, in the second person, without naming the answer ("The ground lurches and the shelving beside you starts to sway.", "You notice a smell of gas, getting stronger."). The validator warns when a cue gives the answer away.
 - `followUpCue`: what they sense after the first response when `correctResponse` is a list (aftershock: drop, cover and hold, then "The shaking stops. The wall above you has a new crack running through it." → leave the zone).

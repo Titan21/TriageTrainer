@@ -34,7 +34,7 @@ const SETTINGS: Record<SettingId, { title: string; text: string; set: (on: boole
   },
   qte: {
     title: 'Quick-time events',
-    text: 'Sudden events like aftershocks, gas or whistle signals pause the game: respond within 5 seconds.',
+    text: 'Sudden events like aftershocks, gas or whistle signals pause the game. You have 12 seconds to read and respond; a little longer still counts, as slow.',
     set: (on) => { app.qte = on; setQtePref(on); },
   },
   sound: {

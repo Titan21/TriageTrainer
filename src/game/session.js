@@ -39,7 +39,9 @@ export const CORE_ACTIONS = [
 export const SCENE_ACTIONS = ['check_danger', 'don_gloves', 'call_walking_wounded', 'make_safe', 'withdraw', 'drop_cover_hold', 'evacuate', 'stop_and_listen', 'resume_work', 'radio_methane', 'call_for_help'];
 /** Answers offered in every quick-time prompt (shuffled), so the right one has to be recognised. */
 export const QTE_CHOICES = ['drop_cover_hold', 'withdraw', 'evacuate', 'stop_and_listen', 'resume_work', 'keep_working'];
-const QTE_SECONDS = 5;
+// Time to notice the prompt, read the cue and the six options, weigh them and choose. The UI adds a grace
+// period of the same length in which a right answer still counts, as slow.
+const QTE_SECONDS = 12;
 /** Actions that put hands on a casualty: check for danger first. */
 const isHandsOn = (a) => ['assessment', 'intervention', 'trap'].includes(a.group) && a.id !== 'ask_to_walk';
 const ENTRY_POINT = [50, 100];

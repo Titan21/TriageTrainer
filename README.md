@@ -30,7 +30,7 @@ See [PLAN.md](PLAN.md) for the design, the build order and the open questions.
    - traps you fell for, and why they matter in an MCI
    - what you did well for safety (being careful is never penalised)
 
-Optional **quick-time events** pause the game for an aftershock, a gas smell or a whistle signal: respond within 5 seconds. The home screen tracks which scenes you've completed and your best scores, on this device only.
+Optional **quick-time events** pause the game for an aftershock, a gas smell or a whistle signal: you have 12 seconds to read the situation and respond. The home screen tracks which scenes you've completed and your best scores, on this device only.
 
 Modes: **Learn** (one to three casualties, with hints) and **Full scene** (8–10 casualties on a map, with bystanders, hazards and re-triage).
 
