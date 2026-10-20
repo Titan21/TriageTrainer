@@ -1,6 +1,6 @@
 import { content } from './engine';
 import { app } from './state';
-import { unlockAudio } from './sound';
+import { playBlasts, unlockAudio, type Playing } from './sound';
 import { esc, setHintsPref, setQtePref, setSoundPref, tagVars } from './util';
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -48,12 +48,41 @@ const switchRow = (id: SettingId) => `<label class="switch"><input type="checkbo
     <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
     <span class="switch-text"><strong>${SETTINGS[id].title}</strong><small>${SETTINGS[id].text}</small></span></label>`;
 
+/** Under the Sound switch: one short whistle blast at game pitch and volume, to set the device volume. */
+const soundTest = () => `<div class="sound-test">
+    <button type="button" class="btn btn-quiet btn-small" data-sound-test>Play example</button>
+    <span class="sound-test-note" role="status" aria-live="polite">One short whistle blast, as loud as the game plays it.</span>
+  </div>`;
+
 /** The on/off settings, one panel. Call bindSettings on the page afterwards. */
 export function settingsPanel(which: SettingId[] = ['hints', 'qte', 'sound']): string {
-  return `<div class="panel settings">${which.map(switchRow).join('')}</div>`;
+  return `<div class="panel settings">${which.map((id) => (id === 'sound' ? `<div class="setting-group">${switchRow(id)}${soundTest()}</div>` : switchRow(id))).join('')}</div>`;
+}
+
+let example: Playing | null = null;
+
+async function playExample(button: HTMLButtonElement, note: HTMLElement): Promise<void> {
+  example?.stop();
+  unlockAudio();
+  button.disabled = true;
+  example = await playBlasts([1]);
+  if (!example) {
+    note.textContent = 'No sound could play. Check that this tab and your device are not muted, then try again.';
+    button.disabled = false;
+    return;
+  }
+  note.textContent = 'Playing…';
+  window.setTimeout(() => {
+    button.disabled = false;
+    note.textContent = app.sound
+      ? 'Set your volume so that was clearly audible but not uncomfortable.'
+      : "Sound is off, so the game won't play signals. Turn it on above to hear them.";
+  }, 1200);
 }
 
 export function bindSettings(root: HTMLElement): void {
+  const test = root.querySelector<HTMLButtonElement>('[data-sound-test]');
+  if (test) test.addEventListener('click', () => void playExample(test, root.querySelector<HTMLElement>('.sound-test-note')!));
   root.querySelectorAll<HTMLInputElement>('[data-setting]').forEach((input) => {
     input.addEventListener('change', () => {
       SETTINGS[input.dataset.setting as SettingId].set(input.checked);

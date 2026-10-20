@@ -592,3 +592,9 @@ dialog.dlg::backdrop { background: rgba(10, 14, 16, 0.6); }
 /* Quick-time grace period: the bar turns amber once the target time has passed */
 .qte-timer.is-late .qte-bar > span { background: #b7791f; }
 .qte-timer.is-late { color: #b7791f; }
+
+/* Sound calibration under the Sound switch */
+.settings .setting-group + .switch, .settings .switch + .setting-group { border-top: 1px solid var(--line); padding-top: 14px; }
+.sound-test { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 10px 0 0 calc(52px + 14px); }
+.sound-test-note { color: var(--ink-soft); font-size: 0.875rem; flex: 1 1 14rem; }
+@media (max-width: 420px) { .sound-test { margin-left: 0; } }
