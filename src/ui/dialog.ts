@@ -16,6 +16,8 @@ function ensure(): HTMLDialogElement {
     if (hit && handler) handler(hit, () => dlg!.close());
   });
   dlg.addEventListener('close', () => {
+    // The close event arrives a moment after close(); if another dialog has opened since, it owns the handler.
+    if (dlg!.open) return;
     handler = null;
     const key = returnKey;
     returnKey = undefined;

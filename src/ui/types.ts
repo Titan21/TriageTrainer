@@ -123,6 +123,8 @@ export interface DebriefCasualty {
   verdict?: 'correct' | 'under' | 'over';
   reason: string; mistakes: string[]; teaching: string[]; missedFindings: string[]; deteriorated?: string;
   stages: { id: string; note?: string; status: string; at: number | null }[];
+  /** The shortest correct sequence for this casualty. Absent when the engine does not provide it. */
+  ideal?: { steps: { id: string; label: string; seconds: number; why?: string; done: boolean }[]; seconds: number; yours: number };
 }
 
 export interface Debrief {
@@ -131,6 +133,8 @@ export interface Debrief {
   casualties: DebriefCasualty[];
   items: { points: number; text: string; casualty: string | null; kind: string }[];
   teaching: string[];
+  /** Action time over the visited casualties, ideal against yours. Absent when the engine does not provide it. */
+  ideal?: { seconds: number; yours: number };
   /** Things done well: scene safety, danger checks, quick-time reactions. */
   credits: { text: string; kind: 'safety' | 'reaction' }[];
   safety: {

@@ -11,12 +11,14 @@
 //       danger check shows the injury and doing it shows the credit.
 //   qte=1 turns quick-time events on. While playing the steps, prompts are answered for you:
 //       qteanswer=right (default) | wrong | slow | freeze.
+//   hints=0|1 plays with those hints settings (like a challenge link), challenge=1 marks the run as a team challenge run.
+//   mockideal=1 adds made-up "ideal run" data to the debrief when the engine does not provide it yet.
 //   prompt=<n> (with qte=1) plays careful steps until the n-th quick-time prompt is waiting (earlier ones are answered
 //       as qteanswer says), then stops there, so the play screen opens with that prompt on top.
 import { triage } from '../engine/rules.js';
 import { answerPrompt, approach as engineApproach, content, debrief, perform as enginePerform } from './engine';
 import { app, injuryAfter, startGame } from './state';
-import type { Scene, Session } from './types';
+import type { Debrief, Scene, Session } from './types';
 
 // Record the last result like the play screen does, so a jumped-to state shows a realistic result line.
 function perform(s: Session, id: string, opts: { category?: string } = {}) {
@@ -86,11 +88,31 @@ function withLocalHazard(sceneId: string): string {
   return id;
 }
 
+/** Made-up ideal-run data, only to look at the layout when the engine's own is missing. */
+function mockIdeal(d: Debrief): void {
+  if (d.ideal) return;
+  const plan: [string, string, boolean][] = [
+    ['check_danger', 'Check for danger before you kneel down.', true], ['check_breathing', 'Breathing rate under 10 or over 30?', true],
+    ['check_radial_pulse', 'Is there a radial pulse?', false], ['give_command', 'Can they follow a simple command?', true], ['tag_casualty', '', true],
+  ];
+  let total = 0;
+  for (const c of d.casualties) {
+    const steps = plan.map(([id, why, done]) => ({ id, label: content.actions.get(id)?.label ?? id, seconds: content.actions.get(id)?.timeCostSeconds ?? 5, why, done }));
+    const seconds = steps.reduce((a, st) => a + st.seconds, 0);
+    c.ideal = { steps, seconds, yours: seconds + 50 };
+    total += seconds;
+  }
+  d.ideal = { seconds: total, yours: total + 50 * d.casualties.length };
+}
+
 /** Sets up app state from the URL. Returns options for the play screen. */
 export function setup(screen: 'play' | 'debrief', q: URLSearchParams): { dialog: string | null } {
   if (q.has('qte')) app.qte = q.get('qte') === '1';
   const sceneId = q.get('localhazard') === '1' ? withLocalHazard(q.get('scene')!) : q.get('scene')!;
-  const s = startGame(sceneId, q.get('seed') ?? 'dev');
+  const s = startGame(sceneId, q.get('seed') ?? 'dev', undefined, {
+    hints: q.has('hints') ? q.get('hints') === '1' : undefined,
+    challenge: q.get('challenge') === '1',
+  });
   const stopAt = Number(q.get('prompt')) || 0;
   const mode = (q.get('qteanswer') ?? 'right') as QteAnswer;
   const auto = q.get('auto') ?? (stopAt ? 'all' : '0');
@@ -110,6 +132,9 @@ export function setup(screen: 'play' | 'debrief', q: URLSearchParams): { dialog:
       if (settle() || ++n >= limit) break;
     }
   }
-  if (screen === 'debrief') app.report = debrief(s);
+  if (screen === 'debrief') {
+    app.report = debrief(s);
+    if (q.get('mockideal') === '1') mockIdeal(app.report);
+  }
   return { dialog: q.get('dialog') };
 }

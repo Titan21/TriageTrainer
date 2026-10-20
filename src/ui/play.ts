@@ -82,7 +82,7 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
     const ev = m?.event ? s.events.find((e) => e.def.id === m.event) : undefined;
     const show = !!m?.urgent && !ev?.resolved;
     if (!show || !m) { R.urgent.hidden = true; setHtml(R.urgent, ''); return; }
-    const left = app.hints && ev?.deadlineAt != null && !ev.missed ? Math.max(0, Math.round(ev.deadlineAt - s.clock)) : null;
+    const left = s.hints && ev?.deadlineAt != null && !ev.missed ? Math.max(0, Math.round(ev.deadlineAt - s.clock)) : null;
     R.urgent.hidden = false;
     setHtml(R.urgent, `<span class="urgent-icon" aria-hidden="true">!</span>
       <div class="urgent-text"><strong>Urgent</strong> <span class="mono">${clockText(s, m.t, true)}</span> ${esc(displayText(m))}${left != null ? ` <span class="urgent-left">About ${left} s to respond.</span>` : ''}</div>
@@ -153,7 +153,7 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
   function renderResult() {
     const r = ui.last;
     if (!r) { setHtml(R.result, '<p class="result-empty">Nothing done yet. Go to a casualty, or call out for anyone who can walk.</p>'); return; }
-    const wrong = !r.correct && app.hints;
+    const wrong = !r.correct && s.hints;
     // The injury sentence leads the text of the step that caused it: lift it out so it stands apart.
     const hurt = ui.notice && r.text.startsWith(ui.notice.text) ? ui.notice : null;
     const rest = hurt ? r.text.slice(hurt.text.length) : r.text;
@@ -188,7 +188,7 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
   }
 
   function renderHint() {
-    setHtml(R.hint, app.hints ? `<p class="hint"><span class="hint-label">Hint</span> ${esc(hint(s))}</p>` : '');
+    setHtml(R.hint, s.hints ? `<p class="hint"><span class="hint-label">Hint</span> ${esc(hint(s))}</p>` : '');
   }
 
   function renderActions() {
@@ -239,7 +239,7 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
     // No toast when the result line is already fully on screen (wide layouts, or a short scroll).
     const box = R.result.getBoundingClientRect();
     if (box.top >= R.bar.getBoundingClientRect().bottom && box.bottom <= window.innerHeight) { hideToast(); return; }
-    const wrong = !r.correct && app.hints;
+    const wrong = !r.correct && s.hints;
     R.toast.innerHTML = `<strong>${esc(r.title)}</strong> ${r.seconds ? `<span class="mono">${r.seconds}&nbsp;s</span>` : ''}<br>${esc(r.text)}${wrong ? `<br><em>Not needed here. ${esc(r.feedback ?? '')}</em>` : ''}`;
     R.toast.hidden = false;
     clearTimeout(toastTimer);

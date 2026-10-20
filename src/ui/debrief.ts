@@ -1,4 +1,5 @@
 import { clockText, content, picture } from './engine';
+import { challengeCode, openChallengeDialog, resultText, settingsText, shareInto } from './challenge';
 import { crossIcon, header, protocolBanner, tagBadge, tickIcon } from './components';
 import { startGame, app } from './state';
 import { recordResult, type RecordResult } from './progress';
@@ -14,6 +15,17 @@ const VERDICT: Record<string, { text: string; cls: string }> = {
 };
 
 const list = (items: string[], cls = '') => (items.length ? `<ul class="plain ${cls}">${items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : '');
+
+/** The shortest correct sequence for this casualty, with what you did. Open by default on wide screens, folded on phones. */
+function idealRun(c: DebriefCasualty): string {
+  const i = c.ideal;
+  if (!i?.steps?.length) return '';
+  const open = typeof matchMedia === 'function' && matchMedia('(min-width: 900px)').matches;
+  const rows = i.steps.map((st) => `<li class="ideal-row ${st.done ? 'is-done' : 'is-missed'}"><span class="mark">${st.done ? tickIcon() : crossIcon()}</span>
+      <span class="ideal-body"><span class="ideal-line"><span class="sr-only">${st.done ? 'Done: ' : 'Not done: '}</span>${esc(st.label)} <span class="mono muted">${st.seconds}&nbsp;s</span></span>${st.why ? `<span class="ideal-why">${esc(st.why)}</span>` : ''}</span></li>`).join('');
+  return `<details class="ideal"${open ? ' open' : ''}><summary><span class="ideal-title">Ideal run</span><span class="ideal-times">Ideal <strong>${i.seconds}&nbsp;s</strong> &middot; You <strong>${i.yours}&nbsp;s</strong></span></summary>
+      <ol class="ideal-steps">${rows}</ol></details>`;
+}
 
 function casualtyCard(s: Session, c: DebriefCasualty, index: number): string {
   const v = VERDICT[c.verdict ?? 'none'];
@@ -41,6 +53,7 @@ function casualtyCard(s: Session, c: DebriefCasualty, index: number): string {
       ${c.missedFindings.length ? `<h4>You did not find</h4>${list(c.missedFindings)}` : ''}
       ${stages ? `<h4>What changed over time</h4><ul class="plain stages">${stages}</ul>` : ''}
       ${c.teaching.length ? `<h4>Teaching points</h4>${list(c.teaching, 'teaching')}` : ''}
+      ${idealRun(c)}
     </div></article>`;
 }
 
@@ -104,8 +117,29 @@ function scoreBox(d: Debrief, r: RecordResult): string {
         <div><dt>Over-triage</dt><dd>${d.over}</dd></div>
         <div class="${over ? 'is-over' : ''}"><dt>Time</dt><dd><span class="mono">${mmss(d.seconds)}</span> vs <span class="mono">${mmss(d.targetSeconds)}</span> target</dd></div>
       </dl>
+      ${d.ideal ? `<p class="ideal-total">Ideal total <strong class="mono">${mmss(d.ideal.seconds)}</strong> of action time; you used <strong class="mono">${mmss(d.ideal.yours)}</strong>.</p>` : ''}
     </section>`;
 }
+
+/** Same run again for the team: the code, the link, and the result as text to post. */
+function teamSection(s: Session, fromChallenge: boolean): string {
+  return `<section class="panel team" aria-labelledby="team-h">
+      <h2 id="team-h">Team challenge</h2>
+      <p>${fromChallenge ? 'You played a team challenge. ' : ''}Run code <strong class="code-chip">${esc(challengeCode(s.seed))}</strong> <span class="muted">(${esc(settingsText(s.hints, s.qte))})</span>. Send the link and everyone plays the same casualties with the same vitals.</p>
+      <div class="team-actions">
+        <button type="button" class="btn btn-primary" data-challenge data-key="challenge">Challenge your team to this run</button>
+        <button type="button" class="btn" data-copy-result data-key="copy-result">Copy result</button>
+      </div>
+      <p class="share-status" role="status" aria-live="polite" data-copy-status></p>
+      <div data-copy-box></div>
+    </section>`;
+}
+
+const againRow = (fromChallenge: boolean) => `<div class="actions-row">
+      <button class="btn btn-primary btn-big" data-again>Play again</button>
+      ${fromChallenge ? '<button class="btn btn-big" data-retry>Try this challenge again</button>' : ''}
+      <a class="btn" href="#/">Back to scenes</a>
+    </div>`;
 
 export function mountDebrief(root: HTMLElement): boolean {
   const s = app.session;
@@ -113,6 +147,7 @@ export function mountDebrief(root: HTMLElement): boolean {
   if (!s || !d) return false;
   const nameOf = (id: string | null) => (id ? d.casualties.find((c) => c.id === id)?.name ?? '' : '');
   const progress = recordResult(s, d);
+  const fromChallenge = app.playedChallenge;
   const sceneItems = d.items.filter((i) => i.kind !== 'mistake');
   const kindLabel: Record<string, string> = { danger: 'Danger', safety: 'Safety', time: 'Time', action: 'Wrong action', event: 'Event' };
 
@@ -121,10 +156,8 @@ export function mountDebrief(root: HTMLElement): boolean {
     <h1 tabindex="-1">Debrief: ${esc(s.scene.title)}</h1>
     ${protocolBanner()}
     ${scoreBox(d, progress)}
-    <div class="actions-row">
-      <button class="btn btn-primary btn-big" data-again>Play again</button>
-      <a class="btn" href="#/">Back to scenes</a>
-    </div>
+    ${againRow(fromChallenge)}
+    ${teamSection(s, fromChallenge)}
     ${safetySection(s, d)}
     <section aria-labelledby="cas-h"><h2 id="cas-h">Casualties</h2>
       <div class="dcards">${d.casualties.map((c, i) => casualtyCard(s, c, i)).join('')}</div></section>
@@ -133,11 +166,8 @@ export function mountDebrief(root: HTMLElement): boolean {
         : '<p class="muted">Nothing to report: you stayed safe, kept to time and chose well.</p>'}
     </section>
     ${d.teaching.length ? `<section class="panel" aria-labelledby="teach-h"><h2 id="teach-h">What to remember from this scene</h2>${list(d.teaching, 'teaching')}</section>` : ''}
-    <div class="actions-row">
-      <button class="btn btn-primary btn-big" data-again>Play again</button>
-      <a class="btn" href="#/">Back to scenes</a>
-    </div>
-    <p class="seed">Scene ${esc(s.scene.id)} &middot; seed <code>${esc(s.seed)}</code> &middot; ${plural(d.casualties.length, 'casualty', 'casualties')}</p>
+    ${againRow(fromChallenge)}
+    <p class="seed">Scene ${esc(s.scene.id)} &middot; code <code>${esc(challengeCode(s.seed))}</code> &middot; ${plural(d.casualties.length, 'casualty', 'casualties')}</p>
   </main>`;
 
   root.querySelectorAll('[data-again]').forEach((b) => b.addEventListener('click', () => {
@@ -145,5 +175,17 @@ export function mountDebrief(root: HTMLElement): boolean {
     startGame(s.scene.id, randomSeed());
     location.hash = '#/play';
   }));
+  // The same run again: same seed and the settings it was played with.
+  root.querySelectorAll('[data-retry]').forEach((b) => b.addEventListener('click', () => {
+    if (s.qte && app.sound) unlockAudio();
+    startGame(s.scene.id, s.seed, undefined, { hints: s.hints, qte: s.qte, challenge: true });
+    location.hash = '#/play';
+  }));
+  root.querySelector('[data-challenge]')!.addEventListener('click', () => openChallengeDialog({
+    sceneId: s.scene.id, sceneTitle: s.scene.title, seed: s.seed, hints: s.hints, qte: s.qte, returnFocusKey: 'challenge',
+  }));
+  root.querySelector('[data-copy-result]')!.addEventListener('click', () => {
+    void shareInto({ text: resultText(s, d) }, root.querySelector<HTMLElement>('[data-copy-status]')!, root.querySelector<HTMLElement>('[data-copy-box]')!);
+  });
   return true;
 }

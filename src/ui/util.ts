@@ -67,8 +67,12 @@ export function parseHash(hash: string): { path: string[]; query: URLSearchParam
 export function seedFromUrl(hashQuery?: URLSearchParams): string | null {
   return new URLSearchParams(location.search).get('seed') ?? hashQuery?.get('seed') ?? null;
 }
+/** Seeds double as challenge codes, so they are short and easy to read out: five characters, no 0/O or 1/I. */
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 export function randomSeed(): string {
-  return Math.random().toString(36).slice(2, 8);
+  let code = '';
+  for (let i = 0; i < 5; i++) code += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
+  return code;
 }
 
 // ----- tag colours -----
