@@ -130,6 +130,7 @@ A casualty file is `{ "prefix": "ci_", "theme": "Circulation and bleeding", "cas
 - Mobility aids (wheelchair, walking frame, crutches, stick) are drawn with the `mobility_aid` appearance overlay. `canWalk` describes whether the person can get themselves to the walking-wounded point; a broken wheelchair means `canWalk: false`.
 - Pick names that fit Aotearoa New Zealand (Maori, Pakeha, Pasifika, Asian, other), varied ages and sexes, and NZ incidents: earthquake, tsunami, flood, landslide, volcanic ash, bus or train crash, building or stand collapse, gas explosion, crowd crush, fire.
 - No gore in any text. Plain, clinical and short.
+- **Never write a sieve threshold as a number.** Quote it from the rules file: `over {{adult.rrHigh}}`, `under {{adult.rrLow}}`, `over {{adult.crtMax}} seconds`, `under {{child.rrLow}} or over {{child.rrHigh}}`. The app fills these in when content loads, so when NZRT's numbers replace the placeholders in `triage-rules.json` (`thresholds`), every text follows. The validator rejects unknown placeholders and warns about written-out threshold numbers. A casualty's own vitals ("a rate of 28 to 30") are data and stay as numbers.
 
 ### State consistency (the validator enforces these)
 

@@ -313,9 +313,9 @@
         ]
       },
       "teaching": [
-        "Children have their own breathing limits in the sieve. In the child sieve only a rate under 15 or over 45 is red.",
+        "Children have their own breathing limits in the sieve. In the child sieve only a rate under {{child.rrLow}} or over {{child.rrHigh}} is red.",
         "Hemi breathes 42 to 44 times a minute. That is orange in a child, but the same rate would be red in an adult.",
-        "At 14, Grace goes through the adult sieve, where more than 30 breaths a minute is red.",
+        "At 14, Grace goes through the adult sieve, where more than {{adult.rrHigh}} breaths a minute is red.",
         "Being trapped does not change the category. Sieve Hemi as normal, then flag him for medical before anyone frees him.",
         "The teacher can give you names and ages. Ask her rather than questioning a frightened child.",
         "Look up before you go in. A classroom with a broken ceiling can shed more on you while you work."

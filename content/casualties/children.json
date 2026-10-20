@@ -217,7 +217,7 @@
         "keyActions": ["flag_for_medical"]
       },
       "teaching": [
-        "A rate over 30 would be red in an adult, but children breathe faster: in a child only a rate under 15 or over 45 is red.",
+        "A rate over {{adult.rrHigh}} would be red in an adult, but children breathe faster: in a child only a rate under {{child.rrLow}} or over {{child.rrHigh}} is red.",
         "Count the breaths: 42 to 44 is orange, but the rate can creep past 45, so check him again.",
         "Being trapped does not change the category: sieve him as normal, then flag him for medical before anyone frees him.",
         "Freeing a child who has been trapped for a long time can cause a sudden collapse."
@@ -611,7 +611,7 @@
       },
       "teaching": [
         "At 14 she goes through the adult sieve, not the child sieve: older children and teenagers are triaged as adults.",
-        "A rate over 30 is red in the adult sieve; 32 breaths a minute in a six-year-old would only be orange.",
+        "A rate over {{adult.rrHigh}} is red in the adult sieve; 32 breaths a minute in a six-year-old would only be orange.",
         "Her bent leg is not why she is red, her fast breathing is, so do not stop to splint it."
       ],
       "tags": ["child", "teenager", "adult_sieve", "respiratory_rate", "red", "bus_crash"]

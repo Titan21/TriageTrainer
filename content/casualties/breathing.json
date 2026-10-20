@@ -347,7 +347,7 @@
         "targetSeconds": 45
       },
       "teaching": [
-        "Count the breaths for the full check; more than 30 a minute is red even when the casualty is awake and talking.",
+        "Count the breaths for the full check; more than {{adult.rrHigh}} a minute is red even when the casualty is awake and talking.",
         "Fast, shallow breathing with a hand held to the chest points to a chest injury.",
         "A talking casualty can tire out quickly, so re-check them if you pass again."
       ],
@@ -412,7 +412,7 @@
         {
           "id": "d1",
           "atSeconds": 120,
-          "note": "Her airway is starting to swell: the voice is hoarse and the rate creeps up, but it is still not over 30.",
+          "note": "Her airway is starting to swell: the voice is hoarse and the rate creeps up, but it is still not over {{adult.rrHigh}}.",
           "state": { "rr": { "range": [29, 30] } },
           "appearance": [
             { "overlay": "sweating" },
@@ -531,7 +531,7 @@
         "targetSeconds": 50
       },
       "teaching": [
-        "A breathing rate under 10 is red even when the casualty is awake, calm and talking to you.",
+        "A breathing rate under {{adult.rrLow}} is red even when the casualty is awake, calm and talking to you.",
         "Strong painkillers can slow breathing until it stops, so tag red and tell the treatment team about the tablets.",
         "Give nothing by mouth to a drowsy casualty; water can be inhaled and block the airway.",
         "A bent leg looks urgent, but splinting is not part of the sieve."
@@ -596,7 +596,7 @@
         "targetSeconds": 45
       },
       "teaching": [
-        "Count, don't guess: 28 to 30 breaths a minute is not over 30, so she is orange.",
+        "Count, don't guess: 28 to 30 breaths a minute is not over {{adult.rrHigh}}, so she is orange.",
         "An anxious, talkative casualty can still be sick; only the count separates orange from red.",
         "She is close to the cut-off and tiring, so say so when you tag her and re-check early."
       ],
@@ -658,7 +658,7 @@
         "targetSeconds": 40
       },
       "teaching": [
-        "Fast, wet-sounding breathing with blue lips after near-drowning means water in the lungs; over 30 breaths a minute is red.",
+        "Fast, wet-sounding breathing with blue lips after near-drowning means water in the lungs; over {{adult.rrHigh}} breaths a minute is red.",
         "A cold, wet casualty makes you want to wrap and comfort them, but a helper can do that after the sieve.",
         "Near-drowning casualties can look better and then get worse, so re-triage them when you can."
       ],

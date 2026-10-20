@@ -310,7 +310,7 @@
       "teaching": [
         "He can walk, even with his stick, so he is green in the first sweep.",
         "Older people with heart disease can collapse after a shock with no injury that explains it, so re-triage them.",
-        "Pale, sweaty, a tight chest and capillary refill over 2 seconds make him red on re-triage.",
+        "Pale, sweaty, a tight chest and capillary refill over {{adult.crtMax}} seconds make him red on re-triage.",
         "Ask about medical history during re-triage, not in the first sweep."
       ],
       "tags": ["walking_wounded", "earthquake", "dust", "older_person", "heart", "re_triage"]
@@ -812,7 +812,7 @@
       },
       "teaching": [
         "He cannot walk, and his breathing, pulse, refill and commands are normal, so he is orange.",
-        "A broken thigh bone can bleed a lot inside the thigh; re-triage him, because a fast pulse and refill over 2 seconds make him red.",
+        "A broken thigh bone can bleed a lot inside the thigh; re-triage him, because a fast pulse and refill over {{adult.crtMax}} seconds make him red.",
         "Splinting is not part of the sieve; tag him and leave the traction splint to the treatment team."
       ],
       "tags": ["fracture", "femur", "bus_crash", "re_triage"]

@@ -10,7 +10,7 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, resolve, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { triage, sampleStates, mergeState, isRange, findingContext, evalCond, condFields, requiredChecks } from '../src/engine/rules.js';
+import { triage, sampleStates, mergeState, isRange, findingContext, evalCond, condFields, requiredChecks, condThresholds, placeholders, getPath } from '../src/engine/rules.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contentDir = join(root, 'content');
@@ -154,8 +154,38 @@ for (const [age, sieve] of Object.entries(rules.sieves)) {
       if (!actions.has(c)) err(w, `check "${c}" is not an action`);
     }
     for (const f of condFields(step.when)) if (!CONTEXT_FIELDS.has(f)) err(w, `reads unknown field "${f}"`);
+    for (const t of condThresholds(step.when)) if (typeof getPath(rules.thresholds ?? {}, t) !== 'number') err(w, `threshold "${t}" is not in rules.thresholds`);
   }
 }
+
+// ---------- thresholds quoted in text ----------
+
+const thresholdRefs = [];
+for (const [group, values] of Object.entries(rules.thresholds ?? {})) {
+  if (group === 'notes') continue;
+  for (const [name, v] of Object.entries(values)) thresholdRefs.push({ ref: `${group}.${name}`, value: v });
+}
+const HARD_CODED = /\b(over|above|more than|greater than|faster than|longer than|under|below|less than|fewer than|slower than)\s+(\d+(?:\.\d+)?)\b/gi;
+
+/** Placeholders must resolve; threshold numbers written out are flagged so they follow the rules file. */
+function scanTexts(node, where) {
+  if (typeof node === 'string') {
+    for (const ref of placeholders(node)) {
+      if (typeof getPath(rules.thresholds ?? {}, ref) !== 'number') err(where, `placeholder {{${ref}}} is not in rules.thresholds`);
+    }
+    for (const m of node.matchAll(HARD_CODED)) {
+      const hits = thresholdRefs.filter((t) => String(t.value) === m[2]);
+      if (hits.length) warn(where, `"${m[0]}" hard-codes a sieve threshold; write {{${hits.map((h) => h.ref).join('}} or {{')}}} so it follows triage-rules.json`);
+    }
+  } else if (Array.isArray(node)) node.forEach((x, i) => scanTexts(x, `${where}[${i}]`));
+  else if (node && typeof node === 'object') {
+    for (const [k, v] of Object.entries(node)) if (!['state', 'id', 'ref', 'position', 'look', 'thresholds'].includes(k)) scanTexts(v, `${where}.${k}`);
+  }
+}
+currentFile = join(contentDir, 'actions.json');
+scanTexts(actionsDoc.actions, 'actions');
+currentFile = join(contentDir, 'triage-rules.json');
+scanTexts(rules.sieves, 'sieves');
 for (const age of Object.keys(vocab.ageGroups)) {
   if (!rules.sieves[age]) err('sieves', `no sieve for age group "${age}"`);
 }
@@ -510,6 +540,7 @@ for (const file of casualtyFiles) {
   if (!doc.prefix) warn('', 'file has no "prefix"');
   doc.casualties.forEach((c) => {
     checkCasualty(c, doc.prefix);
+    scanTexts(c, c.id);
     const n = c.identity?.name;
     if (n && fullNames.has(n)) warn(c.id, `name "${n}" is also used by ${fullNames.get(n)}`);
     else if (n) fullNames.set(n, c.id);
@@ -630,6 +661,7 @@ for (const file of sceneFiles) {
       }
     }
     if (!Array.isArray(s.teaching) || !s.teaching.length) err(w, 'teaching needs at least one point');
+    scanTexts(s, w);
   }
 }
 

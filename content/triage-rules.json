@@ -92,11 +92,11 @@
         },
         {
           "id": "respiratory_rate",
-          "question": "Breathing rate under 10 or over 30?",
+          "question": "Breathing rate under {{adult.rrLow}} or over {{adult.rrHigh}}?",
           "when": {
             "any": [
-              { "field": "rr", "op": "lt", "value": 10 },
-              { "field": "rr", "op": "gt", "value": 30 }
+              { "field": "rr", "op": "lt", "threshold": "adult.rrLow" },
+              { "field": "rr", "op": "gt", "threshold": "adult.rrHigh" }
             ]
           },
           "category": "red",
@@ -104,11 +104,11 @@
         },
         {
           "id": "circulation",
-          "question": "No radial pulse, or capillary refill over 2 seconds?",
+          "question": "No radial pulse, or capillary refill over {{adult.crtMax}} seconds?",
           "when": {
             "any": [
               { "field": "radialPulse.present", "op": "eq", "value": false },
-              { "field": "crtSeconds", "op": "gt", "value": 2 }
+              { "field": "crtSeconds", "op": "gt", "threshold": "adult.crtMax" }
             ]
           },
           "category": "red",
@@ -216,11 +216,11 @@
         },
         {
           "id": "respiratory_rate",
-          "question": "Breathing rate under 15 or over 45?",
+          "question": "Breathing rate under {{child.rrLow}} or over {{child.rrHigh}}?",
           "when": {
             "any": [
-              { "field": "rr", "op": "lt", "value": 15 },
-              { "field": "rr", "op": "gt", "value": 45 }
+              { "field": "rr", "op": "lt", "threshold": "child.rrLow" },
+              { "field": "rr", "op": "gt", "threshold": "child.rrHigh" }
             ]
           },
           "category": "red",
@@ -259,5 +259,10 @@
         }
       ]
     }
+  },
+  "thresholds": {
+    "notes": "Numbers the sieves use. Conditions refer to them with \"threshold\" instead of \"value\", and any content text can quote them as {{adult.rrHigh}}, so changing a number here changes the rules and every text that mentions it.",
+    "adult": { "rrLow": 10, "rrHigh": 30, "crtMax": 2 },
+    "child": { "rrLow": 15, "rrHigh": 45 }
   }
 }

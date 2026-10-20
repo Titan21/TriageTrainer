@@ -772,7 +772,7 @@
       },
       "teaching": [
         "Never pull out an impaled object; it may be plugging a major bleed.",
-        "Count the capillary refill: exactly 2 seconds is not over 2, so with a pulse present she is orange on this step.",
+        "Count the capillary refill: exactly 2 seconds is not over {{adult.crtMax}}, so with a pulse present she is orange on this step.",
         "Re-triage her later: slow bleeding around the object can still push her to red."
       ],
       "tags": ["bleeding", "earthquake", "impaled_object"]

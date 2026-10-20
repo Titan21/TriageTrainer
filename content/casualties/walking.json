@@ -584,7 +584,7 @@
           "id": "d1",
           "atSeconds": 330,
           "unless": [],
-          "note": "Ash irritation and an asthma flare: wheezier, speaks in short phrases, has to sit down, breathing faster than 30.",
+          "note": "Ash irritation and an asthma flare: wheezier, speaks in short phrases, has to sit down, breathing faster than {{adult.rrHigh}}.",
           "state": {
             "canWalk": false,
             "rr": { "range": [32, 35] },
@@ -607,7 +607,7 @@
       "teaching": [
         "A casualty who can walk is green in the first sweep, even with a cough and a small burn.",
         "Ash irritates the airways for a while: her rate of 28 to 30 is close to the cut-off, so count it again at re-triage.",
-        "If she can no longer walk and breathes faster than 30, she is red.",
+        "If she can no longer walk and breathes faster than {{adult.rrHigh}}, she is red.",
         "Ask about asthma and medicines at re-triage, not in the first sweep."
       ],
       "tags": ["walking_wounded", "respiratory", "re_triage", "volcanic_ash", "burn"]

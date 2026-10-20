@@ -76,7 +76,10 @@
           "behaviour": "helper",
           "canHelp": ["instruct_bystander_pressure"],
           "position": [46, 43],
-          "lines": ["I did a first aid course last year. Tell me what to do.", "I've got it. I'll keep pressing."]
+          "lines": [
+            "I did a first aid course last year. Tell me what to do.",
+            "I've got it. I'll keep pressing."
+          ]
         },
         {
           "id": "by_friend",
@@ -86,7 +89,10 @@
           "behaviour": "pulls_to_friend",
           "canHelp": [],
           "position": [62, 31],
-          "lines": ["Fatima first, please! She's only stuck under a shelf!", "Can't you just lift it off her?"]
+          "lines": [
+            "Fatima first, please! She's only stuck under a shelf!",
+            "Can't you just lift it off her?"
+          ]
         },
         {
           "id": "by_film",
@@ -129,7 +135,13 @@
           "type": "radio_message",
           "description": "Control: urban search and rescue is about 20 minutes away. Keep walking casualties together away from the buildings."
         },
-        { "id": "ev_cease", "atSeconds": 135, "type": "signal", "signal": "cease", "deadlineSeconds": 30 },
+        {
+          "id": "ev_cease",
+          "atSeconds": 135,
+          "type": "signal",
+          "signal": "cease",
+          "deadlineSeconds": 30
+        },
         { "id": "ev_resume", "atSeconds": 175, "type": "signal", "signal": "resume" },
         {
           "id": "ev_friend",
@@ -280,7 +292,10 @@
           "behaviour": "helper",
           "canHelp": ["instruct_bystander_pressure"],
           "position": [40, 46],
-          "lines": ["I'm a truckie, I stopped when I saw it. What do you need?", "Tell me where to press and I'll hold it."]
+          "lines": [
+            "I'm a truckie, I stopped when I saw it. What do you need?",
+            "Tell me where to press and I'll hold it."
+          ]
         },
         {
           "id": "by_mere",
@@ -460,7 +475,7 @@
             "teaching": [
               "A casualty who can walk is green in the first sweep, even with a cough and a small burn.",
               "Dust irritates the airways for a while: her rate of 28 to 30 is close to the cut-off, so count it again at re-triage.",
-              "If she can no longer walk and breathes faster than 30, she is red.",
+              "If she can no longer walk and breathes faster than {{adult.rrHigh}}, she is red.",
               "Ask about asthma and medicines at re-triage, not in the first sweep."
             ]
           }
@@ -475,7 +490,10 @@
           "behaviour": "parent",
           "canHelp": [],
           "position": [68, 41],
-          "lines": ["That's Ethan, he's one. He was on my knee and then everything came down.", "He just sat up and started crying."]
+          "lines": [
+            "That's Ethan, he's one. He was on my knee and then everything came down.",
+            "He just sat up and started crying."
+          ]
         },
         {
           "id": "by_helper",
@@ -500,7 +518,12 @@
       ],
       "hazards": [
         { "id": "hz_stand", "type": "unstable_floor", "position": [30, 12], "activeAtStart": true },
-        { "id": "hz_terrace", "type": "unstable_floor", "position": [50, 12], "activeAtStart": false }
+        {
+          "id": "hz_terrace",
+          "type": "unstable_floor",
+          "position": [50, 12],
+          "activeAtStart": false
+        }
       ],
       "safety": {
         "expected": [
@@ -554,7 +577,13 @@
           "type": "radio_message",
           "description": "Control: the rescue helicopter lands in 10 minutes on the far side of the field. Keep that area clear."
         },
-        { "id": "ev_evacuate", "atSeconds": 560, "type": "signal", "signal": "evacuate", "deadlineSeconds": 45 }
+        {
+          "id": "ev_evacuate",
+          "atSeconds": 560,
+          "type": "signal",
+          "signal": "evacuate",
+          "deadlineSeconds": 45
+        }
       ],
       "teaching": [
         "Two catastrophic bleeds, one on an adult and one on a child: stop each one before anything else, then tag red.",
@@ -651,7 +680,10 @@
           "behaviour": "helper",
           "canHelp": [],
           "position": [40, 44],
-          "lines": ["I pulled her out of the water. She wasn't breathing.", "What can I do? Tell me and I'll do it."]
+          "lines": [
+            "I pulled her out of the water. She wasn't breathing.",
+            "What can I do? Tell me and I'll do it."
+          ]
         },
         {
           "id": "by_parent",
@@ -661,7 +693,10 @@
           "behaviour": "parent",
           "canHelp": [],
           "position": [52, 30],
-          "lines": ["Mele? Has anyone seen Mele? She's four!", "She was right beside me when the water came."]
+          "lines": [
+            "Mele? Has anyone seen Mele? She's four!",
+            "She was right beside me when the water came."
+          ]
         },
         {
           "id": "by_film",
@@ -733,7 +768,7 @@
       "teaching": [
         "Most casualties walk out of a flood. Call out for the walking wounded first, then sieve the people left behind.",
         "A child who is not breathing but has a pulse gets five rescue breaths after the airway is opened. If she is still not breathing, or has no pulse, she is black.",
-        "Count the breaths on the near-drowned man: more than 30 a minute is red, even though he is awake and talking.",
+        "Count the breaths on the near-drowned man: more than {{adult.rrHigh}} a minute is red, even though he is awake and talking.",
         "A casualty who cannot get up is orange even when nothing looks broken. Ask a walking casualty or a helper to bring a blanket.",
         "When the water starts rising over the road, withdraw to high ground. Do not go back for the trapped man until the swift-water crew says it is safe.",
         "Stay out of the water yourself. Floodwater hides cables and debris, and a rescuer swept away becomes another casualty."

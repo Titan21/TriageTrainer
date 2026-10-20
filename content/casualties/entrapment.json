@@ -222,7 +222,7 @@
       },
       "teaching": [
         "A trapped casualty cannot walk, so go on to breathing, pulse and commands; she passes all three and is orange.",
-        "A rate of 30 is not over 30. Count the full 15 seconds before you call it red.",
+        "A rate of 30 is not over {{adult.rrHigh}}. Count the full 15 seconds before you call it red.",
         "Even one pinned arm is entrapment: flag for medical rather than lifting the beam.",
         "A graze or small cut does not change the category."
       ],
@@ -337,7 +337,7 @@
         "keyActions": ["flag_for_medical"]
       },
       "teaching": [
-        "Fast breathing over 30 with blue-grey lips is red, even though he is awake and talking.",
+        "Fast breathing over {{adult.rrHigh}} with blue-grey lips is red, even though he is awake and talking.",
         "He is trapped: flag for medical, tag red and move on; do not try to cut or lift him free.",
         "A chest compressed in a crash can tire out and stop breathing within minutes, so red casualties need re-checking.",
         "The crash mechanism does not need a collar in the sieve; note it and move on."

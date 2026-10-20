@@ -334,7 +334,7 @@
         "targetSeconds": 40
       },
       "teaching": [
-        "Speaking only a few words at a time and breathing over 30 a minute is a severe asthma attack, so he is red.",
+        "Speaking only a few words at a time and breathing over {{adult.rrHigh}} a minute is a severe asthma attack, so he is red.",
         "Help him use his own reliever straight away; it takes seconds and can stop the attack getting worse.",
         "In severe asthma a breathing rate that falls to 8 or 9 with a quiet chest and drowsiness means exhaustion, so keep him red and re-check rather than down-triage.",
         "Check severe asthma casualties again soon, because a tired casualty can stop breathing quickly."

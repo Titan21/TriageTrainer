@@ -578,7 +578,7 @@
         "targetSeconds": 50
       },
       "teaching": [
-        "Count the breaths: 28 to 30 a minute is not over 30, so she is orange now, but she will not stay that way.",
+        "Count the breaths: 28 to 30 a minute is not over {{adult.rrHigh}}, so she is orange now, but she will not stay that way.",
         "Soot around the nose and mouth with facial burns means the airway may swell; re-triage her soon.",
         "Cooling the burns is right first aid but takes 20 minutes; ask a helper to do it while you sieve."
       ],
@@ -660,7 +660,7 @@
       },
       "teaching": [
         "Cold, wet, slow and confused is red: she cannot follow commands, and slow circulation from cold skin confirms it.",
-        "A breathing rate of 10 or 11 is not under 10, so count the full minute before you decide.",
+        "A breathing rate of 10 or 11 is not under {{adult.rrLow}}, so count the full minute before you decide.",
         "Warming matters, but it comes after the sieve; ask a helper to wrap her."
       ],
       "tags": ["environmental", "hypothermia", "flood"]
@@ -737,7 +737,7 @@
         "targetSeconds": 50
       },
       "teaching": [
-        "Anxious but alert and obeying, with a rate of 27 to 30 and a good pulse, he is orange: the rate is not over 30.",
+        "Anxious but alert and obeying, with a rate of 27 to 30 and a good pulse, he is orange: the rate is not over {{adult.rrHigh}}.",
         "A scalp cut can bleed a lot and look dramatic, but a minor bleed does not change the tag.",
         "The deformed ankle is why he cannot walk; leave the splint and dressing to the treatment team."
       ],
