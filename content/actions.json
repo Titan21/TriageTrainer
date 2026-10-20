@@ -6,7 +6,9 @@
     "correctWhen uses the condition language in content/FORMAT.md. Time costs are placeholders to tune in play-testing.",
     "listedForCasualty is true when the action appears in the casualty's expected.lifeSavingInterventions or expected.keyActions. Use it for presentation-specific help (glucose, inhaler) so authors decide where it applies.",
     "onTrue.keepPoseWithAid: when the casualty has a mobility_aid of one of these types, keep their pose (a wheelchair user moves in their chair) and only add the motion overlay.",
-    "Card templates don't include the time: every card entry is timestamped when it is written."
+    "Card templates don't include the time: every card entry is timestamped when it is written.",
+    "safety: true marks actions that are never scored as wrong (being careful only costs time). Scenes reward them through safety.expected.",
+    "qteOnly: true actions only appear as answers in quick-time prompts (e.g. keep_working)."
   ],
   "groups": {
     "scene": "Scene and self",
@@ -22,8 +24,13 @@
       "label": "Check for danger",
       "group": "scene",
       "timeCostSeconds": 5,
-      "effect": { "type": "scene", "do": "check_danger" },
-      "correctWhen": true
+      "effect": {
+        "type": "scene",
+        "do": "check_danger",
+        "card": { "field": "other", "template": "Scene checked for danger" }
+      },
+      "correctWhen": true,
+      "safety": true
     },
     {
       "id": "don_gloves",
@@ -31,8 +38,8 @@
       "group": "scene",
       "timeCostSeconds": 10,
       "effect": { "type": "scene", "do": "don_gloves" },
-      "correctWhen": { "not": { "field": "done.don_gloves", "op": "eq", "value": true } },
-      "feedbackWrong": "You already had gloves on."
+      "correctWhen": true,
+      "safety": true
     },
     {
       "id": "call_walking_wounded",
@@ -56,12 +63,12 @@
     },
     {
       "id": "withdraw",
-      "label": "Withdraw to safety",
+      "label": "Leave the zone (withdraw to safety)",
       "group": "scene",
       "timeCostSeconds": 20,
       "effect": { "type": "scene", "do": "withdraw" },
-      "correctWhen": { "field": "hazardActive", "op": "eq", "value": true },
-      "feedbackWrong": "Nothing on scene required withdrawing, so you lost time and left casualties untriaged."
+      "correctWhen": true,
+      "safety": true
     },
     {
       "id": "drop_cover_hold",
@@ -69,17 +76,53 @@
       "group": "scene",
       "timeCostSeconds": 10,
       "effect": { "type": "scene", "do": "drop_cover_hold" },
-      "correctWhen": { "field": "hazardActive", "op": "eq", "value": true },
-      "feedbackWrong": "Nothing was shaking or falling, so taking cover cost time."
+      "correctWhen": true,
+      "safety": true
     },
     {
       "id": "make_safe",
-      "label": "Make the area safe (stop traffic, cones, isolate the hazard)",
+      "label": "Make the area safe (cones, lookout, isolate the hazard)",
       "group": "scene",
       "timeCostSeconds": 30,
       "effect": { "type": "scene", "do": "make_safe" },
-      "correctWhen": { "field": "hazardActive", "op": "eq", "value": true },
-      "feedbackWrong": "There was no hazard you could make safe, so this cost time."
+      "correctWhen": true,
+      "safety": true
+    },
+    {
+      "id": "evacuate",
+      "label": "Evacuate to the assembly point",
+      "group": "scene",
+      "timeCostSeconds": 30,
+      "effect": { "type": "scene", "do": "evacuate" },
+      "correctWhen": true,
+      "safety": true
+    },
+    {
+      "id": "stop_and_listen",
+      "label": "Stop work and stay quiet",
+      "group": "scene",
+      "timeCostSeconds": 15,
+      "effect": { "type": "scene", "do": "stop_and_listen" },
+      "correctWhen": true,
+      "safety": true
+    },
+    {
+      "id": "resume_work",
+      "label": "Resume work",
+      "group": "scene",
+      "timeCostSeconds": 0,
+      "effect": { "type": "scene", "do": "resume_work" },
+      "correctWhen": true,
+      "safety": true
+    },
+    {
+      "id": "keep_working",
+      "label": "Keep working",
+      "group": "scene",
+      "timeCostSeconds": 0,
+      "effect": { "type": "scene", "do": "keep_working" },
+      "correctWhen": true,
+      "qteOnly": true
     },
     {
       "id": "radio_methane",
@@ -87,8 +130,8 @@
       "group": "communication",
       "timeCostSeconds": 30,
       "effect": { "type": "scene", "do": "radio_methane" },
-      "correctWhen": { "not": { "field": "done.radio_methane", "op": "eq", "value": true } },
-      "feedbackWrong": "One METHANE report is enough; repeat it only when something changes."
+      "correctWhen": true,
+      "safety": true
     },
     {
       "id": "call_for_help",
@@ -96,7 +139,8 @@
       "group": "communication",
       "timeCostSeconds": 5,
       "effect": { "type": "scene", "do": "call_for_help" },
-      "correctWhen": true
+      "correctWhen": true,
+      "safety": true
     },
     {
       "id": "ask_to_walk",

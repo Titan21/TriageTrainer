@@ -14,18 +14,42 @@
         "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 10 minutes out"
       },
       "startClock": "10:20",
-      "targetSeconds": 150,
+      "targetSeconds": 155,
       "casualties": [
         { "ref": "wk_jacket_bleed_01", "position": [25, 65] },
         { "ref": "wk_deaf_gesture_01", "position": [72, 60] },
-        { "ref": "en_bookshelf_leg_01", "position": [48, 28] }
+        {
+          "ref": "en_bookshelf_leg_01",
+          "position": [48, 28],
+          "localHazard": {
+            "type": "broken_glass",
+            "found": "Glass from the shop window is scattered around the fallen shelf; you sweep a clear patch before you kneel.",
+            "injury": "You kneel on a shard of window glass and cut your knee.",
+            "timeLostSeconds": 30
+          }
+        }
       ],
+      "hazards": [
+        { "id": "hz_glass", "type": "falling_glass", "position": [40, 18], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Looked up at the awnings and shop fronts before going in.",
+            "miss": "You went in under the damaged shop fronts without checking for danger."
+          }
+        ]
+      },
       "teaching": [
         "Call out 'If you can walk, come to me' before you go to anyone. Everyone who walks is green, and you only sieve the people left behind.",
         "Walking is the first step of the sieve. A graze, a limp or a hand held to an arm does not change it.",
         "Someone who does not answer may not have heard you. Beckon, point and mime walking before you decide they cannot follow instructions.",
         "Green is green for now, not for good. Note the mechanism on the card and re-triage walkers when you have time.",
-        "The woman who stays put is trapped under a shelf. She cannot walk, so she is next on your sieve."
+        "The woman who stays put is trapped under a shelf. She cannot walk, so she is next on your sieve.",
+        "Glass, loose stock and leaning shelves can hurt you too. Look before you kneel, even beside someone who is calling for help."
       ],
       "tags": ["earthquake", "walking_wounded", "green", "call_walking_wounded"]
     },
@@ -43,9 +67,18 @@
         "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 15 minutes out"
       },
       "startClock": "10:25",
-      "targetSeconds": 110,
+      "targetSeconds": 115,
       "casualties": [
-        { "ref": "br_not_breathing_black_01", "position": [38, 58] },
+        {
+          "ref": "br_not_breathing_black_01",
+          "position": [38, 58],
+          "localHazard": {
+            "type": "unstable_debris",
+            "found": "Loose bricks from the shop front are stacked against his shoulder; you ease them clear before you kneel.",
+            "injury": "A loose brick slips off the pile and hits your hand.",
+            "timeLostSeconds": 25
+          }
+        },
         { "ref": "en_beam_arm_01", "position": [66, 36] }
       ],
       "bystanders": [
@@ -60,6 +93,20 @@
           "lines": ["I found him like this! Please, pump his chest!", "You can't just leave him!"]
         }
       ],
+      "hazards": [
+        { "id": "hz_masonry", "type": "cracking_wall", "position": [62, 24], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Checked the damaged shop front and cafe ceiling before going in.",
+            "miss": "You went in under loose masonry and a broken ceiling without checking for danger."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_cpr_plea",
@@ -77,7 +124,8 @@
         "Still not breathing after one airway opening means tag black, even though it feels wrong.",
         "Do not start CPR in a mass casualty incident. It ties you to one casualty while others you can save wait.",
         "A black tag is not giving up. It lets you reach the woman calling for help under the beam.",
-        "A bystander begging for CPR is understandable. Say briefly why you are moving on, tag black and keep going."
+        "A bystander begging for CPR is understandable. Say briefly why you are moving on, tag black and keep going.",
+        "A look up and around takes five seconds, even for someone you expect to tag black. A rescuer hurt by falling masonry helps nobody."
       ],
       "tags": ["earthquake", "airway", "not_breathing", "black", "cpr_trap"]
     },
@@ -95,15 +143,39 @@
         "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 10 minutes out"
       },
       "startClock": "10:30",
-      "targetSeconds": 60,
+      "targetSeconds": 65,
       "casualties": [
-        { "ref": "bl_thigh_bleed_01", "position": [50, 55] }
+        {
+          "ref": "bl_thigh_bleed_01",
+          "position": [50, 55],
+          "localHazard": {
+            "type": "broken_glass",
+            "found": "Glass from the shop window is scattered around him; you sweep a space clear before you kneel.",
+            "injury": "You kneel straight onto a shard of window glass and cut your knee.",
+            "timeLostSeconds": 30
+          }
+        }
       ],
+      "hazards": [
+        { "id": "hz_glass", "type": "falling_glass", "position": [46, 36], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Looked up at the broken shop front before kneeling beside him.",
+            "miss": "You went in without looking up at the broken shop front."
+          }
+        ]
+      },
       "teaching": [
         "Catastrophic bleeding is the first question in the sieve. Stop it before you check anything else.",
         "A tourniquet goes high on the thigh, above the wound, and is tightened until the bleeding stops. Write the time on the card.",
         "Shouting does not mean he is fine. Pale, sweaty skin and a fast pulse point to heavy blood loss.",
-        "Once the bleed is controlled, tag red and move on. Do not stay to comfort him or give a drink."
+        "Once the bleed is controlled, tag red and move on. Do not stay to comfort him or give a drink.",
+        "Look for glass, wires and loose stock before you kneel. Five seconds now is cheaper than a hurt rescuer later."
       ],
       "tags": ["earthquake", "bleeding", "tourniquet", "red"]
     },
@@ -115,23 +187,64 @@
         "major": "Major incident declared",
         "exactLocation": "State Highway 1, north of Kaikōura",
         "type": "Landslide onto the coast road, two vehicles hit",
-        "hazards": "Further slips, rockfall, heavy rain, wet road",
+        "hazards": "Further slips, rockfall, heavy rain, wet road, traffic in the open lane",
         "access": "From the north, one lane open along the verge",
         "number": "About 2 casualties here",
         "emergencyServices": "Hato Hone St John from Kaikōura 20 minutes out, Fire and Emergency NZ 25 minutes"
       },
       "startClock": "14:05",
-      "targetSeconds": 120,
+      "targetSeconds": 185,
       "casualties": [
         { "ref": "bl_scalp_laceration_01", "position": [32, 38] },
-        { "ref": "br_unconscious_prone_01", "position": [64, 62] }
+        {
+          "ref": "br_unconscious_prone_01",
+          "position": [64, 62],
+          "localHazard": {
+            "type": "unstable_debris",
+            "found": "Loose rocks and slip mud are banked against her side; you move the rocks clear before you touch her.",
+            "injury": "A rock rolls off the mud bank and hits your shin.",
+            "timeLostSeconds": 35
+          }
+        }
+      ],
+      "hazards": [
+        { "id": "hz_traffic", "type": "traffic", "position": [50, 90], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Looked up at the slope and along the road before anyone knelt on the verge.",
+            "miss": "You went onto the slip without looking at the slope above."
+          },
+          {
+            "id": "s_lookout",
+            "action": "make_safe",
+            "by": "first_casualty",
+            "hazard": "hz_traffic",
+            "credit": "A lookout watched the slope and the traffic was slowed before you worked beside the open lane.",
+            "miss": "Nobody watched the slope or slowed the traffic while you worked beside the open lane."
+          }
+        ]
+      },
+      "events": [
+        {
+          "id": "ev_evacuate",
+          "atSeconds": 90,
+          "type": "signal",
+          "signal": "evacuate",
+          "deadlineSeconds": 45
+        }
       ],
       "teaching": [
         "Breathing and pulse can look fine in a casualty with a serious head injury. The command check is what finds it.",
         "A casualty who breathes but cannot follow a simple command is red.",
         "Put her in the recovery position to protect her airway, then move on.",
         "The woman with the bleeding scalp talks and obeys, so she is orange. A dramatic scalp wound is not a red tag.",
-        "Quiet is not safe. The casualty who is not making a noise is often the one who needs you first."
+        "Quiet is not safe. The casualty who is not making a noise is often the one who needs you first.",
+        "On a slip, post a lookout and agree a signal before you work. Three short whistle blasts mean leave the area now."
       ],
       "tags": ["landslide", "head_injury", "commands", "recovery_position", "red"]
     },
@@ -149,9 +262,18 @@
         "emergencyServices": "Fire and Emergency NZ 10 minutes out, Hato Hone St John 15 minutes"
       },
       "startClock": "11:15",
-      "targetSeconds": 120,
+      "targetSeconds": 125,
       "casualties": [
-        { "ref": "ch_trapped_fast_breather_01", "position": [36, 40] },
+        {
+          "ref": "ch_trapped_fast_breather_01",
+          "position": [36, 40],
+          "localHazard": {
+            "type": "unstable_debris",
+            "found": "A sheet of ceiling board hangs loose above the beam; you keep out from under it and work from his side.",
+            "injury": "The loose ceiling board comes away and hits your shoulder.",
+            "timeLostSeconds": 30
+          }
+        },
         {
           "ref": "ch_teen_adult_sieve_01",
           "position": [66, 62],
@@ -176,12 +298,27 @@
           ]
         }
       ],
+      "hazards": [
+        { "id": "hz_ceiling", "type": "cracking_wall", "position": [34, 34], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Looked up at the sagging ceiling before going into the classroom block.",
+            "miss": "You went into the damaged classroom block without checking for danger."
+          }
+        ]
+      },
       "teaching": [
         "Children have their own breathing limits in the sieve. In the child sieve only a rate under 15 or over 45 is red.",
         "Hemi breathes 42 to 44 times a minute. That is orange in a child, but the same rate would be red in an adult.",
         "At 14, Grace goes through the adult sieve, where more than 30 breaths a minute is red.",
         "Being trapped does not change the category. Sieve Hemi as normal, then flag him for medical before anyone frees him.",
-        "The teacher can give you names and ages. Ask her rather than questioning a frightened child."
+        "The teacher can give you names and ages. Ask her rather than questioning a frightened child.",
+        "Look up before you go in. A classroom with a broken ceiling can shed more on you while you work."
       ],
       "tags": ["earthquake", "child", "child_sieve", "adult_sieve", "entrapment", "school"]
     },
@@ -199,9 +336,18 @@
         "emergencyServices": "Fire and Emergency NZ urban search and rescue and Hato Hone St John medics 15 minutes out"
       },
       "startClock": "15:50",
-      "targetSeconds": 80,
+      "targetSeconds": 100,
       "casualties": [
-        { "ref": "en_slab_legs_01", "position": [48, 50] }
+        {
+          "ref": "en_slab_legs_01",
+          "position": [48, 50],
+          "localHazard": {
+            "type": "unstable_debris",
+            "found": "Loose rubble is packed under the edge of the slab; you keep your weight off that side and kneel at his head.",
+            "injury": "Rubble shifts under your knee and you lurch against the slab edge, bruising your arm.",
+            "timeLostSeconds": 35
+          }
+        }
       ],
       "bystanders": [
         {
@@ -218,6 +364,20 @@
           ]
         }
       ],
+      "hazards": [
+        { "id": "hz_floor", "type": "unstable_floor", "position": [48, 42], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Checked the floor and the load above him before going in.",
+            "miss": "You went in under a collapsed floor without checking for danger."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_lift",
@@ -227,22 +387,31 @@
           "casualty": "en_slab_legs_01",
           "description": "The man in the hard hat grabs the edge of the slab and tells you to help him lift it.",
           "correctResponse": "flag_for_medical",
-          "deadlineSeconds": 30,
+          "deadlineSeconds": 45,
           "penaltyIfWrong": "major"
+        },
+        {
+          "id": "ev_cease",
+          "atSeconds": 40,
+          "type": "signal",
+          "signal": "cease",
+          "deadlineSeconds": 30
         },
         {
           "id": "ev_medics",
           "atSeconds": 60,
           "type": "radio_message",
           "description": "Control: a medical team and a rescue crew are 15 minutes away. Hold any release until they arrive."
-        }
+        },
+        { "id": "ev_resume", "atSeconds": 85, "type": "signal", "signal": "resume" }
       ],
       "teaching": [
         "Trapped but breathing normally, with a pulse and following commands, is orange.",
         "After hours under a heavy load, lifting it off can release toxins into the blood and stop the heart.",
         "Flag for medical before any release. Do not free him yourself and do not let a well-meaning bystander try.",
         "However thirsty he is, nothing by mouth.",
-        "Tag orange, write on the card how long he has been trapped, and move on."
+        "Tag orange, write on the card how long he has been trapped, and move on.",
+        "One long whistle blast means stop work and keep quiet so the search team can listen. Wait for the resume signal before you start again."
       ],
       "tags": ["earthquake", "entrapment", "crush", "orange", "flag_for_medical"]
     },
@@ -260,7 +429,7 @@
         "emergencyServices": "Fire and ambulance 10 minutes out"
       },
       "startClock": "10:30",
-      "targetSeconds": 100,
+      "targetSeconds": 105,
       "casualties": [
         {
           "ref": "wk_loud_forearm_01",
@@ -276,9 +445,29 @@
           "override": {
             "approach": "Man lying still on his back on the footpath in front of a collapsed shop front, eyes closed, with a cut on his head and bruising on his face.",
             "mechanism": "Struck by falling masonry from the shop front when the earthquake hit. A passer-by saw him go down and he has not spoken since."
+          },
+          "localHazard": {
+            "type": "broken_glass",
+            "found": "Glass and chips of masonry lie around his head; you brush them clear before you reach in.",
+            "injury": "You rest your palm on a piece of broken glass and cut it.",
+            "timeLostSeconds": 30
           }
         }
       ],
+      "hazards": [
+        { "id": "hz_glass", "type": "falling_glass", "position": [46, 40], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Looked up at the shop fronts before going in under them.",
+            "miss": "You went in under the damaged shop fronts without checking for danger."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_loud_again",
@@ -295,7 +484,8 @@
         "A casualty who is quiet and cannot follow a simple command is red, even when the breathing rate and pulse look fine.",
         "The man with the bent forearm shouts but can walk, so he is green. Do not splint his arm in the first sweep.",
         "A breathing casualty who is not obeying goes into the recovery position to keep the airway open.",
-        "Look at everyone before you commit. The quiet casualty is easy to walk past while others shout."
+        "Look at everyone before you commit. The quiet casualty is easy to walk past while others shout.",
+        "Check overhead before you kneel under a damaged shop front. Glass can follow the masonry down."
       ],
       "tags": ["earthquake", "quiet_casualty", "loud", "head_injury", "green", "red"]
     },
@@ -313,11 +503,31 @@
         "emergencyServices": "Hato Hone St John and Police 15 minutes out, Civil Defence centre opening"
       },
       "startClock": "16:40",
-      "targetSeconds": 100,
+      "targetSeconds": 105,
       "casualties": [
         { "ref": "wk_panic_uninjured_01", "position": [40, 52] },
-        { "ref": "ne_postictal_01", "position": [72, 66] }
+        {
+          "ref": "ne_postictal_01",
+          "position": [72, 66],
+          "localHazard": {
+            "type": "slippery_ground",
+            "found": "The grass beside her is a slick, muddy slope churned up by the crowd; you dig your boots in and kneel on firmer ground.",
+            "injury": "Your boots slide on the wet slope and you go down on one knee, jarring your wrist.",
+            "timeLostSeconds": 30
+          }
+        }
       ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Checked the crowded track and the footing before going in.",
+            "miss": "You went in without checking the crowded, muddy track for danger."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_grab",
@@ -335,7 +545,8 @@
         "Give one short, firm instruction, such as 'Walk to the green area', instead of staying to calm her.",
         "Fear can push the breathing rate to 28 to 30, but the walking step comes first and she is green.",
         "The quiet woman on the grass is the one to worry about. Confused and not following commands makes her red until she can.",
-        "Do not stay with the panicking person. Ask a walking casualty to take her to the green area."
+        "Do not stay with the panicking person. Ask a walking casualty to take her to the green area.",
+        "Crowds and wet, steep tracks are dangers too. Check your footing before you kneel."
       ],
       "tags": ["tsunami", "panic", "uninjured", "green", "behaviour", "red"]
     },
@@ -353,7 +564,7 @@
         "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 20 minutes out"
       },
       "startClock": "13:50",
-      "targetSeconds": 140,
+      "targetSeconds": 170,
       "casualties": [
         {
           "ref": "ne_older_ankle_head_01",
@@ -363,7 +574,16 @@
             "mechanism": "Thrown from his seat when the coach rolled. He hit his head and twisted his left ankle."
           }
         },
-        { "ref": "bl_hidden_arm_bleed_01", "position": [68, 58] }
+        {
+          "ref": "bl_hidden_arm_bleed_01",
+          "position": [68, 58],
+          "localHazard": {
+            "type": "fuel_spill",
+            "found": "Diesel is seeping from the coach beside the wheel; you step round it and kneel on dry ground.",
+            "injury": "You kneel in the diesel and it soaks through your trousers; you stop to wipe yourself down.",
+            "timeLostSeconds": 30
+          }
+        }
       ],
       "bystanders": [
         {
@@ -381,6 +601,21 @@
           ]
         }
       ],
+      "hazards": [
+        { "id": "hz_traffic", "type": "traffic", "position": [90, 84], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_traffic",
+            "action": "make_safe",
+            "by": "first_casualty",
+            "hazard": "hz_traffic",
+            "credit": "Cones out, hazard lights on and a lookout posted before anyone worked beside the road.",
+            "miss": "Nobody slowed the traffic: casualties were treated beside passing vehicles."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_mere_1",
@@ -408,7 +643,8 @@
         "Eru takes a short sieve: not walking, breathing rate normal, pulse fine, obeys commands. That is orange, and you move on.",
         "The quiet woman slumped by the wheel is pale and sweaty with no blood in sight. Expose and look: a bleed under a heavy jacket needs a tourniquet in seconds.",
         "Expose and look takes 15 seconds. A full head-to-toe check takes three minutes.",
-        "Do not argue. A calm 'I will be back for him' is enough, then carry on."
+        "Do not argue. A calm 'I will be back for him' is enough, then carry on.",
+        "Cones and a lookout come before casualties on a live road."
       ],
       "tags": ["bus_crash", "bystander", "pulls_to_friend", "hidden_bleed", "orange", "red"]
     },
@@ -426,9 +662,18 @@
         "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 10 minutes out"
       },
       "startClock": "11:40",
-      "targetSeconds": 150,
+      "targetSeconds": 155,
       "casualties": [
-        { "ref": "ne_spinal_fall_01", "position": [38, 52] },
+        {
+          "ref": "ne_spinal_fall_01",
+          "position": [38, 52],
+          "localHazard": {
+            "type": "unstable_debris",
+            "found": "Stacked timber and boxes lean over his head from the broken mezzanine; you move the loose ones clear before you kneel.",
+            "injury": "A box slides off the leaning stack and hits your shoulder.",
+            "timeLostSeconds": 30
+          }
+        },
         {
           "ref": "bl_impaled_thigh_01",
           "position": [64, 44],
@@ -441,12 +686,25 @@
       "hazards": [
         { "id": "hz_wall", "type": "cracking_wall", "position": [52, 18], "activeAtStart": false }
       ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Checked the cracked wall and the leaning stock before going in.",
+            "miss": "You went in under a cracked wall and a broken mezzanine without checking for danger."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_aftershock",
           "atSeconds": 40,
           "type": "aftershock",
           "hazard": "hz_wall",
+          "cue": "The floor jolts under you and the stacked timber along the wall starts to rattle and sway.",
+          "followUpCue": "The shaking stops. A fresh crack runs up the brick wall above you and fine dust is sifting down.",
           "description": "A strong aftershock hits. The brick wall above you cracks and dust pours down.",
           "correctResponse": ["drop_cover_hold", "withdraw"],
           "deadlineSeconds": 15,
@@ -475,9 +733,18 @@
         "emergencyServices": "Hato Hone St John 8 minutes out, Fire and Emergency NZ 10 minutes"
       },
       "startClock": "09:15",
-      "targetSeconds": 80,
+      "targetSeconds": 110,
       "casualties": [
-        { "ref": "bl_groin_bleed_01", "position": [48, 50] }
+        {
+          "ref": "bl_groin_bleed_01",
+          "position": [48, 50],
+          "localHazard": {
+            "type": "sharp_metal",
+            "found": "The torn metal sheet that cut him lies edge-up on the floor beside him; you slide it clear before you kneel.",
+            "injury": "Your glove catches the torn edge of the metal sheet as you reach in and you cut your hand.",
+            "timeLostSeconds": 30
+          }
+        }
       ],
       "bystanders": [
         {
@@ -491,6 +758,18 @@
           "lines": ["He's my workmate. Tell me what to do.", "I can hold it, just show me where."]
         }
       ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_isolate",
+            "action": "make_safe",
+            "by": "first_casualty",
+            "credit": "Had the dryer isolated and the loose panels cleared before you worked beside it.",
+            "miss": "Nobody confirmed the dryer was isolated: you worked beside the failed equipment and loose panels.",
+            "hazard": "hz_dryer"
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_eta",
@@ -503,9 +782,13 @@
         "A tourniquet does not work on the groin. There is no limb segment above the wound for it to sit on.",
         "Pack the wound and press hard. The groin, neck and armpit are junctional areas.",
         "Ask the worker to hold firm pressure while you finish the sieve checks, then tag red.",
-        "He is shouting, pale and sweaty, which means heavy blood loss. Stop the bleed first, tag second."
+        "He is shouting, pale and sweaty, which means heavy blood loss. Stop the bleed first, tag second.",
+        "Make sure the machinery is isolated before you work beside it. Ask the site staff to confirm, and do not take it for granted."
       ],
-      "tags": ["industrial_accident", "bleeding", "junctional", "pack_wound", "bystander_helper", "red"]
+      "tags": ["industrial_accident", "bleeding", "junctional", "pack_wound", "bystander_helper", "red"],
+      "hazards": [
+        { "id": "hz_dryer", "type": "machinery", "position": [70, 30], "activeAtStart": true }
+      ]
     },
     {
       "id": "sc_learn_airway_opens",
@@ -521,9 +804,18 @@
         "emergencyServices": "Fire and Emergency NZ and Hato Hone St John 20 minutes out"
       },
       "startClock": "12:30",
-      "targetSeconds": 70,
+      "targetSeconds": 100,
       "casualties": [
-        { "ref": "br_airway_opens_red_01", "position": [48, 52] }
+        {
+          "ref": "br_airway_opens_red_01",
+          "position": [48, 52],
+          "localHazard": {
+            "type": "broken_glass",
+            "found": "Pieces of broken window glass lie in the grass under her; you pick out the larger ones before you kneel.",
+            "injury": "You kneel on a piece of coach window glass and cut your knee.",
+            "timeLostSeconds": 30
+          }
+        }
       ],
       "bystanders": [
         {
@@ -537,6 +829,21 @@
           "lines": ["I found her like this. She hasn't moved. Is she dead?", "I think she's gone."]
         }
       ],
+      "hazards": [
+        { "id": "hz_traffic", "type": "traffic", "position": [14, 84], "activeAtStart": true }
+      ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_traffic",
+            "action": "make_safe",
+            "by": "first_casualty",
+            "hazard": "hz_traffic",
+            "credit": "Cones out, hazard lights on and a lookout posted before you knelt on the verge.",
+            "miss": "Nobody slowed the traffic on the pass: you knelt beside passing vehicles."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_gone",
@@ -554,7 +861,8 @@
         "Breathing that starts after the airway is opened is red, and opening the airway was the life-saving step.",
         "Settle her in the recovery position before you move on, or the airway can close again.",
         "A bystander saying she is dead is not a triage assessment. Check for yourself.",
-        "In the sieve the airway comes before spinal care, so a collar can wait for the treatment team."
+        "In the sieve the airway comes before spinal care, so a collar can wait for the treatment team.",
+        "Cones, hazard lights and a lookout come before you kneel on a live road, even for someone who is not breathing."
       ],
       "tags": ["bus_crash", "airway", "recovery_position", "red", "bystander"]
     }

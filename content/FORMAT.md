@@ -207,6 +207,51 @@ These keep the art matching the data. The validator enforces them.
 - `correctResponse` is an action id (`withdraw`, `drop_cover_hold`, `make_safe`, `move_casualty`, etc.), a list of them in order (aftershock: `["drop_cover_hold", "withdraw"]`), or `ignore`. Each hazard's `defaultResponse` in vocab is an action id too.
 - Casualty full names must be unique across the library, because bystanders call casualties by name.
 
+### Safety: being careful is rewarded, never punished
+
+Safety actions (`check_danger`, `don_gloves`, `make_safe`, `withdraw`, `drop_cover_hold`, `evacuate`, `stop_and_listen`, `resume_work`, `radio_methane`, `call_for_help`; marked `"safety": true` in `actions.json`) are never scored as wrong. Doing one that wasn't needed only costs its time. Scenes reward the right ones:
+
+```jsonc
+"safety": {
+  "dangerCheckEachCasualty": true,      // default true: check_danger at each casualty before hands-on care
+  "expected": [
+    { "id": "s_cones", "action": "make_safe", "by": "first_casualty", "hazard": "hz_traffic",
+      "credit": "Cones out and a lookout posted before anyone worked near the road.",
+      "miss": "Nobody slowed the traffic: every casualty was treated next to moving vehicles." },
+    { "id": "s_scene", "action": "check_danger", "by": "first_casualty",
+      "credit": "Checked the scene for danger before going in.",
+      "miss": "You went in without checking the scene for danger." }
+  ]
+}
+```
+
+- `by` is `"first_casualty"` (started before walking to the first casualty), a number of seconds on the scene clock, or `"end"`.
+- Missing an expected action costs `scoring.missedSafetyAction`; doing it shows the `credit` text in the debrief.
+- A hazard that is there from the start (passing traffic, a downed line) has `"activeAtStart": true`. `make_safe` clears active hazards whose vocab `defaultResponse` is `make_safe`.
+
+**Per-casualty danger.** Going hands-on (any assessment, intervention or trap action except `ask_to_walk`) without `check_danger` at that casualty costs `scoring.skippedDangerCheck`. Walking wounded who came to you after the call-out are exempt. A casualty placement can carry a local hazard:
+
+```jsonc
+{ "ref": "bl_thigh_bleed_01", "position": [40, 46],
+  "localHazard": { "type": "broken_glass",
+    "found": "Glass from the shop window is scattered around him; you sweep a space clear before you kneel.",
+    "injury": "You kneel straight onto a shard of window glass and cut your knee.",
+    "timeLostSeconds": 30 } }
+```
+
+`type` comes from `vocab.localHazards`. Checking first shows `found` and earns a credit; skipping the check shows `injury`, costs the time and `scoring.rescuerInjured`. Give local hazards to some casualties, not all, and make them fit the scene (glass at shop fronts, fuel and sharp metal at vehicles, live wires and unstable debris in collapses, slippery ground in floods).
+
+### Quick-time events and signals
+
+When the player turns quick-time events on, every `aftershock`, `hazard_appears` and `signal` event that has a `correctResponse` pauses play and asks for a response against a real-time limit (`qteSeconds`, default 5). The player sees only the `cue`, never the description, and picks from the same six answers every time (drop, cover and hold; leave the zone; evacuate; stop and stay quiet; resume work; keep working).
+
+- `cue`: what the player senses, in the second person, without naming the answer ("The ground lurches and the shelving beside you starts to sway.", "You notice a smell of gas, getting stronger."). The validator warns when a cue gives the answer away.
+- `followUpCue`: what they sense after the first response when `correctResponse` is a list (aftershock: drop, cover and hold, then "The shaking stops. The wall above you has a new crack running through it." → leave the zone).
+- `qte: false` keeps an event as a normal alert even when quick-time is on.
+- `signal` events use a signal from `vocab.signals` (`evacuate`: three short blasts; `cease`: one long blast, stop work and be quiet; `resume`: one long and one short blast). Their response, cue and description come from vocab. These defaults follow the international USAR signals; NZRT should confirm them.
+- With quick-time off, the same events are normal alerts with a `deadlineSeconds` (signals default to 20 s).
+- When the option is on, `vocab.qtePool` also adds random events (one in Learn scenes, two in Full scenes) matched to the scene's tags and briefing words.
+
 ## Condition language
 
 Used by `correctWhen` in actions and by `when` in sieve steps:

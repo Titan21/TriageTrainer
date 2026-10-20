@@ -90,11 +90,11 @@
       "hiddenRegions": ["back"]
     },
     "sitting": {
-      "description": "Sitting on the ground, back upright or against a wall, legs out in front.",
+      "description": "On a low seat (kerb, block, crate or their wheelchair), back upright, knees bent, feet flat on the ground. Use for anyone sitting, including 'sitting on the ground' in approach text.",
       "hiddenRegions": ["back"]
     },
     "slumped": {
-      "description": "Sitting but slumped forward or sideways, head down. Usually a deterioration of sitting.",
+      "description": "Seated like sitting, but the torso has slumped sideways or forward and the head has dropped. Usually a deterioration of sitting.",
       "hiddenRegions": ["back"]
     },
     "supine": { "description": "Lying on the back, seen from above.", "hiddenRegions": ["back"] },
@@ -388,7 +388,9 @@
       "description": "Unknown liquid or vapour, odd smell, people coughing. Withdraw upwind and uphill.",
       "defaultResponse": "withdraw"
     },
-    "ash_fall": { "description": "Volcanic ash or debris falling.", "defaultResponse": "withdraw" }
+    "ash_fall": { "description": "Volcanic ash or debris falling.", "defaultResponse": "withdraw" },
+    "machinery": { "description": "Machinery still running or able to move.", "defaultResponse": "make_safe" },
+    "rockfall": { "description": "Rocks or mud still coming down the slope.", "defaultResponse": "withdraw" }
   },
   "bystanderBehaviours": {
     "pulls_to_friend": "Keeps grabbing the rescuer and insisting they treat a specific casualty first.",
@@ -406,7 +408,8 @@
     "new_casualty": "A casualty arrives or is discovered.",
     "radio_message": "Instruction or information over the radio.",
     "resources_arrive": "More responders or equipment arrive.",
-    "casualty_calls_out": "A casualty out of view calls or stops calling out."
+    "casualty_calls_out": "A casualty out of view calls or stops calling out.",
+    "signal": "A whistle or horn signal from vocab.signals. Usually a quick-time event."
   },
   "style": {
     "notes": [
@@ -415,5 +418,94 @@
       "Blood is dark maroon with a hatch texture so it never reads as a red tag.",
       "Child figures use child proportions (larger head, shorter limbs) on the same skeleton so every overlay anchors the same way."
     ]
-  }
+  },
+  "signals": {
+    "notes": "Whistle or horn signals used at the scene. Defaults follow the international USAR (INSARAG) signals; confirm NZRT's before relying on them. blasts are lengths in seconds, played as audio cues.",
+    "evacuate": {
+      "pattern": "Three short blasts",
+      "blasts": [1, 1, 1],
+      "meaning": "Evacuate the area now",
+      "response": "evacuate"
+    },
+    "cease": {
+      "pattern": "One long blast",
+      "blasts": [3],
+      "meaning": "Stop all work and be quiet so the team can listen for survivors",
+      "response": "stop_and_listen"
+    },
+    "resume": {
+      "pattern": "One long and one short blast",
+      "blasts": [3, 1],
+      "meaning": "Resume work",
+      "response": "resume_work"
+    }
+  },
+  "localHazards": {
+    "notes": "Dangers right next to one casualty, found by check_danger at that casualty. Skipping the check means the rescuer meets the hazard.",
+    "broken_glass": "Broken glass on the ground",
+    "sharp_metal": "Torn sheet metal or exposed rebar",
+    "live_wire": "Damaged electrical cable, possibly live",
+    "fuel_spill": "Fuel or oil leaking onto the ground",
+    "unstable_debris": "Loose debris that could shift",
+    "hot_surface": "Hot metal or embers",
+    "slippery_ground": "Wet, muddy or oily footing",
+    "sharps": "Needles or medical sharps",
+    "body_fluids": "Blood or body fluids (gloves needed)",
+    "traffic_edge": "Close to moving traffic"
+  },
+  "qtePool": [
+    {
+      "id": "aftershock",
+      "when": ["earthquake", "aftershocks", "collapse", "collapsed"],
+      "event": {
+        "type": "aftershock",
+        "cue": "The ground lurches and everything around you starts to shake.",
+        "followUpCue": "The shaking stops. Dust is drifting down from the damaged structure beside you.",
+        "description": "An aftershock while you were working.",
+        "correctResponse": ["drop_cover_hold", "withdraw"]
+      }
+    },
+    {
+      "id": "gas",
+      "when": ["earthquake", "gas", "explosion", "collapse", "collapsed"],
+      "event": {
+        "type": "hazard_appears",
+        "cue": "You notice a smell of gas, and it is getting stronger.",
+        "description": "A gas leak near where you were working.",
+        "correctResponse": "withdraw"
+      }
+    },
+    {
+      "id": "whistle_evacuate",
+      "when": ["earthquake", "collapse", "collapsed", "landslide", "slip", "slips"],
+      "event": { "type": "signal", "signal": "evacuate" }
+    },
+    {
+      "id": "whistle_quiet",
+      "when": ["earthquake", "collapse", "collapsed", "landslide", "trapped"],
+      "event": { "type": "signal", "signal": "cease" },
+      "then": { "type": "signal", "signal": "resume", "after": 30 }
+    },
+    {
+      "id": "fuel",
+      "when": ["crash", "coach", "bus", "vehicle", "vehicles", "traffic"],
+      "event": {
+        "type": "hazard_appears",
+        "cue": "You smell petrol and see a pool spreading under the wreck towards you.",
+        "description": "Fuel leaking near the wreck.",
+        "correctResponse": "withdraw"
+      }
+    },
+    {
+      "id": "water",
+      "when": ["flood", "tsunami", "water", "surge", "surges"],
+      "event": {
+        "type": "hazard_appears",
+        "cue": "The water around your boots is suddenly rising fast.",
+        "description": "Flood water rising quickly.",
+        "correctResponse": "withdraw"
+      }
+    }
+  ],
+  "qtePoolNotes": "Random quick-time events added when the player turns them on: matched to a scene by its tags and the words in its briefing type and hazards. cue is what the player senses; it must never name the answer."
 }

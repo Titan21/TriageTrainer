@@ -76,6 +76,38 @@ for (const [id, ov] of Object.entries(vocab.overlays)) {
   }
   if (!Array.isArray(ov.regions) && !vocab.regionGroups[ov.regions]) err(`overlays.${id}`, `unknown region group "${ov.regions}"`);
 }
+const QTE_TYPES = ['aftershock', 'hazard_appears', 'signal'];
+const signalIds = Object.keys(vocab.signals ?? {}).filter((k) => k !== 'notes');
+for (const id of signalIds) {
+  const sig = vocab.signals[id];
+  if (!actions.has(sig.response)) err(`signals.${id}`, `response "${sig.response}" is not an action`);
+  if (!Array.isArray(sig.blasts) || !sig.blasts.every(isNum)) err(`signals.${id}`, 'blasts must be a list of seconds');
+}
+function checkQteEvent(w, e) {
+  if (e.type === 'signal') {
+    if (!signalIds.includes(e.signal)) err(w, `signal "${e.signal}" is not in vocab.signals`);
+    return;
+  }
+  if (!QTE_TYPES.includes(e.type)) err(w, `quick-time events must be one of ${QTE_TYPES.join(', ')}`);
+  for (const r of [e.correctResponse ?? []].flat()) if (!actions.has(r)) err(w, `correctResponse "${r}" is not an action`);
+  if (typeof e.cue !== 'string' || !e.cue.trim()) err(w, 'quick-time events need a cue (what the player senses)');
+  else checkCueGivesNothingAway(w, e.cue);
+}
+/** A cue describes what you sense; it must not name the response. */
+function checkCueGivesNothingAway(w, cue) {
+  const t = cue.toLowerCase();
+  for (const word of ['drop', 'cover', 'withdraw', 'evacuate', 'leave the', 'get out', 'retreat', 'take cover']) {
+    if (t.includes(word)) warn(w, `cue contains "${word}", which gives the answer away`);
+  }
+}
+for (const q of vocab.qtePool ?? []) {
+  const w = `qtePool.${q.id}`;
+  if (!Array.isArray(q.when) || !q.when.length) err(w, 'when must be a non-empty list of words');
+  checkQteEvent(`${w}.event`, q.event ?? {});
+  if (q.then) checkQteEvent(`${w}.then`, q.then);
+}
+const localHazardTypes = Object.keys(vocab.localHazards ?? {}).filter((k) => k !== 'notes');
+
 for (const [id, hz] of Object.entries(vocab.hazards)) {
   if (!actions.has(hz.defaultResponse)) err(`hazards.${id}`, `defaultResponse "${hz.defaultResponse}" is not an action`);
 }
@@ -510,6 +542,17 @@ for (const file of sceneFiles) {
       if (refs.has(cs.ref)) err(`${w}.casualties`, `"${cs.ref}" appears twice`);
       refs.add(cs.ref);
       checkPos(`${w}.casualties[${cs.ref}]`, cs.position);
+      if (cs.localHazard) {
+        const lw = `${w}.casualties[${cs.ref}].localHazard`;
+        const lh = cs.localHazard;
+        if (!localHazardTypes.includes(lh.type)) err(lw, `type "${lh.type}" is not in vocab.localHazards`);
+        for (const k of ['found', 'injury']) {
+          if (typeof lh[k] !== 'string' || !lh[k].trim()) err(lw, `${k} text is required`);
+          else checkText(`${lw}.${k}`, lh[k]);
+        }
+        if (lh.timeLostSeconds != null && !(isNum(lh.timeLostSeconds) && lh.timeLostSeconds >= 0)) err(lw, 'timeLostSeconds must be a number of seconds');
+        for (const k of Object.keys(lh)) if (!['type', 'found', 'injury', 'timeLostSeconds'].includes(k)) err(lw, `unknown field "${k}"`);
+      }
       for (const k of Object.keys(cs.override ?? {})) {
         const ow = `${w}.casualties[${cs.ref}].override`;
         if (!['approach', 'mechanism', 'speech', 'teaching'].includes(k)) err(ow, `only approach, mechanism, speech and teaching can be overridden, not "${k}"`);
@@ -557,7 +600,34 @@ for (const file of sceneFiles) {
         if (r !== 'ignore' && !actions.has(r)) err(ew, `correctResponse "${r}" is not an action or "ignore"`);
       }
       if (ev.penaltyIfWrong && !['major', 'minor'].includes(ev.penaltyIfWrong)) err(ew, 'penaltyIfWrong must be major or minor');
+      if (ev.type === 'signal' && !signalIds.includes(ev.signal)) err(ew, `signal "${ev.signal}" is not in vocab.signals`);
+      if (ev.qte != null && !isBool(ev.qte)) err(ew, 'qte must be true/false');
+      if (ev.qteSeconds != null && !(isNum(ev.qteSeconds) && ev.qteSeconds >= 2)) err(ew, 'qteSeconds must be at least 2');
+      if (QTE_TYPES.includes(ev.type) && ev.type !== 'signal' && [ev.correctResponse ?? []].flat().some((r) => r !== 'ignore')) {
+        if (typeof ev.cue !== 'string' || !ev.cue.trim()) warn(ew, 'add a cue (what the player senses) so this can run as a quick-time event without giving the answer away');
+        else checkCueGivesNothingAway(ew, ev.cue);
+      }
+      if (ev.followUpCue != null) checkCueGivesNothingAway(ew, ev.followUpCue);
       checkText(ew, ev.description);
+    }
+    // Scene safety expectations
+    const safety = s.safety ?? {};
+    for (const k of Object.keys(safety)) if (!['dangerCheckEachCasualty', 'expected'].includes(k)) err(`${w}.safety`, `unknown field "${k}"`);
+    if (safety.dangerCheckEachCasualty != null && !isBool(safety.dangerCheckEachCasualty)) err(`${w}.safety`, 'dangerCheckEachCasualty must be true/false');
+    const sids = new Set();
+    for (const x of safety.expected ?? []) {
+      const xw = `${w}.safety.expected[${x.id}]`;
+      if (!x.id || sids.has(x.id)) err(xw, 'needs a unique id');
+      sids.add(x.id);
+      const a = actions.get(x.action);
+      if (!a) err(xw, `action "${x.action}" is not an action`);
+      else if (!a.safety && a.group !== 'scene') err(xw, `"${x.action}" is not a scene safety action`);
+      if (!(x.by === 'first_casualty' || x.by === 'end' || isNum(x.by))) err(xw, 'by must be "first_casualty", "end" or a number of seconds');
+      if (x.hazard && !hazardIds.has(x.hazard)) err(xw, `hazard "${x.hazard}" is not in this scene`);
+      for (const k of ['credit', 'miss']) {
+        if (typeof x[k] !== 'string' || !x[k].trim()) err(xw, `${k} text is required`);
+        else checkText(`${xw}.${k}`, x[k]);
+      }
     }
     if (!Array.isArray(s.teaching) || !s.teaching.length) err(w, 'teaching needs at least one point');
   }

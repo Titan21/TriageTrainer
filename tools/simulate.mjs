@@ -5,7 +5,9 @@
 // running the rules on those observations, and handles hazards. Every casualty
 // should end up correctly tagged; a mismatch means the game hides something the
 // sieve needs, or the content disagrees with itself. A careless player tags
-// everyone green at once and must score badly. Every picture is rendered.
+// everyone green at once and must score badly. An extra-cautious player does the
+// careful run plus needless safety actions and must lose only time. Every scene
+// runs with quick-time events off and on. Every picture is rendered.
 //
 //   node tools/simulate.mjs            summary
 //   node tools/simulate.mjs --verbose  per-casualty action logs
@@ -13,7 +15,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { indexContent, createSession, approach, perform, snapshot, debrief, card, availableActions } from '../src/game/session.js';
+import { indexContent, createSession, approach, perform, snapshot, debrief, card, availableActions, answerPrompt, pendingSafety } from '../src/game/session.js';
 import { triage } from '../src/engine/rules.js';
 import { renderCasualty } from '../src/art/index.js';
 
@@ -46,11 +48,21 @@ function render(session, id, mode) {
 }
 
 function act(session, id, opts) {
+  answerPrompts(session);
   const r = perform(session, id, opts);
   if (verbose) console.log(`   ${String(session.clock).padStart(4)}s ${id}${opts?.category ? `=${opts.category}` : ''}: ${r.text}${r.correct ? '' : `  [wrong: ${r.feedback}]`}`);
+  answerPrompts(session);
   handleHazards(session);
   if (session.current) render(session, session.current, 'play');
   return r;
+}
+
+/** The careful player answers quick-time prompts correctly in about a second. */
+function answerPrompts(session) {
+  for (let guard = 0; session.prompt && guard < 10; guard++) {
+    const r = answerPrompt(session, session.prompt.expected, 1.2);
+    if (verbose) console.log(`   ${String(session.clock).padStart(4)}s QTE -> ${r.expected}: ${r.text}`);
+  }
 }
 
 function handleHazards(session) {
@@ -88,10 +100,14 @@ function observedForTriage(session, rc) {
   };
 }
 
-function carefulCasualty(session, id) {
+function carefulCasualty(session, id, cautious = false) {
   const rc = session.casualties.get(id);
+  answerPrompts(session);
   approach(session, id);
+  answerPrompts(session);
   handleHazards(session);
+  if (!rc.cameToYou || cautious) act(session, 'check_danger');
+  if (cautious) act(session, 'check_danger');
   render(session, id, 'play');
   const exp = rc.def.expected ?? {};
   const has = (a) => rc.done.some((d) => d.id === a && d.ok !== false);
@@ -134,15 +150,17 @@ function carefulCasualty(session, id) {
   act(session, 'tag_casualty', { category: guess });
 }
 
-function playCareful(sceneId) {
-  const s = createSession(content, sceneId, { seed: 'sim' });
-  if (verbose) console.log(`\n== ${sceneId}`);
+function playCareful(sceneId, { qte = false, cautious = false } = {}) {
+  const s = createSession(content, sceneId, { seed: 'sim', qte });
+  if (verbose) console.log(`\n== ${sceneId}${qte ? ' (quick-time on)' : ''}${cautious ? ' (cautious)' : ''}`);
+  for (const x of pendingSafety(s)) act(s, x.action);
+  if (cautious) { act(s, 'withdraw'); act(s, 'don_gloves'); act(s, 'drop_cover_hold'); act(s, 'make_safe'); }
   if (s.order.length > 1) act(s, 'call_walking_wounded');
   // Walkers come to you: tag them first, then work through the rest.
   const walkers = s.order.filter((id) => s.casualties.get(id).observed.canWalk?.value === true);
   for (const id of [...walkers, ...s.order.filter((id) => !walkers.includes(id))]) {
     if (verbose) console.log(` -- ${id}`);
-    carefulCasualty(s, id);
+    carefulCasualty(s, id, cautious);
   }
   // Re-triage pass: anyone whose picture changed since their tag gets a quick re-check.
   for (const id of s.order) {
@@ -151,14 +169,16 @@ function playCareful(sceneId) {
     if (verbose) console.log(` -- re-triage ${id}`);
     for (const k of Object.keys(rc.observed)) delete rc.observed[k];
     rc.firstBreathing = rc.afterAirway = rc.afterRescue = undefined;
-    carefulCasualty(s, id);
+    carefulCasualty(s, id, cautious);
   }
   for (const id of s.order) { render(s, id, 'debrief'); card(s, id); }
   const d = debrief(s);
+  const label = `${sceneId}${qte ? ' [qte]' : ''}${cautious ? ' [cautious]' : ''}`;
   for (const c of d.casualties) {
-    if (c.verdict !== 'correct') problems.push(`${sceneId}/${c.id}: careful player tagged ${c.assigned}, correct ${c.correct} (${c.step})`);
-    for (const m of c.mistakes.filter((x) => !x.startsWith('Tagged '))) problems.push(`${sceneId}/${c.id}: ${m}`);
+    if (c.verdict !== 'correct' && !cautious) problems.push(`${label}/${c.id}: careful player tagged ${c.assigned}, correct ${c.correct} (${c.step})`);
+    if (!cautious) for (const m of c.mistakes.filter((x) => !x.startsWith('Tagged '))) problems.push(`${label}/${c.id}: ${m}`);
   }
+  if (!cautious) for (const i of d.items.filter((x) => x.kind !== 'time' && !x.casualty)) problems.push(`${label}: ${i.text}`);
   return d;
 }
 
@@ -173,16 +193,26 @@ for (const scene of content.scenes.values()) {
   try {
     const good = playCareful(scene.id);
     const bad = playCareless(scene.id);
-    results.push({ id: scene.id, good, bad });
-    if (!scene.id.startsWith('solo_') && bad.score >= good.score) problems.push(`${scene.id}: careless score ${bad.score} >= careful ${good.score}`);
+    const row = { id: scene.id, good, bad };
+    if (!scene.id.startsWith('solo_')) {
+      row.qte = playCareful(scene.id, { qte: true });
+      row.cautious = playCareful(scene.id, { cautious: true });
+      if (bad.score >= good.score) problems.push(`${scene.id}: careless score ${bad.score} >= careful ${good.score}`);
+      // Being careful is never wrong in itself: no safety action may be marked wrong or penalised.
+      // (Its time cost still counts, and a slower player may meet more deterioration.)
+      const safetyLabels = content.actionList.filter((a) => a.safety).map((a) => a.label);
+      const punished = row.cautious.items.filter((i) => i.kind === 'action' && safetyLabels.some((l) => i.text.startsWith(`${l}:`)));
+      if (punished.length) problems.push(`${scene.id}: safety actions were penalised: ${punished.map((i) => i.text).join(' | ')}`);
+    }
+    results.push(row);
   } catch (e) {
     problems.push(`${scene.id}: crashed: ${e.stack.split('\n').slice(0, 3).join(' | ')}`);
   }
 }
 
-console.log('scene | careful score (correct tags, time/target) | careless score');
+console.log('scene | careful (tags, time/target) | careful + QTE | extra-cautious | careless | safety credits');
 for (const r of results.filter((x) => !x.id.startsWith('solo_'))) {
-  console.log(`${r.id} | ${r.good.score} (${r.good.correctTags}/${r.good.total}, ${Math.round(r.good.seconds)}/${r.good.targetSeconds}s) | ${r.bad.score}`);
+  console.log(`${r.id} | ${r.good.score} (${r.good.correctTags}/${r.good.total}, ${Math.round(r.good.seconds)}/${r.good.targetSeconds}s) | ${r.qte?.score} | ${r.cautious?.score} | ${r.bad.score} | ${r.good.credits.length}`);
 }
 if (process.argv.includes('--why')) {
   for (const r of results.filter((x) => !x.id.startsWith('solo_') && x.good.score < 90)) {

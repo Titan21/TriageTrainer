@@ -14,9 +14,18 @@
         "emergencyServices": "Fire and Emergency NZ urban search and rescue 20 minutes out. Hato Hone St John staging at Latimer Square, 10 minutes out"
       },
       "startClock": "12:25",
-      "targetSeconds": 700,
+      "targetSeconds": 750,
       "casualties": [
-        { "ref": "bl_thigh_bleed_01", "position": [40, 46] },
+        {
+          "ref": "bl_thigh_bleed_01",
+          "position": [40, 46],
+          "localHazard": {
+            "type": "body_fluids",
+            "found": "Blood is pooling on the footpath around his leg; you glove up and keep it off your skin before you touch him.",
+            "injury": "You kneel in the blood with bare hands and it soaks your sleeves; you stop to clean up and put gloves on.",
+            "timeLostSeconds": 25
+          }
+        },
         { "ref": "br_not_breathing_black_01", "position": [50, 52] },
         {
           "ref": "ne_quiet_head_01",
@@ -24,10 +33,34 @@
           "override": {
             "approach": "Man lying still on his back at the edge of the footpath behind a toppled planter box, eyes closed, with a cut on his head and bruising on his face.",
             "mechanism": "Struck by falling masonry from a shop front when the earthquake hit. A passer-by saw him go down and he has not spoken since."
+          },
+          "localHazard": {
+            "type": "unstable_debris",
+            "found": "The toppled planter box is wedged on a broken kerb right beside his head; you check it is stable before you reach across.",
+            "injury": "The planter box shifts as you lean over him and pins your hand against the kerb for a moment.",
+            "timeLostSeconds": 30
           }
         },
-        { "ref": "en_bookshelf_leg_01", "position": [58, 28] },
-        { "ref": "bl_impaled_thigh_01", "position": [70, 54] },
+        {
+          "ref": "en_bookshelf_leg_01",
+          "position": [58, 28],
+          "localHazard": {
+            "type": "live_wire",
+            "found": "A cable torn from the shop's ceiling lights hangs across the shelf by her leg; you keep clear of it, kneel on her other side and have it reported.",
+            "injury": "Your arm brushes the hanging cable and you get a sharp electric shock.",
+            "timeLostSeconds": 35
+          }
+        },
+        {
+          "ref": "bl_impaled_thigh_01",
+          "position": [70, 54],
+          "localHazard": {
+            "type": "sharp_metal",
+            "found": "Cut ends of rebar stick out of the broken slab beside her; you keep your hands and sleeves clear of them as you kneel.",
+            "injury": "You lean on a bare rebar end and it tears your sleeve and grazes your forearm.",
+            "timeLostSeconds": 30
+          }
+        },
         { "ref": "md_wheelchair_broken_01", "position": [80, 64] },
         { "ref": "wk_jacket_bleed_01", "position": [18, 66] },
         { "ref": "wk_deaf_gesture_01", "position": [28, 80] },
@@ -67,9 +100,28 @@
         }
       ],
       "hazards": [
+        { "id": "hz_glass", "type": "falling_glass", "position": [52, 38], "activeAtStart": true },
         { "id": "hz_wall", "type": "cracking_wall", "position": [66, 22], "activeAtStart": false },
         { "id": "hz_gas", "type": "gas_smell", "position": [36, 40], "activeAtStart": false }
       ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Checked the shop fronts, the glass above and the car park building before going in.",
+            "miss": "You went into the collapse zone without checking for danger."
+          },
+          {
+            "id": "s_methane",
+            "action": "radio_methane",
+            "by": 120,
+            "credit": "Radioed a METHANE report early, so control knew what was needed.",
+            "miss": "No METHANE report went to control in the first two minutes."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_radio",
@@ -77,6 +129,8 @@
           "type": "radio_message",
           "description": "Control: urban search and rescue is about 20 minutes away. Keep walking casualties together away from the buildings."
         },
+        { "id": "ev_cease", "atSeconds": 135, "type": "signal", "signal": "cease", "deadlineSeconds": 30 },
+        { "id": "ev_resume", "atSeconds": 175, "type": "signal", "signal": "resume" },
         {
           "id": "ev_friend",
           "atSeconds": 200,
@@ -92,6 +146,8 @@
           "atSeconds": 300,
           "type": "aftershock",
           "hazard": "hz_wall",
+          "cue": "A deep rumble comes up through the footpath and the shop windows buzz in their frames.",
+          "followUpCue": "The shaking stops. A new crack runs across the wall above the footpath and dust is trickling down.",
           "description": "A strong aftershock. The shop wall above the footpath cracks and dust pours down.",
           "correctResponse": ["drop_cover_hold", "withdraw"],
           "deadlineSeconds": 20,
@@ -102,6 +158,7 @@
           "atSeconds": 480,
           "type": "hazard_appears",
           "hazard": "hz_gas",
+          "cue": "You notice a smell of gas, faint at first, then stronger. Somewhere close by something is hissing.",
           "description": "A strong smell of gas drifts across the footpath. Fire and Emergency NZ calls for everyone to move back.",
           "correctResponse": "withdraw",
           "deadlineSeconds": 25,
@@ -114,7 +171,8 @@
         "Not breathing after one airway opening is black. Do not start CPR while red and orange casualties wait.",
         "When the ground shakes, drop, cover and hold, then withdraw. When you smell gas, withdraw first and go back when the danger has passed.",
         "Flag trapped casualties for medical and leave lifting to the rescue crews. A friend demanding a release does not change the order.",
-        "A wheelchair user who is not hurt still cannot join the walking wounded. Ask how he wants to be moved and keep his chair with him."
+        "A wheelchair user who is not hurt still cannot join the walking wounded. Ask how he wants to be moved and keep his chair with him.",
+        "One long whistle blast means stop work and be quiet so the rescue crews can listen for survivors. Wait for the resume signal, and send your METHANE report early so control knows what you need."
       ],
       "tags": ["earthquake", "building_collapse", "cbd", "christchurch", "mixed_casualties"]
     },
@@ -132,12 +190,48 @@
         "emergencyServices": "Fire and Emergency NZ from Omarama and Hato Hone St John from Cromwell, 30 minutes out. Rescue helicopter requested"
       },
       "startClock": "14:40",
-      "targetSeconds": 620,
+      "targetSeconds": 680,
       "casualties": [
-        { "ref": "en_bus_chest_01", "position": [54, 33] },
-        { "ref": "bl_hidden_arm_bleed_01", "position": [34, 40] },
-        { "ref": "vr_road_ejected_01", "position": [88, 30] },
-        { "ref": "vr_bus_femur_01", "position": [46, 48] },
+        {
+          "ref": "en_bus_chest_01",
+          "position": [54, 33],
+          "localHazard": {
+            "type": "fuel_spill",
+            "found": "Diesel is dripping from the crushed panels beside his hip; you keep your boots out of it and warn the others.",
+            "injury": "Your knee slides in the diesel and you go down on one hand; your clothes are soaked and you lose time sorting yourself out.",
+            "timeLostSeconds": 35
+          }
+        },
+        {
+          "ref": "bl_hidden_arm_bleed_01",
+          "position": [34, 40],
+          "localHazard": {
+            "type": "broken_glass",
+            "found": "Broken window glass lies in the grass around the wheel; you clear a space before you kneel.",
+            "injury": "You kneel on a piece of window glass and cut your knee.",
+            "timeLostSeconds": 30
+          }
+        },
+        {
+          "ref": "vr_road_ejected_01",
+          "position": [88, 30],
+          "localHazard": {
+            "type": "traffic_edge",
+            "found": "She is lying on the road shoulder with vehicles still passing close by; you work from the bank side and keep an eye on the traffic.",
+            "injury": "A passing vehicle brushes your jacket as you kneel on the road side, and you have to stop and steady yourself.",
+            "timeLostSeconds": 25
+          }
+        },
+        {
+          "ref": "vr_bus_femur_01",
+          "position": [46, 48],
+          "localHazard": {
+            "type": "sharp_metal",
+            "found": "Torn trim and sharp panel edges lie in the grass beside him; you move them clear before you kneel.",
+            "injury": "You put your hand on a torn edge of body panel and cut your palm.",
+            "timeLostSeconds": 30
+          }
+        },
         {
           "ref": "ne_older_ankle_head_01",
           "position": [70, 44],
@@ -210,8 +304,28 @@
         }
       ],
       "hazards": [
+        { "id": "hz_traffic", "type": "traffic", "position": [94, 40], "activeAtStart": true },
         { "id": "hz_smoke", "type": "fire_smoke", "position": [58, 28], "activeAtStart": false }
       ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_traffic",
+            "action": "make_safe",
+            "by": "first_casualty",
+            "hazard": "hz_traffic",
+            "credit": "Cones out, hazard lights on and a lookout posted before anyone worked beside the highway.",
+            "miss": "Nobody slowed the traffic on the highway: casualties were treated beside passing vehicles."
+          },
+          {
+            "id": "s_methane",
+            "action": "radio_methane",
+            "by": 120,
+            "credit": "Radioed a METHANE report early, so control knew what was needed.",
+            "miss": "No METHANE report went to control in the first two minutes."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_radio",
@@ -234,6 +348,7 @@
           "atSeconds": 270,
           "type": "hazard_appears",
           "hazard": "hz_smoke",
+          "cue": "Grey smoke is rolling out of the front of the coach and the air catches in your throat.",
           "description": "Thick smoke starts pouring from the engine bay at the front of the coach.",
           "correctResponse": "withdraw",
           "deadlineSeconds": 20,
@@ -252,7 +367,8 @@
         "A worried relative pulling you to one casualty does not change the order. Sieve everyone and come back.",
         "Smoke from the engine bay means withdraw. Go back when the crew says it is safe.",
         "Trapped, breathing fast, blue-grey lips: red. Flag for medical and do not try to cut him out yourself.",
-        "The woman thrown from the car is not breathing after one airway opening: black. Tag her and keep moving."
+        "The woman thrown from the car is not breathing after one airway opening: black. Tag her and keep moving.",
+        "Cones, hazard lights and a lookout come before casualties on a live road. Send your METHANE report early so control can start the rescue crews and the helicopter."
       ],
       "tags": ["bus_crash", "road_crash", "state_highway", "rural", "central_otago", "mixed_casualties"]
     },
@@ -270,16 +386,40 @@
         "emergencyServices": "Hato Hone St John event medics on site. Fire and Emergency NZ and ambulances 10 minutes out"
       },
       "startClock": "15:10",
-      "targetSeconds": 680,
+      "targetSeconds": 745,
       "casualties": [
-        { "ref": "en_trapped_bleed_01", "position": [40, 22] },
-        { "ref": "ch_forearm_bleed_01", "position": [26, 34] },
+        {
+          "ref": "en_trapped_bleed_01",
+          "position": [40, 22],
+          "localHazard": {
+            "type": "unstable_debris",
+            "found": "Broken slabs lean over the pile that traps his legs; you keep your weight off the pile and work from beside his shoulder.",
+            "injury": "A slab edge shifts and a chunk of concrete bangs your forearm.",
+            "timeLostSeconds": 35
+          }
+        },
+        {
+          "ref": "ch_forearm_bleed_01",
+          "position": [26, 34],
+          "localHazard": {
+            "type": "sharp_metal",
+            "found": "The sheet of roofing metal that cut her lies edge-up beside her; you move it away before you kneel.",
+            "injury": "You put your hand on the edge of the roofing sheet and cut your palm.",
+            "timeLostSeconds": 25
+          }
+        },
         {
           "ref": "en_beam_arm_01",
           "position": [58, 20],
           "override": {
             "approach": "Woman sitting upright on the terracing with her right arm pinned under a fallen steel beam from the stand roof, dusty, looking frightened.",
             "mechanism": "Part of the stand roof came down and a beam fell across her right arm about ten minutes ago."
+          },
+          "localHazard": {
+            "type": "live_wire",
+            "found": "A cable from the stand lighting is pinched under the beam beside her arm; you keep clear of it, kneel on her other side and report it for isolation.",
+            "injury": "Your hand touches the damaged cable and a sharp shock runs up your arm.",
+            "timeLostSeconds": 35
           }
         },
         {
@@ -290,7 +430,16 @@
             "mechanism": "Seating fell onto the lower rows when the stand collapsed. His dad saw him sit up and cry straight away."
           }
         },
-        { "ref": "vr_stand_back_pain_01", "position": [50, 38] },
+        {
+          "ref": "vr_stand_back_pain_01",
+          "position": [50, 38],
+          "localHazard": {
+            "type": "slippery_ground",
+            "found": "Spilled water and drinks have made the concrete wet around her; you find dry footing before you kneel.",
+            "injury": "Your boot slides on the wet concrete and you wrench your knee as you go down.",
+            "timeLostSeconds": 30
+          }
+        },
         { "ref": "vr_stand_nosebleed_01", "position": [30, 44] },
         { "ref": "vr_child_wrist_01", "position": [46, 58] },
         { "ref": "wk_concussed_walker_01", "position": [38, 62] },
@@ -350,8 +499,27 @@
         }
       ],
       "hazards": [
+        { "id": "hz_stand", "type": "unstable_floor", "position": [30, 12], "activeAtStart": true },
         { "id": "hz_terrace", "type": "unstable_floor", "position": [50, 12], "activeAtStart": false }
       ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Checked the terraces and the seating overhead before going onto the stand.",
+            "miss": "You went onto the damaged stand without checking for danger."
+          },
+          {
+            "id": "s_methane",
+            "action": "radio_methane",
+            "by": 120,
+            "credit": "Radioed a METHANE report early, so control knew what was needed.",
+            "miss": "No METHANE report went to control in the first two minutes."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_medics",
@@ -373,6 +541,8 @@
           "atSeconds": 380,
           "type": "aftershock",
           "hazard": "hz_terrace",
+          "cue": "The ground shudders and the stand groans like a ship's timbers.",
+          "followUpCue": "The shaking stops. Loose seats are still clattering and the upper terrace above you has sagged lower than before.",
           "description": "An aftershock. The remaining rows of the stand creak and the upper terrace sags above you.",
           "correctResponse": ["drop_cover_hold", "withdraw"],
           "deadlineSeconds": 20,
@@ -383,14 +553,16 @@
           "atSeconds": 480,
           "type": "radio_message",
           "description": "Control: the rescue helicopter lands in 10 minutes on the far side of the field. Keep that area clear."
-        }
+        },
+        { "id": "ev_evacuate", "atSeconds": 560, "type": "signal", "signal": "evacuate", "deadlineSeconds": 45 }
       ],
       "teaching": [
         "Two catastrophic bleeds, one on an adult and one on a child: stop each one before anything else, then tag red.",
         "Use the child sieve for all three children. A child who can walk is green even when crying. A child who cannot walk because of age cannot be cleared as green.",
         "Crying and shouting are not signs of serious injury. Hand the green casualties to the helpers and move on.",
         "A wheelchair user who can reach the walking-wounded point is green. Ask what she can do rather than telling her to stand.",
-        "When the terrace sags, drop, cover and hold, then withdraw. Go back when the danger is cleared."
+        "When the terrace sags, drop, cover and hold, then withdraw. Go back when the danger is cleared.",
+        "Three short whistle blasts mean leave the area now, even if you are in the middle of care. A damaged stand can move again without warning."
       ],
       "tags": ["earthquake", "stand_collapse", "stadium", "child", "disability", "mixed_casualties"]
     },
@@ -408,23 +580,44 @@
         "emergencyServices": "Fire and Emergency NZ swift-water rescue 20 minutes out. Hato Hone St John 15 minutes out. Police and Civil Defence setting up at the school hall"
       },
       "startClock": "07:10",
-      "targetSeconds": 620,
+      "targetSeconds": 655,
       "casualties": [
         {
           "ref": "vr_wet_drowned_01",
           "position": [24, 60],
           "override": {
             "mechanism": "Pulled from the flood water by neighbours after the river swept through his street. He was under for several minutes."
+          },
+          "localHazard": {
+            "type": "body_fluids",
+            "found": "Muddy flood water and a little vomit are around his mouth; you put on gloves before you touch his face.",
+            "injury": "You open his airway with bare hands and get splashed with muddy water and vomit; you stop to wipe down and put gloves on.",
+            "timeLostSeconds": 25
           }
         },
         { "ref": "ch_rescue_breaths_01", "position": [44, 40] },
-        { "ref": "br_near_drowning_01", "position": [30, 68] },
+        {
+          "ref": "br_near_drowning_01",
+          "position": [30, 68],
+          "localHazard": {
+            "type": "slippery_ground",
+            "found": "The footpath is coated in slippery silt from the flood; you brace yourself against the kerb before you kneel.",
+            "injury": "Your boot slides on the silt and you land on one knee on the footpath.",
+            "timeLostSeconds": 30
+          }
+        },
         { "ref": "vr_wet_hip_01", "position": [56, 62] },
         {
           "ref": "en_prone_debris_01",
           "position": [18, 46],
           "override": {
             "mechanism": "Fast flood water swept debris down the street. A timber beam fell across his left leg and he landed face down."
+          },
+          "localHazard": {
+            "type": "live_wire",
+            "found": "A power cable is tangled in the flood debris beside the beam; you treat it as live, keep away from it and work from the dry side.",
+            "injury": "You brush the cable with your hand while reaching for him and a sharp shock runs up your arm.",
+            "timeLostSeconds": 40
           }
         },
         {
@@ -482,8 +675,27 @@
         }
       ],
       "hazards": [
+        { "id": "hz_flood", "type": "rising_water", "position": [8, 80], "activeAtStart": true },
         { "id": "hz_water", "type": "rising_water", "position": [14, 56], "activeAtStart": false }
       ],
+      "safety": {
+        "expected": [
+          {
+            "id": "s_scene",
+            "action": "check_danger",
+            "by": "first_casualty",
+            "credit": "Checked the water, the current and the debris before going in.",
+            "miss": "You went in along the flooded street without checking for danger."
+          },
+          {
+            "id": "s_methane",
+            "action": "radio_methane",
+            "by": 120,
+            "credit": "Radioed a METHANE report early, so control knew what was needed.",
+            "miss": "No METHANE report went to control in the first two minutes."
+          }
+        ]
+      },
       "events": [
         {
           "id": "ev_radio",
@@ -505,6 +717,7 @@
           "atSeconds": 300,
           "type": "hazard_appears",
           "hazard": "hz_water",
+          "cue": "A brown sheet of water slides across the road at the low end of the street, and the puddle around your boots is spreading fast.",
           "description": "Water surges over the road at the low end of the street and rises quickly toward the casualties.",
           "correctResponse": "withdraw",
           "deadlineSeconds": 25,
@@ -522,7 +735,8 @@
         "A child who is not breathing but has a pulse gets five rescue breaths after the airway is opened. If she is still not breathing, or has no pulse, she is black.",
         "Count the breaths on the near-drowned man: more than 30 a minute is red, even though he is awake and talking.",
         "A casualty who cannot get up is orange even when nothing looks broken. Ask a walking casualty or a helper to bring a blanket.",
-        "When the water starts rising over the road, withdraw to high ground. Do not go back for the trapped man until the swift-water crew says it is safe."
+        "When the water starts rising over the road, withdraw to high ground. Do not go back for the trapped man until the swift-water crew says it is safe.",
+        "Stay out of the water yourself. Floodwater hides cables and debris, and a rescuer swept away becomes another casualty."
       ],
       "tags": ["flood", "river", "evacuation", "wet", "rising_water", "mixed_casualties"]
     }

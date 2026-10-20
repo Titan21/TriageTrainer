@@ -6,6 +6,7 @@
 //   approach(s, casualtyId)          walk to a casualty (costs time)
 //   perform(s, actionId, opts)       do an action on the current casualty or the scene
 //   availableActions(s)              core / extras / more lists for the action panel
+//   answerPrompt(s, actionId, secs)  answer a quick-time prompt (s.prompt) within its time limit
 //   snapshot(s, casualtyId, mode)    { casualty, view } to pass to renderCasualty
 //   card(s, casualtyId)              IMISTAMBO triage card fields
 //   debrief(s)                       scores, mistakes and teaching for the end screen
@@ -31,11 +32,16 @@ export const CARD_FIELDS = [
 
 /** Sieve actions shown in a fixed order so their position becomes habit. */
 export const CORE_ACTIONS = [
-  'ask_to_walk', 'check_response', 'check_breathing', 'open_airway', 'check_radial_pulse', 'check_crt',
+  'check_danger', 'ask_to_walk', 'check_response', 'check_breathing', 'open_airway', 'check_radial_pulse', 'check_crt',
   'give_command', 'expose_check_bleeding', 'apply_tourniquet', 'direct_pressure', 'pack_wound',
   'recovery_position', 'tag_casualty',
 ];
-export const SCENE_ACTIONS = ['check_danger', 'call_walking_wounded', 'withdraw', 'drop_cover_hold', 'make_safe', 'radio_methane', 'call_for_help'];
+export const SCENE_ACTIONS = ['check_danger', 'don_gloves', 'call_walking_wounded', 'make_safe', 'withdraw', 'drop_cover_hold', 'evacuate', 'stop_and_listen', 'resume_work', 'radio_methane', 'call_for_help'];
+/** Answers offered in every quick-time prompt (shuffled), so the right one has to be recognised. */
+export const QTE_CHOICES = ['drop_cover_hold', 'withdraw', 'evacuate', 'stop_and_listen', 'resume_work', 'keep_working'];
+const QTE_SECONDS = 5;
+/** Actions that put hands on a casualty: check for danger first. */
+const isHandsOn = (a) => ['assessment', 'intervention', 'trap'].includes(a.group) && a.id !== 'ask_to_walk';
 const ENTRY_POINT = [50, 100];
 const EXTRA_COUNT = 3;
 
@@ -73,19 +79,25 @@ function placeCasualty(def, placement) {
 
 // ---------- session ----------
 
-export function createSession(content, sceneId, { seed = String(Date.now()), hints = true } = {}) {
+export function createSession(content, sceneId, { seed = String(Date.now()), hints = true, qte = false } = {}) {
   const scene = content.scenes.get(sceneId);
   if (!scene) throw new Error(`Unknown scene "${sceneId}"`);
   const session = {
-    content, scene, seed: String(seed), hints,
+    content, scene, seed: String(seed), hints, qte,
+    prompt: null,       // the quick-time prompt waiting for an answer, if any
+    qteResults: [],     // { eventId, step, expected, answer, seconds, ok, fast }
     clock: 0,
     startClock: scene.startClock ?? '10:00',
     position: ENTRY_POINT,
     current: null,
     order: [],
     casualties: new Map(),
-    hazards: (scene.hazards ?? []).map((h) => ({ ...h, active: h.activeAtStart === true })),
-    events: (scene.events ?? []).map((e) => ({ def: e, fired: false, progress: 0, resolved: false, missed: false })),
+    // active: the hazard is there (shown, reported by check_danger). acute: an event made it urgent and a
+    // response is due; only acute hazards make withdrawing or moving a casualty the right call.
+    hazards: (scene.hazards ?? []).map((h) => ({ ...h, active: h.activeAtStart === true, acute: false })),
+    events: [...(scene.events ?? []), ...(qte ? randomQtes(content, scene, String(seed)) : [])]
+      .sort((a, b) => a.atSeconds - b.atSeconds)
+      .map((e) => ({ def: withSignal(content, e), fired: false, progress: 0, resolved: false, missed: false })),
     sceneDone: [],
     log: [],
     messages: [],
@@ -95,10 +107,46 @@ export function createSession(content, sceneId, { seed = String(Date.now()), hin
     const def = content.casualties.get(placement.ref);
     if (!def) throw new Error(`Scene ${sceneId} references unknown casualty ${placement.ref}`);
     session.order.push(def.id);
-    session.casualties.set(def.id, newRuntime(session, placeCasualty(def, placement), placement.position));
+    const rc = newRuntime(session, placeCasualty(def, placement), placement.position);
+    rc.localHazard = placement.localHazard ?? null;
+    session.casualties.set(def.id, rc);
   }
   fireEvents(session);
   return session;
+}
+
+/** Signal events take their meaning and correct response from vocab.signals. */
+function withSignal(content, e) {
+  if (e.type !== 'signal') return e;
+  const sig = content.vocab.signals?.[e.signal];
+  if (!sig) return e;
+  return { correctResponse: sig.response, deadlineSeconds: 20, description: `Signal: ${sig.pattern.toLowerCase()} (${sig.meaning.toLowerCase()}).`, cue: `You hear ${sig.pattern.toLowerCase()} on a whistle.`, qte: true, ...e };
+}
+
+/**
+ * Extra quick-time events when the option is on: picked from vocab.qtePool by the
+ * scene's tags and briefing, at seeded times that don't collide with scripted events.
+ */
+function randomQtes(content, scene, seed) {
+  const pool = content.vocab.qtePool ?? [];
+  const words = new Set([...(scene.tags ?? []), ...`${scene.briefing?.type ?? ''} ${scene.briefing?.hazards ?? ''}`.toLowerCase().split(/[^a-z]+/)]);
+  const fits = pool.filter((q) => q.when.some((w) => words.has(w)));
+  if (!fits.length) return [];
+  const rng = makeRng(`${seed}|qte|${scene.id}`);
+  const count = scene.mode === 'full_scene' ? 2 : 1;
+  const span = Math.max(90, (scene.targetSeconds ?? 120) * 0.8);
+  const taken = (scene.events ?? []).map((e) => e.atSeconds);
+  const out = [];
+  const choices = [...fits];
+  while (out.length < count && choices.length) {
+    const q = choices.splice(Math.floor(rng() * choices.length), 1)[0];
+    let at = Math.round(30 + rng() * (span - 30));
+    for (let tries = 0; tries < 10 && taken.some((t) => Math.abs(t - at) < 30); tries++) at = Math.round(30 + rng() * (span - 30));
+    taken.push(at);
+    out.push({ ...q.event, id: `qte_${q.id}_${out.length}`, atSeconds: at, qte: true, random: true });
+    if (q.then) out.push({ ...q.then, id: `qte_${q.id}_${out.length}_then`, atSeconds: at + (q.then.after ?? 40), qte: true, random: true });
+  }
+  return out;
 }
 
 function newRuntime(session, def, position) {
@@ -120,6 +168,11 @@ function newRuntime(session, def, position) {
     tag: null,
     visitedAt: null,
     changedSince: 0,   // clock time of the last applied stage, for "nothing changed" notes
+    cameToYou: false,  // walked to the rescuer after the call-out: no danger check needed
+    dangerChecked: false,
+    dangerSkipped: false,
+    hazardFound: false,
+    hazardMet: false,
   };
 }
 
@@ -135,7 +188,7 @@ export function clockText(session, t = session.clock, withSeconds = false) {
 const regionText = (r) => String(r ?? '').replace(/_/g, ' ');
 const yesNo = (v) => (v ? 'yes' : 'no');
 const doneAt = (rc, id, t = Infinity) => rc.done.some((d) => d.id === id && d.ok !== false && d.t <= t);
-const hazardActive = (s) => s.hazards.some((h) => h.active);
+const hazardActive = (s) => s.hazards.some((h) => h.acute) || s.events.some((ev) => ev.fired && !ev.resolved && !ev.missed && ['aftershock', 'hazard_appears', 'signal'].includes(ev.def.type) && expectedResponses(ev.def).length);
 const bystanderPresent = (s) => (s.scene.bystanders ?? []).some((b) => (b.canHelp ?? []).includes('instruct_bystander_pressure'));
 
 /** Is the casualty breathing right now, counting an opened airway or rescue breaths? */
@@ -218,8 +271,15 @@ function fireEvents(session) {
       // The deadline runs from when the player sees the alert (the end of the action in progress).
       if (e.deadlineSeconds != null) ev.deadlineAt = session.clock + e.deadlineSeconds;
       const hz = e.hazard && session.hazards.find((h) => h.id === e.hazard);
-      if (hz && ['hazard_appears', 'aftershock'].includes(e.type)) hz.active = true;
-      session.messages.push({ t: session.clock, event: e.id, type: e.type, text: e.description ?? e.type, urgent: !!expectedResponses(e).length });
+      if (hz && ['hazard_appears', 'aftershock'].includes(e.type)) { hz.active = true; hz.acute = true; }
+      if (session.qte && e.qte !== false && ['aftershock', 'hazard_appears', 'signal'].includes(e.type) && expectedResponses(e).length) {
+        // Quick-time: play stops until the player answers. The cue is what you sense, never the answer.
+        ev.deadlineAt = null;
+        if (!session.prompt) session.prompt = makePrompt(session, ev, 0);
+        else (session.queuedPrompts ??= []).push(ev);
+      } else {
+        session.messages.push({ t: session.clock, event: e.id, type: e.type, text: e.description ?? e.cue ?? e.type, urgent: !!expectedResponses(e).length });
+      }
     }
     if (ev.fired && !ev.resolved && !ev.missed && ev.progress === 0 && ev.startedAt == null && ev.deadlineAt != null && session.clock > ev.deadlineAt && expectedResponses(e).length) {
       ev.missed = true;
@@ -230,6 +290,62 @@ function fireEvents(session) {
 
 const expectedResponses = (e) => [e.correctResponse ?? []].flat().filter((r) => r && r !== 'ignore');
 
+function makePrompt(session, ev, step) {
+  const e = ev.def;
+  const rng = makeRng(`${session.seed}|prompt|${e.id}|${step}`);
+  const choices = [...QTE_CHOICES];
+  for (let i = choices.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [choices[i], choices[j]] = [choices[j], choices[i]]; }
+  const signal = e.type === 'signal' ? session.content.vocab.signals?.[e.signal] ?? null : null;
+  return {
+    eventId: e.id,
+    step,
+    cue: step === 0 ? (e.cue ?? e.description) : (e.followUpCue ?? 'What now?'),
+    signal: signal ? { id: e.signal, pattern: signal.pattern, blasts: signal.blasts } : null,
+    choices: choices.map((id) => ({ id, label: session.content.actions.get(id)?.label ?? id })),
+    expected: expectedResponses(e)[step],
+    limitSeconds: e.qteSeconds ?? QTE_SECONDS,
+    at: session.clock,
+  };
+}
+
+/**
+ * Answer the current quick-time prompt. `seconds` is the real reaction time the UI
+ * measured; pass actionId null when the time ran out. The chosen action then runs
+ * like any other (it costs game time). Returns { ok, correct, fast, text, expected }.
+ */
+export function answerPrompt(session, actionId, seconds) {
+  const p = session.prompt;
+  if (!p) return { ok: false, text: 'Nothing to respond to.' };
+  const ev = session.events.find((x) => x.def.id === p.eventId);
+  const correct = actionId === p.expected;
+  const fast = correct && seconds <= p.limitSeconds;
+  session.qteResults.push({ eventId: p.eventId, step: p.step, expected: p.expected, answer: actionId, seconds, ok: correct, fast });
+  session.prompt = null;
+  let text;
+  const want = session.content.actions.get(p.expected)?.label ?? p.expected;
+  if (correct) {
+    const r = perform(session, actionId);
+    text = `${r.text}${fast ? '' : ` Right call, but it took you ${seconds.toFixed(1)} s.`}`;
+    const next = expectedResponses(ev.def)[p.step + 1];
+    if (next && !ev.resolved) session.prompt = makePrompt(session, ev, p.step + 1);
+  } else {
+    ev.missed = true;
+    if (actionId && actionId !== 'keep_working') perform(session, actionId);
+    text = actionId ? `Wrong call. You needed to: ${want}.` : `You froze. You needed to: ${want}.`;
+    session.messages.push({ t: session.clock, event: p.eventId, type: 'missed', text, urgent: true });
+  }
+  if (!session.prompt && session.queuedPrompts?.length) session.prompt = makePrompt(session, session.queuedPrompts.shift(), 0);
+  return { ok: true, correct, fast, text, expected: p.expected };
+}
+
+/** A response only has to start before the deadline: note the start before the action's time passes. */
+function markResponseStart(session, actionId) {
+  for (const ev of session.events) {
+    if (!ev.fired || ev.resolved || ev.missed || ev.startedAt != null) continue;
+    if (expectedResponses(ev.def)[0] === actionId) ev.startedAt = session.clock;
+  }
+}
+
 /** Count an action towards open events. startedAt is when the action began. */
 function noteResponse(session, actionId, startedAt) {
   for (const ev of session.events) {
@@ -238,15 +354,16 @@ function noteResponse(session, actionId, startedAt) {
     if (!want.length) continue;
     if (want[ev.progress] === actionId) {
       if (ev.progress === 0) {
-        ev.startedAt = startedAt;
-        if (ev.deadlineAt != null && startedAt > ev.deadlineAt) ev.missed = true;
+        ev.startedAt ??= startedAt;
+        if (ev.deadlineAt != null && ev.startedAt > ev.deadlineAt) ev.missed = true;
       }
       ev.progress++;
       if (ev.progress >= want.length) {
         ev.resolved = true;
         ev.resolvedAt = session.clock;
         const hz = ev.def.hazard && session.hazards.find((h) => h.id === ev.def.hazard);
-        if (hz && ['withdraw', 'make_safe'].includes(actionId)) hz.active = false;
+        if (hz) hz.acute = false;
+        if (hz && ['withdraw', 'make_safe', 'evacuate'].includes(actionId)) hz.active = false;
         if (ev.def.type === 'aftershock' && !ev.def.hazard && actionId === 'drop_cover_hold') {
           for (const h of session.hazards) if (h.active && h.type === 'aftershock') h.active = false;
         }
@@ -267,6 +384,7 @@ export function approach(session, casualtyId) {
   const rc = session.casualties.get(casualtyId);
   if (!rc) throw new Error(`No casualty ${casualtyId}`);
   if (session.current === casualtyId) return { ok: true, seconds: 0, text: '' };
+  if (session.prompt) return { ok: false, seconds: 0, text: 'Respond to what is happening first.' };
   const seconds = moveSeconds(session.position, rc.position);
   advance(session, seconds);
   session.position = rc.position;
@@ -302,7 +420,7 @@ export function availableActions(session) {
   const copy = [...pool];
   while (extras.length < EXTRA_COUNT && copy.length) extras.push(copy.splice(Math.floor(rng() * copy.length), 1)[0]);
   const used = new Set([...CORE_ACTIONS, ...extras.map((a) => a.id)]);
-  const more = all.filter((a) => !used.has(a.id) && a.id !== 'move_on');
+  const more = all.filter((a) => !used.has(a.id) && a.id !== 'move_on' && !a.qteOnly);
   return { core, extras, more };
 }
 
@@ -318,12 +436,15 @@ export function perform(session, actionId, opts = {}) {
   if (!a) throw new Error(`Unknown action ${actionId}`);
   const rc = session.current && session.casualties.get(session.current);
   const sceneLevel = SCOPE_SCENE.has(a.group) || a.effect.scope === 'scene' || ['radio_methane', 'call_for_help'].includes(a.id);
+  if (session.prompt) return { ok: false, text: 'Respond to what is happening first.', correct: true, seconds: 0 };
   if (!rc && !sceneLevel) return { ok: false, text: 'Go to a casualty first.', correct: true, seconds: 0 };
   if (a.effect.type === 'tag' && !opts.category) return { ok: false, text: 'Choose a category.', correct: true, seconds: 0 };
+  if (a.qteOnly) return { ok: false, text: 'Not now.', correct: true, seconds: 0 };
 
   // Judge the action against the situation before it happens.
   const correct = rc ? evalCond(a.correctWhen, condContext(session, rc, a.id)) : evalCond(a.correctWhen, sceneContext(session));
   const seconds = a.timeCostSeconds ?? 0;
+  markResponseStart(session, a.id);
   // The action finishes at the new clock time; record it first so a stage due at
   // exactly that moment counts it, then run stages and events, then the effect.
   session.clock += seconds;
@@ -332,6 +453,21 @@ export function perform(session, actionId, opts = {}) {
   if (sceneLevel) session.sceneDone.push({ id: a.id, t });
   for (const r of session.casualties.values()) runStages(session, r);
   fireEvents(session);
+
+  // Hands on without checking for danger first: note it, and meet any local hazard.
+  let injury = null;
+  if (rc && isHandsOn(a) && needsDangerCheck(session, rc) && !rc.dangerChecked) {
+    rc.dangerSkipped = true;
+    if (rc.localHazard && !rc.hazardMet) {
+      rc.hazardMet = true;
+      const lost = rc.localHazard.timeLostSeconds ?? 30;
+      session.clock += lost;
+      injury = `${rc.localHazard.injury} (${lost} s lost)`;
+      session.messages.push({ t: session.clock, casualty: rc.id, type: 'injury', text: rc.localHazard.injury, urgent: true });
+      for (const r of session.casualties.values()) runStages(session, r);
+      fireEvents(session);
+    }
+  }
 
   let result;
   if (rc && !sceneLevel) {
@@ -344,10 +480,16 @@ export function perform(session, actionId, opts = {}) {
   }
   noteResponse(session, a.id, t - seconds);
   for (const r of session.casualties.values()) runStages(session, r);
+  if (injury) result = { ...result, text: `${injury} ${result.text}` };
 
-  const entry = { t, casualty: rc?.id ?? null, action: a.id, seconds, correct, feedback: correct ? null : a.feedbackWrong ?? null, text: result.text };
+  const entry = { t, casualty: rc?.id ?? null, action: a.id, seconds, correct, feedback: correct ? null : a.feedbackWrong ?? null, text: result.text, injury: !!injury };
   session.log.push(entry);
   return { ...result, correct, feedback: entry.feedback, seconds };
+}
+
+/** Does this casualty need a danger check before hands-on care? Walkers who came to you don't. */
+export function needsDangerCheck(session, rc) {
+  return session.scene.safety?.dangerCheckEachCasualty !== false && !rc.cameToYou;
 }
 
 function sceneContext(session) {
@@ -371,6 +513,7 @@ function applySceneEffect(session, a, rc) {
       observe(session, r, 'canWalk', r.state.canWalk === true);
       if (r.state.canWalk) {
         walkers.push(r);
+        r.cameToYou = true;
         if (!r.drawn.includes(a.id)) r.drawn.push(a.id);
         // They come to you: tagging them is now a short step away.
         r.position = [Math.min(100, session.position[0] + 4 + walkers.length * 3), Math.max(0, session.position[1] - 4)];
@@ -386,11 +529,25 @@ function applySceneEffect(session, a, rc) {
   switch (e.do) {
     case 'check_danger': {
       const act = session.hazards.filter((h) => h.active);
-      return { ok: true, text: act.length ? `Danger: ${act.map((h) => session.content.vocab.hazards[h.type]?.description ?? h.type).join(' ')}` : 'No immediate danger that you can see.' };
+      const parts = act.map((h) => session.content.vocab.hazards[h.type]?.description ?? h.type);
+      if (rc) {
+        rc.dangerChecked = true;
+        if (rc.localHazard && !rc.hazardMet) { rc.hazardFound = true; parts.push(rc.localHazard.found); }
+        else if (!act.length) parts.push('No immediate danger around this casualty.');
+      }
+      return { ok: true, text: parts.length ? parts.join(' ') : 'No immediate danger that you can see.' };
     }
-    case 'withdraw': return { ok: true, text: hazardActive(session) ? 'You move back to a safe distance.' : 'You withdraw, but nothing required it.' };
+    case 'withdraw': return { ok: true, text: hazardActive(session) ? 'You leave the danger zone and move to a safe distance.' : 'You step back to a safe distance. Nothing needed it this time, but better safe.' };
     case 'drop_cover_hold': return { ok: true, text: 'You drop, cover and hold until the shaking stops.' };
-    case 'make_safe': return { ok: true, text: 'You make the area as safe as you can.' };
+    case 'make_safe': {
+      const fixable = session.hazards.filter((h) => h.active && session.content.vocab.hazards[h.type]?.defaultResponse === 'make_safe');
+      for (const h of fixable) { h.active = false; h.acute = false; }
+      return { ok: true, text: fixable.length ? 'Cones out, hazard lights on and a lookout posted: traffic now passes slowly and wide.' : 'You make the area as safe as you can.' };
+    }
+    case 'evacuate': return { ok: true, text: 'You leave by the safe route and report to the assembly point.' };
+    case 'stop_and_listen': return { ok: true, text: 'You stop work and stay quiet while the team listens.' };
+    case 'resume_work': return { ok: true, text: 'Back to work.' };
+    case 'keep_working': return { ok: true, text: 'You keep working.' };
     case 'radio_methane': return { ok: true, text: 'METHANE report sent to control.' };
     case 'call_for_help': return { ok: true, text: 'You call for more help.' };
     case 'don_gloves': return { ok: true, text: 'Gloves on.' };
@@ -628,13 +785,38 @@ export function snapshot(session, casualtyId, mode = 'play') {
   };
 }
 
+// ---------- safety ----------
+
+/** Expected scene safety actions not done yet (scene.safety.expected). */
+export function pendingSafety(session) {
+  const doneIds = new Set(session.sceneDone.map((d) => d.id));
+  return (session.scene.safety?.expected ?? []).filter((x) => !doneIds.has(x.action));
+}
+
+function safetyResults(session) {
+  const firstApproach = session.log.find((l) => l.action === 'approach')?.t ?? Infinity;
+  return (session.scene.safety?.expected ?? []).map((x) => {
+    const when = session.sceneDone.find((d) => d.id === x.action)?.t;
+    const limit = x.by === 'first_casualty' ? firstApproach : typeof x.by === 'number' ? x.by : Infinity;
+    // A scene action done before the first approach finishes before it, so compare start times.
+    const a = session.content.actions.get(x.action);
+    const started = when == null ? null : when - (a?.timeCostSeconds ?? 0);
+    return { ...x, ok: started != null && started <= limit, at: when ?? null };
+  });
+}
+
 // ---------- hints ----------
 
 /** A Learn-mode nudge based on what is visible and what has been checked. */
 export function hint(session) {
   const rc = session.current && session.casualties.get(session.current);
-  if (!rc) return 'Pick a casualty, or call out for anyone who can walk.';
+  if (!rc) {
+    const pending = pendingSafety(session).filter((x) => x.by === 'first_casualty');
+    if (pending.length) return pending[0].hint ?? 'Make sure the scene is safe before you go in.';
+    return 'Pick a casualty, or call out for anyone who can walk.';
+  }
   const has = (id) => rc.done.some((d) => d.id === id);
+  if (needsDangerCheck(session, rc) && !rc.dangerChecked) return 'Check for danger before you kneel down.';
   const seenCat = rc.findings.some((f) => f.lifeThreat === 'catastrophic_bleed' && (f.visible || rc.revealed.has(f.id)));
   if (seenCat && !['apply_tourniquet', 'direct_pressure', 'pack_wound', 'instruct_bystander_pressure'].some(has)) return 'Catastrophic bleeding comes first.';
   if (!has('ask_to_walk') && !has('call_walking_wounded') && rc.observed.responsive?.value !== 'unresponsive') return 'Can they make their own way to you?';
@@ -665,6 +847,9 @@ export function debrief(session) {
   const items = [];
   let penalty = 0;
   const add = (points, text, casualty = null, kind = 'mistake') => { penalty += points; items.push({ points, text, casualty, kind }); };
+  const credits = [];
+  const credit = (text, kind = 'safety') => credits.push({ text, kind });
+  const w = (k, d) => sc[k] ?? d;
 
   const casualties = session.order.map((id) => {
     const rc = session.casualties.get(id);
@@ -691,11 +876,16 @@ export function debrief(session) {
     if (lsi.length && rc.def.state && triage(rules, rc.ageGroup, rollState(rc.def.state, () => 0.5)).category !== 'black' && !lsi.some(doneBefore)) {
       mark(sc.missedLifeSavingIntervention, `Missed life-saving intervention: ${lsi.map((x) => actions.get(x)?.label ?? x).join(' or ')}.`);
     }
-    for (const k of exp.keyActions ?? []) if (!doneBefore(k)) mark(3, `Missed: ${actions.get(k)?.label ?? k}.`);
+    for (const k of exp.keyActions ?? []) if (!doneBefore(k)) mark(w('missedKeyAction', 3), `Missed: ${actions.get(k)?.label ?? k}.`);
+    if (rc.visitedAt != null && needsDangerCheck(session, rc)) {
+      if (rc.hazardMet) mark(w('rescuerInjured', 10), `Hurt yourself: ${rc.localHazard.injury}`);
+      else if (rc.dangerSkipped) mark(w('skippedDangerCheck', 2), 'Went hands-on without checking for danger first.');
+      if (rc.hazardFound) credit(`Checked for danger at ${displayName(session, id)}: ${rc.localHazard.found}`);
+    }
     if (assigned) {
       for (const chk of requiredChecks(rules, rc.ageGroup, truth.step)) {
         const opts = [chk].flat();
-        if (!opts.some(doneBefore)) mark(2, `Tagged without: ${opts.map((x) => actions.get(x)?.label ?? x).join(' or ')}.`);
+        if (!opts.some(doneBefore)) mark(w('skippedCheck', 2), `Tagged without: ${opts.map((x) => actions.get(x)?.label ?? x).join(' or ')}.`);
       }
     }
     // Deteriorated after the (last) tag and never re-triaged.
@@ -704,7 +894,7 @@ export function debrief(session) {
       const pNow = session.content.categories.get(now.category).priority, pTag = session.content.categories.get(assigned).priority;
       if (now.category !== 'black' && pNow < pTag) {
         out.deteriorated = now.category;
-        mark(3, `Deteriorated to ${now.category} after you tagged ${assigned}; a re-triage would have caught it.`);
+        mark(w('missedRetriage', 3), `Deteriorated to ${now.category} after you tagged ${assigned}; a re-triage would have caught it.`);
       }
     }
     out.missedFindings = rc.findings.filter((f) => !f.visible && !rc.revealed.has(f.id) && f.overlay !== 'entrapment').map((f) => f.label);
@@ -712,17 +902,42 @@ export function debrief(session) {
     return out;
   });
 
-  const wrong = session.log.filter((l) => l.correct === false);
+  const wrong = session.log.filter((l) => l.correct === false && !actions.get(l.action)?.safety);
   for (const l of wrong) {
     const a = actions.get(l.action);
-    add(a.group === 'silly' ? 2 : 1, `${a.label}: ${l.feedback ?? 'not needed here.'}`, l.casualty, 'action');
+    add(a.group === 'silly' ? w('sillyAction', 2) : w('wrongAction', 1), `${a.label}: ${l.feedback ?? 'not needed here.'}`, l.casualty, 'action');
   }
+  const qteByEvent = new Map();
+  for (const q of session.qteResults) (qteByEvent.get(q.eventId) ?? qteByEvent.set(q.eventId, []).get(q.eventId)).push(q);
   for (const ev of session.events) {
-    if (!(ev.missed || (ev.fired && !ev.resolved && expectedResponses(ev.def).length && ev.def.deadlineSeconds != null))) continue;
+    const qs = qteByEvent.get(ev.def.id) ?? [];
     const needed = expectedResponses(ev.def).map((x) => actions.get(x)?.label ?? x).join(', then ');
-    if (['hazard_appears', 'aftershock'].includes(ev.def.type)) add(sc.enteredOrStayedInDanger, `Danger not handled in time: ${ev.def.description} You needed to: ${needed}.`, null, 'danger');
-    else add(3, `Not handled in time: ${ev.def.description} You needed to: ${needed}.`, ev.def.casualty ?? null, 'event');
+    const what = ev.def.cue ?? ev.def.description;
+    if (qs.length) {
+      const bad = qs.find((q) => !q.ok);
+      if (bad) add(w('qteWrong', 15), `${what} ${bad.answer ? `You chose "${actions.get(bad.answer)?.label ?? bad.answer}"` : 'You froze'}; you needed to: ${needed}.`, null, 'danger');
+      else {
+        const slow = qs.filter((q) => !q.fast);
+        if (slow.length) add(w('qteSlow', 3), `${what} Right response, but slow (${slow.map((q) => `${q.seconds.toFixed(1)} s`).join(', ')}; aim for under ${QTE_SECONDS} s).`, null, 'danger');
+        else credit(`${what} You responded correctly in ${qs.map((q) => `${q.seconds.toFixed(1)} s`).join(' and ')}.`, 'reaction');
+      }
+      continue;
+    }
+    if (ev.resolved && !ev.missed && expectedResponses(ev.def).length) {
+      if (['hazard_appears', 'aftershock', 'signal'].includes(ev.def.type)) credit(`${ev.def.description} You responded in time.`);
+      continue;
+    }
+    if (!(ev.missed || (ev.fired && !ev.resolved && expectedResponses(ev.def).length && ev.def.deadlineSeconds != null))) continue;
+    if (['hazard_appears', 'aftershock', 'signal'].includes(ev.def.type)) add(sc.enteredOrStayedInDanger, `Danger not handled in time: ${ev.def.description} You needed to: ${needed}.`, null, 'danger');
+    else add(w('otherEventMissed', 3), `Not handled in time: ${ev.def.description} You needed to: ${needed}.`, ev.def.casualty ?? null, 'event');
   }
+  for (const x of safetyResults(session)) {
+    if (x.ok) credit(x.credit ?? `${actions.get(x.action)?.label ?? x.action}: done.`);
+    else add(w('missedSafetyAction', 5), x.miss ?? `Missed: ${actions.get(x.action)?.label ?? x.action}.`, null, 'safety');
+  }
+  const checkable = session.order.map((id) => session.casualties.get(id)).filter((rc) => rc.visitedAt != null && needsDangerCheck(session, rc));
+  const checked = checkable.filter((rc) => rc.dangerChecked && !rc.dangerSkipped);
+  if (checkable.length && checked.length === checkable.length) credit(`Checked for danger before going hands-on at every casualty (${checked.length}).`);
   const target = session.scene.targetSeconds ?? sc.targetSecondsPerCasualty * session.order.length;
   if (session.clock > target) {
     const over = session.clock - target;
@@ -741,6 +956,8 @@ export function debrief(session) {
     over: tagged.filter((c) => c.verdict === 'over').length,
     casualties,
     items,
+    credits,
+    safety: { dangerChecks: { checked: checked.length, of: checkable.length }, expected: safetyResults(session) },
     teaching: session.scene.teaching ?? [],
   };
 }

@@ -9,7 +9,7 @@
     { "id": "black", "label": "Dead", "priority": 4, "colour": "#111111" }
   ],
   "scoring": {
-    "notes": "Points off a score of 100. Tag penalties by correct category (row) and assigned category (column): under-triage costs more than over-triage, and tagging a salvageable casualty black is the worst outcome. An untagged casualty costs its row's maximum. Smaller process penalties (skipped checks 2, missed key action 3, wrong action 1, silly action 2, missed re-triage 3) are fixed in src/game/session.js.",
+    "notes": "Points off a score of 100. Tag penalties by correct category (row) and assigned category (column): under-triage costs more than over-triage, and tagging a salvageable casualty black is the worst outcome. An untagged casualty costs its row's maximum. Safety actions are never penalised; missing an expected one is.",
     "triagePenalty": {
       "red": { "red": 0, "orange": 18, "green": 30, "black": 45 },
       "orange": { "red": 6, "orange": 0, "green": 18, "black": 45 },
@@ -19,7 +19,18 @@
     "missedLifeSavingIntervention": 20,
     "enteredOrStayedInDanger": 15,
     "targetSecondsPerCasualty": 60,
-    "overtimePenaltyPer10Seconds": 1
+    "overtimePenaltyPer10Seconds": 1,
+    "skippedCheck": 2,
+    "missedKeyAction": 3,
+    "wrongAction": 1,
+    "sillyAction": 2,
+    "missedRetriage": 3,
+    "otherEventMissed": 3,
+    "missedSafetyAction": 5,
+    "skippedDangerCheck": 2,
+    "rescuerInjured": 10,
+    "qteWrong": 15,
+    "qteSlow": 3
   },
   "sieves": {
     "adult": {
