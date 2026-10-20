@@ -27,6 +27,8 @@ export const PROPORTIONS = {
 };
 
 const mirror = (a) => a.map((x) => 180 - x);
+const SEAT_LEG = [58, 88, 80];
+const SEAT_LEG_SCALE = [0.44, 0.82, 0.5];
 
 // Segment angles: arms [upper, fore, hand], legs [thigh, shin, foot] per side.
 export const POSES = {
@@ -35,17 +37,21 @@ export const POSES = {
     arms: { L: [80, 84, 86], R: mirror([80, 84, 86]) },
     legs: { L: [84, 88, 35], R: mirror([84, 88, 35]) },
   },
+  // Seated poses (front view, camera a little above the casualty): the pelvis is at seat height, the
+  // thighs run toward the viewer so they are foreshortened and a little apart, the shins drop almost
+  // straight to the ground and the feet stand flat. The seat itself is drawn by seat.js.
   sitting: {
-    axis: -90, lat: [1, 0], headDir: -90, face: 'front', upright: true, legsFront: true,
-    legScale: [0.72, 0.64, 0.8],
-    arms: { L: [62, 76, 84], R: mirror([62, 76, 84]) },
-    legs: { L: [48, 62, 36], R: mirror([48, 62, 36]) },
+    axis: -90, lat: [1, 0], headDir: -90, face: 'front', upright: true, legsFront: true, seated: true,
+    legScale: SEAT_LEG_SCALE,
+    arms: { L: [74, 84, 88], R: mirror([74, 84, 88]) },
+    legs: { L: SEAT_LEG, R: mirror(SEAT_LEG) },
   },
+  // Same lower body as sitting; the torso sags sideways and forward and the head drops.
   slumped: {
-    axis: -64, lat: [0.9, -0.44], headDir: -38, headScale: 0.78, face: 'front', upright: true, legsFront: true,
-    legScale: [0.72, 0.64, 0.8],
-    arms: { L: [40, 62, 78], R: [102, 96, 92] },
-    legs: { L: [48, 62, 36], R: [128, 116, 144] },
+    axis: -68, lat: [0.93, -0.37], hipLat: [1, 0], torsoScale: 0.92, headDir: -30, headScale: 0.8, face: 'front', upright: true, legsFront: true, seated: true,
+    legScale: SEAT_LEG_SCALE,
+    arms: { L: [84, 92, 94], R: [104, 98, 94] },
+    legs: { L: SEAT_LEG, R: mirror(SEAT_LEG) },
   },
   supine: {
     axis: 180, lat: [0, -1], headDir: 180, face: 'front', upright: false,
@@ -104,14 +110,15 @@ const SIDE = { L: { name: 'left', sign: 1 }, R: { name: 'right', sign: -1 } };
 
 function buildJoints(P, S) {
   const up = dir(S.axis), lat = unit(S.lat), latK = S.latK ?? 1;
+  const hipLat = S.hipLat ? unit(S.hipLat) : lat; // seated slumps tilt the torso, not the hips
   const pelvis = [0, 0];
-  const neck = mul(up, P.torso);
+  const neck = mul(up, P.torso * (S.torsoScale ?? 1));
   const head = add(neck, mul(dir(S.headDir), P.headToNeck * (S.headScale ?? 1)));
   const J = { head, neck, pelvis };
   const ls = S.legScale ?? [1, 1, 1];
   for (const [k, { sign }] of Object.entries(SIDE)) {
     const sh = add(add(neck, mul(lat, sign * P.shoulderHalf * latK)), mul(up, -4));
-    const hip = add(pelvis, mul(lat, sign * P.hipHalf * latK));
+    const hip = add(pelvis, mul(hipLat, sign * P.hipHalf * latK));
     const a = S.arms[k], b = S.legs[k];
     const el = add(sh, mul(dir(a[0]), P.upperArm));
     const wr = add(el, mul(dir(a[1]), P.forearm));
@@ -149,7 +156,7 @@ export function getSkeleton(pose, ageGroup) {
   const latUnit = lat;
   const geom = {
     pose, ageGroup, P, spec: S, joints: J, up, lat: latUnit,
-    face: S.face, upright: S.upright, legsFront: !!S.legsFront, armsBehind: S.armsBehind ?? [],
+    face: S.face, upright: S.upright, legsFront: !!S.legsFront, seated: !!S.seated, armsBehind: S.armsBehind ?? [],
     head: { c: J.head, r: P.headR, mode: S.face, tilt: 0, up: angleOf(J.neck, J.head) },
     neck: { pts: [J.neck, add(J.head, mul(unit(sub(J.neck, J.head)), P.headR * 0.8))], w: P.w.neck },
     torso: { neck: J.neck, pelvis: J.pelvis, lat: latUnit, profile: torsoProfile(P, S.depthK ?? 1) },
@@ -183,7 +190,7 @@ function placeGeometry(geom) {
   const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
   const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
   const dx = CX - (x0 + x1) / 2;
-  const dy = geom.upright ? GROUND_Y - y1 : LYING_CY - (y0 + y1) / 2;
+  const dy = geom.upright ? GROUND_Y - y1 + (geom.spec.groundDrop ?? 0) : LYING_CY - (y0 + y1) / 2;
   const mv = (p) => { p[0] += dx; p[1] += dy; };
   const seen = new Set();
   const move = (p) => { if (!seen.has(p)) { seen.add(p); mv(p); } };
@@ -348,7 +355,12 @@ export function deriveAnchors(geom) {
     const thigh = findLimb(geom, k, 'leg').segs[0];
     const hip = thigh.pts[0], knee = thigh.pts.at(-1);
     const medial = unit(sub(geom.torso.pelvis, hip));
-    const c = add(add(hip, mul(medial, 3)), mul(unit(sub(knee, hip)), 6));
+    if (geom.seated && thigh.pts.length === 2) {
+      // seated thighs are short: keep the thigh mark toward the knee so it does not sit on the groin
+      const c = polyAt(thigh.pts, polyLength(thigh.pts) * 0.6);
+      A[thigh.region].x = c[0]; A[thigh.region].y = c[1];
+    }
+    const c = add(add(hip, mul(medial, geom.seated ? 4 : 3)), mul(unit(sub(knee, hip)), geom.seated ? 3.5 : 6));
     A[`${name}_groin`] = { region: `${name}_groin`, x: c[0], y: c[1], angle: angleOf(hip, knee), length: 14, width: 12, p0: hip, p1: lerp(hip, knee, 0.3), kind: 'segment' };
   }
   const [x0, y0, x1, y1] = geom.bbox;

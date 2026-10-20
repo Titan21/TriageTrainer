@@ -5,6 +5,7 @@
 import { f, pt, perp, add, sub, mul, unit, dist, lerp, clamp, chainPath, roundedPoly, blobPath, rad } from '../util.js';
 import { OUTLINE, INK } from '../palette.js';
 import { reachArm, findLimb, torsoPoint, torsoHalfWidth } from '../skeleton.js';
+import { seatMetrics } from '../seat.js';
 import { silhouette, segDrawPts } from '../figure.js';
 import { textWidth, wrapText, nearestOnRect } from '../labels.js';
 import { frame, headPoint, headGroup, faceLayout, blurFilter, dustFill, bodyClip, darkLine } from './helpers.js';
@@ -335,17 +336,36 @@ function wheelchairSide(broken, rng) {
   return { svg: `<g transform="translate(10 0) rotate(-72 0 8)">${s}</g>`, w: 84, h: 86, rest: 39, tipped: true };
 }
 
-function wheelchairFront(ctx, broken) {
-  const g = ctx.geom, pp = g.torso.pelvis, hw = g.P.hipHalf + 12;
-  const top = torsoPoint(g, -0.15);
-  let s = '';
-  s += line([pp[0] - hw - 6, top[1] - 6], [pp[0] - hw - 12, top[1] - 16], 3.4, AID.dark);
-  s += line([pp[0] + hw + 6, top[1] - 6], [pp[0] + hw + 12, top[1] - 16], 3.4, AID.dark);
-  s += `<path d="${roundedPoly([[pp[0] - hw - 8, top[1] - 4], [pp[0] + hw + 8, top[1] - 4], [pp[0] + hw + 8, pp[1] + 8], [pp[0] - hw - 8, pp[1] + 8]], 6)}" fill="${AID.blue}" stroke="${OUTLINE}" stroke-width="2.2" stroke-linejoin="round"/>`;
-  for (const sg of [-1, 1]) {
-    const cx = pp[0] + sg * (hw + 17), cy = pp[1] + 6;
-    s += `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="5" ry="22" fill="#e2e6ea" stroke="${OUTLINE}" stroke-width="2.2"/><ellipse cx="${f(cx)}" cy="${f(cy)}" rx="2" ry="19" fill="none" stroke="${AID.grey}" stroke-width="1.4"/>`;
+/** Front view of an intact wheelchair under a seated casualty: it is the seat, so no block is drawn. */
+function wheelchairFront(ctx) {
+  const g = ctx.geom, pp = g.torso.pelvis, gy = g.groundY, P = g.P;
+  const { u, half } = seatMetrics(g);
+  const cx = pp[0];
+  const seatY = pp[1] + P.hipHalf * 0.9;      // where the casualty sits
+  const hw = half - 6 * u;                   // half width of the seat
+  const top = torsoPoint(g, -0.1);
+  const R = 33 * u, wx = hw + 8 * u;          // wheel radius and distance of its centre from the middle
+  let s = `<ellipse cx="${f(cx)}" cy="${f(gy + 1)}" rx="${f(wx + 12 * u)}" ry="${f(5 * u)}" fill="#000" fill-opacity="0.15"/>`;
+  // footplates under the feet, small castors at the front corners
+  for (const k of ['L', 'R']) {
+    const an = g.joints['an' + k], sg = k === 'L' ? 1 : -1;
+    s += `<path d="${roundedPoly([[an[0] - 11 * u, gy - 4 * u], [an[0] + 11 * u, gy - 4 * u], [an[0] + 11 * u, gy + 1], [an[0] - 11 * u, gy + 1]], 2)}" fill="${AID.dark}" stroke="${OUTLINE}" stroke-width="2" stroke-linejoin="round"/>`;
+    const c = [cx + sg * (wx - 3 * u), gy - 5.5 * u];
+    s += line([c[0], gy - 26 * u], [c[0], c[1]], 2.6, AID.grey);
+    s += `<circle cx="${f(c[0])}" cy="${f(c[1])}" r="${f(5 * u)}" fill="${AID.light}" stroke="${OUTLINE}" stroke-width="2"/>`;
   }
+  // push handles and backrest
+  for (const sg of [-1, 1]) s += line([cx + sg * (hw + 4), top[1] - 6], [cx + sg * (hw + 9 * u), top[1] - 17 * u], 3.4, AID.dark);
+  s += `<path d="${roundedPoly([[cx - hw - 4, top[1] - 4], [cx + hw + 4, top[1] - 4], [cx + hw + 4, seatY + 6 * u], [cx - hw - 4, seatY + 6 * u]], 6)}" fill="${AID.blue}" stroke="${OUTLINE}" stroke-width="2.2" stroke-linejoin="round"/>`;
+  // big wheels with a push rim, from the ground up to about seat height
+  for (const sg of [-1, 1]) {
+    const x = cx + sg * wx, y = gy - R + 3;
+    s += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(6 * u)}" ry="${f(R)}" fill="#e2e6ea" stroke="${OUTLINE}" stroke-width="2.2"/>`;
+    s += `<ellipse cx="${f(x)}" cy="${f(y)}" rx="${f(2.2 * u)}" ry="${f(R - 3)}" fill="none" stroke="${AID.grey}" stroke-width="1.4"/>`;
+    s += `<ellipse cx="${f(x - sg * 4 * u)}" cy="${f(y)}" rx="${f(1.8 * u)}" ry="${f(R - 6)}" fill="none" stroke="${AID.dark}" stroke-width="1.4"/>`;
+  }
+  // seat cushion and side frames above the wheels
+  s += `<path d="${roundedPoly([[cx - hw - 6, seatY - 3 * u], [cx + hw + 6, seatY - 3 * u], [cx + hw + 6, seatY + 8 * u], [cx - hw - 6, seatY + 8 * u]], 4)}" fill="${AID.blue}" stroke="${OUTLINE}" stroke-width="2.2" stroke-linejoin="round"/>`;
   return s;
 }
 
@@ -405,8 +425,8 @@ export const mobility_aid = {
     const g = ctx.geom;
     const type = params.type ?? 'wheelchair', broken = params.condition === 'broken';
     const rng = ctx.rng(`aid:${type}`);
-    if (type === 'wheelchair' && !broken && (g.pose === 'sitting' || g.pose === 'slumped')) {
-      ctx.add('ground', wheelchairFront(ctx, false));
+    if (type === 'wheelchair' && !broken && g.seated) {
+      ctx.add('ground', wheelchairFront(ctx));
       return '';
     }
     const a = type === 'wheelchair' ? wheelchairSide(broken, rng) : type === 'walking_frame' ? walkingFrame(broken) : type === 'crutches' ? crutches(broken) : stick(broken);

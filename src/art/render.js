@@ -237,7 +237,9 @@ export function renderCasualty(casualty, view = {}, content = {}) {
   const anchors = Object.fromEntries(Object.entries(allAnchors).filter(([r]) => !hidden.has(r)));
 
   // 6. figure and context
-  const figure = drawFigure(geom, style);
+  // seated figures get a low block to sit on, unless an intact wheelchair is their seat
+  const wheelchairSeat = appearance.some((a) => a.overlay === 'mobility_aid' && (a.params?.type ?? 'wheelchair') === 'wheelchair' && a.params?.condition !== 'broken');
+  const figure = drawFigure(geom, style, { seat: wheelchairSeat ? null : casualty.id ?? 'x' });
   figure.centre = lerp(geom.torso.neck, geom.torso.pelvis, 0.5);
   const uid = content.uid ?? view.uid ?? `a${hash(JSON.stringify([casualty, view])).toString(36)}`;
   const layers = Object.fromEntries(LAYERS.map((l) => [l, []]));

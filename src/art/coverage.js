@@ -7,6 +7,7 @@ import { getSkeleton, getAnchors, VIEWBOX, POSES } from './skeleton.js';
 import { OVERLAYS, KIND_LAYER } from './overlays/index.js';
 import { LOOK_SUPPORT, TOP_PALETTE, BOTTOM_PALETTE, SHOE_PALETTE, FIXED_COLOURS, looksLikeTagColour, colourDistance } from './palette.js';
 import { renderCasualty, LAYERS } from './render.js';
+import { SEAT_COLOURS } from './seat.js';
 
 const POSE_PREFERENCE = ['supine', 'sitting', 'standing', 'prone', 'recovery', 'slumped'];
 const MAX_COMBOS = 40;
@@ -90,7 +91,7 @@ export function checkCoverage(vocab, opts = {}) {
 
   // ---- palette ----
   const tagCols = (opts.rules?.categories ?? []).map((c) => c.colour);
-  for (const c of [...TOP_PALETTE, ...BOTTOM_PALETTE, ...SHOE_PALETTE, FIXED_COLOURS.hiVis, FIXED_COLOURS.school]) {
+  for (const c of [...TOP_PALETTE, ...BOTTOM_PALETTE, ...SHOE_PALETTE, FIXED_COLOURS.hiVis, FIXED_COLOURS.school, ...SEAT_COLOURS]) {
     const fam = looksLikeTagColour(c);
     if (fam) gap(`clothing colour ${c} looks like the ${fam} tag colour`);
     for (const t of tagCols) if (colourDistance(c, t) < 70) gap(`clothing colour ${c} is too close to tag colour ${t}`);

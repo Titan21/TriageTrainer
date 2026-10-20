@@ -5,6 +5,7 @@
 import { f, pt, add, sub, mul, unit, perp, lerp, dist, circlePath, capsulePath, chainPath, polyPath, roundedPoly, lighten, darken } from './util.js';
 import { torsoOutline, torsoPoint, torsoHalfWidth, subPolyline, polyLength, polyAt, findLimb } from './skeleton.js';
 import { FIXED_COLOURS, OUTLINE } from './palette.js';
+import { seatSvg } from './seat.js';
 
 const LW = 2; // outline width
 
@@ -28,8 +29,20 @@ const segCapsules = (segs, extra = 0) => segs.map((s) => chainPath(segDrawPts(s)
 
 // ---- skin ----
 
+/**
+ * Torso polygon with the same winding as the limb capsules and the head disc (counter-clockwise
+ * on screen). Unions made of several sub-paths (body clip, skin fills) use the nonzero rule, so a
+ * clockwise torso would cut holes wherever a limb overlaps it (hips, shoulders).
+ */
+export function torsoPathCcw(geom) {
+  const pts = torsoOutline(geom, 0, 1.12, 0);
+  let a = 0;
+  for (let i = 0; i < pts.length; i++) { const p = pts[i], q = pts[(i + 1) % pts.length]; a += p[0] * q[1] - q[0] * p[1]; }
+  return roundedPoly(a > 0 ? [...pts].reverse() : pts, 7);
+}
+
 export function bodyPaths(geom) {
-  const torso = roundedPoly(torsoOutline(geom, 0, 1.12, 0), 7);
+  const torso = torsoPathCcw(geom);
   const neck = chainPath(geom.neck.pts, geom.neck.w / 2);
   const head = circlePath(geom.head.c, geom.head.r);
   const limbs = geom.limbs.map((l) => ({ limb: l, d: segCapsules(l.segs) }));
@@ -283,8 +296,10 @@ function noseSvg(r, skin) {
 /**
  * Draw the base figure. Returns { ground, body, clothing, bodyUnion } SVG fragments.
  * `clothing` includes the "front" parts (arms, head) that sit above the torso.
+ * opts.seat: for seated poses, the id the seat block is styled from (null = no block,
+ * e.g. an intact wheelchair is the seat; overlays/appearance.js draws it).
  */
-export function drawFigure(geom, style) {
+export function drawFigure(geom, style, opts = {}) {
   const back = geom.head.mode === 'back';
   const arm = (side) => findLimb(geom, side, 'arm');
   const leg = (side) => findLimb(geom, side, 'leg');
@@ -296,13 +311,18 @@ export function drawFigure(geom, style) {
   // upright: an ellipse; lying: render.js draws the body shape again, offset (see ground)
   let ground = null;
   if (geom.upright) {
-    ground = `<ellipse cx="${f((x0 + x1) / 2)}" cy="${f(geom.groundY)}" rx="${f((x1 - x0) * 0.4)}" ry="5" fill="#000" fill-opacity="0.13"/>`;
-    // seated figures also cast a shadow under the hips
-    if (geom.legsFront) ground += `<ellipse cx="${f(geom.torso.pelvis[0])}" cy="${f(geom.torso.pelvis[1] + 7)}" rx="${f(geom.P.hipHalf * 2.4)}" ry="${f(geom.P.hipHalf * 0.7)}" fill="#000" fill-opacity="0.12"/>`;
+    // seated figures: the shadow sits under the feet, not the whole spread of arms and lean
+    let [sx0, sx1] = [x0, x1];
+    if (geom.seated) {
+      const fx = ['L', 'R'].flatMap((k) => [geom.joints['an' + k][0], geom.joints['to' + k][0]]);
+      sx0 = Math.min(...fx) - 10; sx1 = Math.max(...fx) + 10;
+    }
+    ground = `<ellipse cx="${f((sx0 + sx1) / 2)}" cy="${f(geom.groundY)}" rx="${f((sx1 - sx0) * (geom.seated ? 0.55 : 0.4))}" ry="5" fill="#000" fill-opacity="0.13"/>`;
+    if (geom.seated && opts.seat != null) ground += seatSvg(geom, opts.seat);
   }
 
   // body (skin): arms behind the torso, legs, torso + neck
-  const torsoSkin = silhouette(chainPath(geom.neck.pts, geom.neck.w / 2) + roundedPoly(torsoOutline(geom, 0, 1.12, 0), 7), style.skin, style.outline);
+  const torsoSkin = silhouette(chainPath(geom.neck.pts, geom.neck.w / 2) + torsoPathCcw(geom), style.skin, style.outline);
   const legsSkin = legOrder.map((s) => legSkin(leg(s), style)).join('');
   const behindArms = geom.armsBehind.map((s) => silhouette(segCapsules(arm(s).segs), style.skin, style.outline)).join('');
   const body = behindArms + (geom.legsFront ? torsoSkin + legsSkin : legsSkin + torsoSkin);

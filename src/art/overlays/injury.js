@@ -246,7 +246,9 @@ function obbOf(ctx, regions) {
   const n = pts.length, mx = pts.reduce((s, p) => s + p[0], 0) / n, my = pts.reduce((s, p) => s + p[1], 0) / n;
   let sxx = 0, sxy = 0, syy = 0;
   for (const p of pts) { const dx = p[0] - mx, dy = p[1] - my; sxx += dx * dx; sxy += dx * dy; syy += dy * dy; }
-  const ang = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+  let ang = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+  // a seated body leans and slumps, but debris lies square across the lap and legs
+  if (ctx.geom.seated) ang = Math.round(ang / (Math.PI / 2)) * (Math.PI / 2);
   const u = [Math.cos(ang), Math.sin(ang)], v = perp(u);
   let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
   for (const p of pts) {
