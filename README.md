@@ -18,8 +18,8 @@ See [PLAN.md](PLAN.md) for the design, the build order and the open questions.
 
 ## How it plays
 
-1. Read a short METHANE briefing.
-2. Approach a casualty. The picture shows only what you can see at a glance.
+1. Read a short METHANE briefing, and make the scene safe: check for danger, put out cones on a live road.
+2. Approach a casualty and check for danger before you kneel; skip it and you may kneel on broken glass. The picture shows only what you can see at a glance.
 3. Pick actions: check breathing, open the airway, check the radial pulse, apply a tourniquet... Each one costs time and reveals or changes something. Plausible traps (start CPR, splint the arm) and a few silly options are mixed in.
 4. Watch the IMISTAMBO triage card fill in as you learn things.
 5. Tag the casualty. If you're slow, they may deteriorate.
@@ -28,6 +28,9 @@ See [PLAN.md](PLAN.md) for the design, the build order and the open questions.
    - checks you skipped
    - interventions you missed
    - traps you fell for, and why they matter in an MCI
+   - what you did well for safety (being careful is never penalised)
+
+Optional **quick-time events** pause the game for an aftershock, a gas smell or a whistle signal: respond within 5 seconds. The home screen tracks which scenes you've completed and your best scores, on this device only.
 
 Modes: **Learn** (one to three casualties, with hints) and **Full scene** (8–10 casualties on a map, with bystanders, hazards and re-triage).
 

@@ -43,6 +43,8 @@ The casualties and scenes were drafted by several parallel agents against the sh
 - **The player sees observations, not the truth.** The picture's vital-sign probes show the values as last checked, so a casualty who deteriorates looks the same until you re-check (visible changes such as pallor or slumping show straight away).
 - **Casualties are "Casualty N" until you learn their name.** Internal titles describe the diagnosis and are never shown during play.
 - **CI plays the game.** The deploy workflow runs the validator and the simulator before building, so content or engine changes that break play never deploy.
+- **Being careful is never punished.** Safety actions (check for danger, gloves, make safe, leave the zone, drop/cover/hold, evacuate, stop and listen) are never scored as wrong; an unneeded one only costs its time. The simulator checks this on every deploy with an extra-cautious player.
+- **Progress stays on the device.** Completed scenes and best scores (with and without hints) are kept in the browser's local storage; there is no account or server.
 
 ## Core loop (single casualty)
 1. **Briefing:** short METHANE summary.
@@ -197,11 +199,18 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 - Crowd crush, chemical exposure and electrical injury.
 - A shortened, rotated leg overlay for hip fractures (currently pelvis bruising plus guarding).
 
+## Safety and quick-time events
+- **Scene safety.** Each scene lists the safety actions a good responder does, with a credit and a miss text: cones and a lookout on a live road, a danger check before entering a collapse, a METHANE report early in a full scene. Hazards present from the start (passing traffic) are active until made safe.
+- **Danger check at every casualty.** Going hands-on without checking for danger first is a process mistake. Some casualties have a local hazard (broken glass, fuel, a live cable, unstable debris, slippery ground): checking finds it ("you sweep a space clear before you kneel"); skipping the check means the rescuer meets it ("you kneel onto a shard of glass"), losing time and points. Walking wounded who came to you are exempt.
+- **Quick-time events (optional).** With the option on, aftershocks, sudden hazards (gas, fuel, rising water) and whistle signals pause play and show only what you sense. You pick from the same six responses every time (drop/cover/hold, leave the zone, evacuate, stop and stay quiet, resume work, keep working) within 5 real seconds; aftershocks need a second response once the shaking stops. Extra random events are added from `vocab.qtePool` to match the scene. With the option off, the same events are alerts with a game-time deadline.
+- **Whistle signals** default to the international USAR signals: three short blasts = evacuate, one long = stop work and be quiet (listening for survivors), one long and one short = resume work. They are data in `vocab.json`; NZRT should confirm them.
+
 ## Scoring
 - Category penalty matrix (`triage-rules.json`): under-triage costs more than over-triage; a salvageable casualty tagged black is the maximum.
 - Missed life-saving intervention: major penalty. Missed key action (e.g. not flagging an entrapment): smaller penalty.
 - Skipped required checks (tagged before checking breathing, tagged black without opening the airway): process penalty and debrief note.
-- Entering or staying in danger, or missing a hazard deadline: major penalty.
+- Entering or staying in danger, missing a hazard deadline, or the wrong quick-time response: major penalty. A right but slow response: small penalty.
+- Missed scene safety action, going hands-on without a danger check, meeting a local hazard: penalties, all weighted in `triage-rules.json`. Safety done well is listed as credits in the debrief.
 - Time over target reduces score.
 - Card completeness per phase, and handover accuracy (order, latest vitals).
 
@@ -234,6 +243,9 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 - **Editing content without code:** edit a JSON file on github.com and commit. The Action validates it, and the error log names the casualty and field if something's wrong.
 - **The contact sheet is published** at `<site>/preview/` so an NZRT clinician can review every casualty's picture, text and stages without installing anything.
 
+## Progress tracking
+The home screen shows how many Learn and Full scenes you have completed, your best score per scene (and best without hints), plays, and a suggested next scene. The debrief says when you beat your best. Progress can be reset.
+
 ## Next steps
 - **Clinician review** of the content using the contact sheet and the content review notes below.
 - **Handover builder** (build step 8).
@@ -247,7 +259,10 @@ Walking actions are wheelchair-inclusive: "make your own way to the collection p
 - Exact fields and layout of the NZRT triage card (a photo of a blank card would help).
 - Does catastrophic bleeding stay red after it is controlled (placeholder: yes)?
 - Are oral glucose for a known low blood sugar, and helping with someone's own reliever inhaler, acceptable during the sieve (placeholder: yes, when quick)?
-- Clock model: game time works well for learning. Should Full scenes also add real-time pressure?
+- Clock model: game time works well for learning; quick-time events add real-time pressure for hazards. Should Full scenes also get an overall real-time limit?
+- Whistle signals: are NZRT's the same as the international USAR ones (3 short = evacuate, 1 long = cease work/quiet, 1 long + 1 short = resume)? INSARAG also uses an air horn for evacuation.
+- Is an early METHANE report every responder's job, or only the team leader's? Full scenes currently expect one within 120 s.
+- Who gives cease/resume signals before USAR arrives (the long-entrapment scene assumes another crew does)?
 - Communication barriers: a Deaf casualty who writes or signs is modelled as `canTalk: false`; should identity and history be obtainable by gesture or writing?
 - How will the exercise present injuries: moulage, cards or role-players?
 - GitHub repo name and owner (sets the Pages base path).
