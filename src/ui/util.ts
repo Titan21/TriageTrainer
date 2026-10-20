@@ -34,14 +34,26 @@ export function groupHeading(group: string): string {
 }
 export const GROUP_ORDER = ['scene', 'communication', 'assessment', 'intervention', 'trap', 'silly'];
 
-// ----- prefs (the only thing remembered across reloads) -----
+// ----- prefs (the only things remembered across reloads, besides progress) -----
 
-export function getHintsPref(): boolean {
-  try { return localStorage.getItem('triage.hints') !== 'off'; } catch { return true; }
+function getPref(key: string, fallback: boolean): boolean {
+  try {
+    const v = localStorage.getItem(key);
+    return fallback ? v !== 'off' : v === 'on';
+  } catch { return fallback; }
 }
-export function setHintsPref(on: boolean): void {
-  try { localStorage.setItem('triage.hints', on ? 'on' : 'off'); } catch { /* storage unavailable */ }
+function setPref(key: string, on: boolean): void {
+  try { localStorage.setItem(key, on ? 'on' : 'off'); } catch { /* storage unavailable */ }
 }
+
+export const getHintsPref = () => getPref('triage.hints', true);
+export const setHintsPref = (on: boolean) => setPref('triage.hints', on);
+/** Quick-time events: sudden events that pause the game and ask for a response. Off by default. */
+export const getQtePref = () => getPref('triage.qte', false);
+export const setQtePref = (on: boolean) => setPref('triage.qte', on);
+/** Sound for whistle signals. On by default. */
+export const getSoundPref = () => getPref('triage.sound', true);
+export const setSoundPref = (on: boolean) => setPref('triage.sound', on);
 
 // ----- url -----
 

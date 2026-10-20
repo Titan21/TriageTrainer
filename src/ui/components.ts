@@ -1,6 +1,7 @@
 import { content } from './engine';
 import { app } from './state';
-import { esc, setHintsPref, tagVars } from './util';
+import { unlockAudio } from './sound';
+import { esc, setHintsPref, setQtePref, setSoundPref, tagVars } from './util';
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -23,18 +24,49 @@ export function protocolBanner(): string {
   return `<aside class="banner banner-warn" role="note"><strong>Placeholder protocol.</strong> ${esc(rest)}</aside>`;
 }
 
-export function hintsToggle(): string {
-  return `<label class="switch"><input type="checkbox" role="switch" data-hints ${app.hints ? 'checked' : ''}>
+type SettingId = 'hints' | 'qte' | 'sound';
+
+const SETTINGS: Record<SettingId, { title: string; text: string; set: (on: boolean) => void }> = {
+  hints: {
+    title: 'Hints',
+    text: 'A nudge line and an explanation when an action is wrong. Turn off to test yourself.',
+    set: (on) => { app.hints = on; setHintsPref(on); },
+  },
+  qte: {
+    title: 'Quick-time events',
+    text: 'Sudden events like aftershocks, gas or whistle signals pause the game: respond within 5 seconds.',
+    set: (on) => { app.qte = on; setQtePref(on); },
+  },
+  sound: {
+    title: 'Sound',
+    text: 'Plays whistle signals. Only matters when quick-time events are on.',
+    set: (on) => { app.sound = on; setSoundPref(on); },
+  },
+};
+
+const switchRow = (id: SettingId) => `<label class="switch"><input type="checkbox" role="switch" data-setting="${id}" ${app[id] ? 'checked' : ''}>
     <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-    <span class="switch-text"><strong>Hints</strong><small>A nudge line and an explanation when an action is wrong. Turn off to test yourself.</small></span></label>`;
+    <span class="switch-text"><strong>${SETTINGS[id].title}</strong><small>${SETTINGS[id].text}</small></span></label>`;
+
+/** The on/off settings, one panel. Call bindSettings on the page afterwards. */
+export function settingsPanel(which: SettingId[] = ['hints', 'qte', 'sound']): string {
+  return `<div class="panel settings">${which.map(switchRow).join('')}</div>`;
 }
 
-export function bindHintsToggle(root: HTMLElement): void {
-  root.querySelector<HTMLInputElement>('[data-hints]')?.addEventListener('change', (e) => {
-    app.hints = (e.target as HTMLInputElement).checked;
-    setHintsPref(app.hints);
+export function bindSettings(root: HTMLElement): void {
+  root.querySelectorAll<HTMLInputElement>('[data-setting]').forEach((input) => {
+    input.addEventListener('change', () => {
+      SETTINGS[input.dataset.setting as SettingId].set(input.checked);
+      // A tap is the moment browsers allow sound to start, so get audio ready for the whistle signals.
+      if (app.qte && app.sound) unlockAudio();
+    });
   });
 }
+
+const icon = (path: string) => `<svg class="mark-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><path d="${path}" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+/** Tick and cross for done / not done. Shape carries the meaning, so they need no colour. */
+export const tickIcon = () => icon('M3.5 8.5l3 3 6-7');
+export const crossIcon = () => icon('M4 4l8 8M12 4l-8 8');
 
 export function header(): string {
   return `<header class="appbar"><a class="brand" href="#/"><span class="brand-mark" aria-hidden="true">+</span>Triage Trainer</a></header>`;

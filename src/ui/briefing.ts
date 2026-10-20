@@ -1,6 +1,7 @@
 import { content } from './engine';
-import { bindHintsToggle, header, hintsToggle, protocolBanner } from './components';
-import { startGame } from './state';
+import { bindSettings, header, protocolBanner, settingsPanel } from './components';
+import { unlockAudio } from './sound';
+import { app, startGame } from './state';
 import { esc, mmss, plural } from './util';
 import type { Briefing } from './types';
 
@@ -34,14 +35,15 @@ export function mountBriefing(root: HTMLElement, sceneId: string): boolean {
         <div><dt>Target time</dt><dd class="mono">${mmss(target)}</dd></div>
       </dl>
     </section>
-    <div class="panel">${hintsToggle()}</div>
+    ${settingsPanel(['hints', 'qte'])}
     <div class="actions-row">
       <button class="btn btn-primary btn-big" data-start>Start</button>
       <a class="btn" href="#/">Back</a>
     </div>
   </main>`;
-  bindHintsToggle(root);
+  bindSettings(root);
   root.querySelector('[data-start]')!.addEventListener('click', () => {
+    if (app.qte && app.sound) unlockAudio();
     startGame(sceneId);
     location.hash = '#/play';
   });

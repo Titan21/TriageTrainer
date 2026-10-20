@@ -7,7 +7,9 @@ import { renderCard } from './card';
 import { catName, tagBadge } from './components';
 import { closeDialog, openDialog } from './dialog';
 import { casualtyLabel, renderMap } from './map';
-import { app } from './state';
+import { cancelPrompts, runPrompts } from './qte';
+import { unlockAudio } from './sound';
+import { app, injuryAfter } from './state';
 import { esc, groupHeading, GROUP_ORDER, mmss, plural, setHtml, tagVars } from './util';
 import type { Action, Session } from './types';
 
@@ -26,6 +28,7 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
   const target = scene.targetSeconds ?? content.rules.scoring.targetSecondsPerCasualty * s.order.length;
   let toastTimer = 0;
   let lastCurrent: string | null = '\0'; // never equal to a real id, so the first render centres the current chip
+  let disposed = false;
 
   root.innerHTML = `<div class="play">
     <header class="topbar">
@@ -69,7 +72,13 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
   }
 
   function renderUrgent() {
-    const m = s.messages.at(-1);
+    if (ui.notice) {
+      R.urgent.hidden = false;
+      setHtml(R.urgent, `<span class="urgent-icon" aria-hidden="true">!</span>
+        <div class="urgent-text"><strong>You were hurt.</strong> ${esc(ui.notice.text)}</div>`);
+      return;
+    }
+    const m = [...s.messages].reverse().find((x) => x.type !== 'injury');
     const ev = m?.event ? s.events.find((e) => e.def.id === m.event) : undefined;
     const show = !!m?.urgent && !ev?.resolved;
     if (!show || !m) { R.urgent.hidden = true; setHtml(R.urgent, ''); return; }
@@ -145,9 +154,15 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
     const r = ui.last;
     if (!r) { setHtml(R.result, '<p class="result-empty">Nothing done yet. Go to a casualty, or call out for anyone who can walk.</p>'); return; }
     const wrong = !r.correct && app.hints;
+    // The injury sentence leads the text of the step that caused it: lift it out so it stands apart.
+    const hurt = ui.notice && r.text.startsWith(ui.notice.text) ? ui.notice : null;
+    const rest = hurt ? r.text.slice(hurt.text.length) : r.text;
+    const lost = hurt ? /^\s*\((\d+) s lost\)/.exec(rest)?.[1] : undefined;
+    const text = hurt ? rest.replace(/^\s*\(\d+ s lost\)\s*/, '') : r.text;
     setHtml(R.result, `<div class="result${r.ok ? '' : ' is-warn'}${wrong ? ' is-wrong' : ''}">
       <div class="result-head"><strong>${esc(r.title)}</strong>${r.seconds ? `<span class="mono">${r.seconds}&nbsp;s</span>` : ''}</div>
-      ${r.text ? `<p>${esc(r.text)}</p>` : ''}
+      ${hurt ? `<p class="result-injury"><strong>You were hurt.</strong> ${esc(hurt.text)}${lost ? ` <span class="mono">${lost}&nbsp;s lost</span>` : ''}</p>` : ''}
+      ${text ? `<p>${esc(text)}</p>` : ''}
       ${wrong ? `<p class="result-feedback"><strong>Not needed here.</strong> ${esc(r.feedback ?? 'This did not help with the sieve.')}</p>` : ''}</div>`);
   }
 
@@ -234,34 +249,61 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
 
   // ----- actions -----
 
+  /** After any step: show what happened, then ask for a response if the step triggered a quick-time prompt. */
+  function afterStep() {
+    renderAll();
+    if (s.prompt) void respond();
+    else showToast();
+  }
+
+  /** The quick-time prompt: blocks the screen until answered, then shows how it went. */
+  async function respond() {
+    const key = (document.activeElement as HTMLElement | null)?.dataset.key;
+    hideToast();
+    const answer = await runPrompts(s, { sound: app.sound });
+    if (disposed || !answer) return;
+    ui.last = { title: 'Quick response', seconds: 0, text: answer.text, ok: answer.correct, correct: true, feedback: null };
+    renderAll();
+    const back = key ? play.querySelector<HTMLElement>(`[data-key="${CSS.escape(key)}"]`) : null;
+    (back ?? R.casualty.querySelector<HTMLElement>('h2'))?.focus({ preventScroll: true });
+  }
+
   function goTo(id: string) {
     if (s.current === id) { window.scrollTo(0, 0); return; }
     const r = approach(s, id);
+    ui.notice = null;
     ui.last = { title: `You walk to ${casualtyLabel(s, id)}`, seconds: r.seconds, text: '', ok: true, correct: true, feedback: null };
     hideToast();
-    renderAll();
+    afterStep();
     window.scrollTo(0, 0);
     const active = document.activeElement;
-    if (!active || active === document.body || !play.contains(active)) R.casualty.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
+    if (!s.prompt && (!active || active === document.body || !play.contains(active))) R.casualty.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
   }
 
   function toScene() {
     if (!s.current) return;
     leave(s);
+    ui.notice = null;
     ui.last = { title: 'Back at the scene overview', seconds: 0, text: '', ok: true, correct: true, feedback: null };
     hideToast();
     renderAll();
     window.scrollTo(0, 0);
   }
 
-  function doAction(id: string) {
-    if (id === 'tag_casualty' && s.current) { openTag(); return; }
+  /** Does an action and records the result, including any injury it caused. */
+  function act(id: string, opts: { category?: string } = {}, title?: string) {
     const a = content.actions.get(id);
     if (!a) return;
-    const r = perform(s, id);
-    ui.last = { title: a.label, seconds: r.seconds, text: r.text, ok: r.ok, correct: r.correct, feedback: r.feedback };
-    renderAll();
-    showToast();
+    const before = s.messages.length;
+    const r = perform(s, id, opts);
+    ui.notice = injuryAfter(s, before);
+    ui.last = { title: title ?? a.label, seconds: r.seconds, text: r.text, ok: r.ok, correct: r.correct, feedback: r.feedback };
+    afterStep();
+  }
+
+  function doAction(id: string) {
+    if (id === 'tag_casualty' && s.current) { openTag(); return; }
+    act(id);
   }
 
   function openTag() {
@@ -276,10 +318,7 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
       returnFocusKey: 'a-tag_casualty',
       onPick: (cat, close) => {
         close();
-        const r = perform(s, 'tag_casualty', { category: cat });
-        ui.last = { title: `Tag ${name}`, seconds: r.seconds, text: r.text, ok: r.ok, correct: r.correct, feedback: r.feedback };
-        renderAll();
-        showToast();
+        act('tag_casualty', { category: cat }, `Tag ${name}`);
       },
     });
   }
@@ -302,6 +341,7 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
   }
 
   play.addEventListener('click', (e) => {
+    if (app.qte && app.sound) unlockAudio();
     const t = (e.target as HTMLElement).closest<HTMLElement>('[data-approach],[data-action],[data-act],#pb-toast');
     if (!t) return;
     if (t.id === 'pb-toast') { hideToast(); return; }
@@ -325,8 +365,9 @@ export function mountPlay(root: HTMLElement, opts: { dialog?: string | null } = 
 
   renderAll();
   R.casualty.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
-  if (opts.dialog === 'tag' && s.current) openTag();
+  if (s.prompt) void respond(); // a prompt can be waiting at the start, or after leaving the screen mid-prompt
+  else if (opts.dialog === 'tag' && s.current) openTag();
   else if (opts.dialog === 'finish') confirmFinish();
 
-  return () => { clearTimeout(toastTimer); closeDialog(); };
+  return () => { disposed = true; clearTimeout(toastTimer); closeDialog(); cancelPrompts(); };
 }

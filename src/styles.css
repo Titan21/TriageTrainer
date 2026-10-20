@@ -457,3 +457,138 @@ dialog.dlg::backdrop { background: rgba(10, 14, 16, 0.6); }
 /* Offline status on the home screen */
 .offline-note { margin-top: 2rem; color: var(--ink-soft); font-size: 0.875rem; opacity: 0.8; }
 .offline-note:empty { display: none; }
+
+/* ---------- progress tracking (home and debrief) ----------
+   Scores use the teal accent in rounded-rectangle chips on purpose: the red, orange, green and black
+   triage colours (and their pill shape) belong to tags only, so a score is never mistaken for a tag. */
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+.progress-panel { display: grid; gap: 12px; }
+.progress-panel > h2 { margin-bottom: 0; }
+.prog-row { display: grid; gap: 6px; }
+.prog-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; }
+.prog-name { font-weight: 650; }
+.prog-count { color: var(--ink-soft); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+.prog-bar { height: 8px; border-radius: 4px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.prog-bar > span { display: block; height: 100%; border-radius: 4px; background: var(--accent); transition: width 0.3s; }
+
+.suggest {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--tap); padding: 10px 14px;
+  background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; color: var(--ink); text-decoration: none;
+}
+.suggest:hover { filter: brightness(0.97); }
+.suggest-body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.suggest-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); }
+.suggest-title { font-weight: 700; }
+.suggest-note { font-size: 0.85rem; color: var(--ink-soft); }
+.suggest-arrow { flex: none; font-size: 1.4rem; line-height: 1; font-weight: 700; color: var(--accent); }
+
+.scene-title .check { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 7px; vertical-align: -2px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); }
+.scene-progress { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; }
+.scene-progress .muted { font-size: 0.85rem; }
+.score-chip { display: inline-flex; align-items: baseline; gap: 5px; padding: 1px 9px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-size: 0.82rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.score-chip-quiet { background: var(--surface-2); color: var(--ink); font-weight: 600; }
+
+.reset-row { display: flex; justify-content: center; }
+.reset-row .btn { color: var(--ink-soft); font-weight: 600; }
+.btn-danger { color: var(--bad-ink); background: var(--bad-bg); border-color: var(--bad-line); }
+.btn-danger:hover { background: var(--bad-bg); filter: brightness(0.96); }
+
+.score-col { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.best-line { font-size: 0.95rem; }
+.best-flag { display: inline-block; padding: 1px 10px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font-size: 0.85rem; }
+.pill-quiet { display: inline-block; padding: 1px 10px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--ink-soft); font-size: 0.78rem; font-weight: 650; }
+
+/* ---------- settings, quick-time prompts and safety ----------
+   Quick-time prompts, injury notes and the Safety section use the neutral and teal accent tokens only:
+   the triage tag colours stay reserved for tags. */
+
+.settings { display: grid; gap: 14px; }
+.settings .switch + .switch { border-top: 1px solid var(--line); padding-top: 14px; }
+
+.mark-icon { display: block; }
+
+/* injury note in the result area */
+.result-injury { margin-top: 6px; padding: 8px 10px; border-radius: 8px; background: var(--surface-2); border-left: 4px solid var(--ink); }
+
+/* quick-time prompt: a full-screen modal; the page behind is inert */
+.qte-open { overflow: hidden; }
+.qte {
+  position: fixed; inset: 0; z-index: 100; display: flex; overflow-y: auto; overscroll-behavior: contain;
+  background: rgba(10, 14, 16, 0.82); -webkit-overflow-scrolling: touch;
+}
+.qte-panel {
+  width: min(100%, 560px); min-height: 100%; margin: auto; padding: 18px 16px 22px; outline: none;
+  display: flex; flex-direction: column; gap: 14px; background: var(--surface); color: var(--ink);
+}
+.qte-kicker { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+.qte-cue { font-size: 1.45rem; line-height: 1.25; font-weight: 700; }
+.qte-status { min-height: 1.4em; color: var(--ink-soft); font-size: 0.92rem; }
+.qte-status:empty { min-height: 0; }
+
+.qte-signal { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px; border-radius: 12px; background: var(--surface-2); }
+.qte-blast { display: block; height: 20px; width: calc(var(--len, 1) * 2.4rem); border-radius: 10px; border: 2px solid var(--accent); background: transparent; }
+.qte-blast.is-done { background: var(--accent); }
+.qte-blast.is-on { background: var(--accent); box-shadow: 0 0 0 5px var(--accent-soft); }
+
+.qte-timer { display: flex; align-items: center; gap: 12px; }
+.qte-bar { flex: 1; height: 12px; border-radius: 6px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line-strong); overflow: hidden; }
+.qte-bar > span { display: block; height: 100%; background: var(--accent); }
+.qte-secs { flex: none; min-width: 3.6em; text-align: right; font-weight: 700; }
+
+.qte-choices { display: grid; gap: 8px; }
+.qte-choice {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px;
+  font: inherit; font-weight: 650; text-align: left; color: var(--ink);
+  background: var(--bg); border: 2px solid var(--line-strong); border-radius: 12px; cursor: pointer;
+}
+.qte-choice:hover:not(:disabled) { background: var(--accent-soft); border-color: var(--accent); }
+.qte-choice:active:not(:disabled) { transform: translateY(1px); }
+.qte-choice:disabled { opacity: 0.55; cursor: default; }
+.qte-num { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--surface-2); font-size: 0.9rem; font-weight: 800; }
+.qte-label { flex: 1; min-width: 0; }
+
+.qte-result { display: flex; flex-direction: column; gap: 12px; }
+.qte-result-head { display: flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 750; }
+.qte-result-head .mark-icon { flex: none; width: 26px; height: 26px; padding: 5px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+.qte-result-text { font-size: 1.05rem; }
+
+.qte-panel.is-shaking { animation: qte-shake 0.7s ease-in-out; }
+@keyframes qte-shake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-9px, 3px); }
+  22% { transform: translate(8px, -4px); }
+  34% { transform: translate(-7px, 4px); }
+  46% { transform: translate(6px, -3px); }
+  58% { transform: translate(-5px, 2px); }
+  72% { transform: translate(3px, -2px); }
+  86% { transform: translate(-2px, 1px); }
+}
+
+@media (min-width: 560px) {
+  .qte { padding: 24px; }
+  .qte-panel { min-height: 0; padding: 22px; border: 1px solid var(--line-strong); border-radius: 16px; box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4); }
+  .qte-choices { grid-template-columns: 1fr 1fr; }
+}
+@media (max-height: 700px) {
+  .qte-panel { gap: 10px; padding-block: 14px; }
+  .qte-cue { font-size: 1.3rem; }
+  .qte-choice { min-height: 48px; padding-block: 6px; }
+}
+
+/* debrief: safety */
+.safety h3 { margin: 14px 0 6px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
+.safety-summary { display: flex; align-items: flex-start; gap: 8px; font-size: 1rem; }
+.safety-summary .mark-icon { flex: none; width: 22px; height: 22px; padding: 4px; margin-top: 1px; border-radius: 50%; }
+.safety-summary.is-done .mark-icon { background: var(--accent); color: var(--accent-ink); }
+.safety-summary.is-missed .mark-icon { background: transparent; color: var(--ink-soft); box-shadow: inset 0 0 0 2px var(--ink-soft); }
+.marks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 0.95rem; }
+.mark-row { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; }
+.mark { display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; }
+.mark-row.is-done .mark { background: var(--accent); color: var(--accent-ink); }
+.mark-row.is-missed .mark { background: transparent; color: var(--ink-soft); box-shadow: inset 0 0 0 2px var(--ink-soft); }
+
+/* Quick-time grace period: the bar turns amber once the target time has passed */
+.qte-timer.is-late .qte-bar > span { background: #b7791f; }
+.qte-timer.is-late { color: #b7791f; }

@@ -4,7 +4,7 @@ import { renderCasualty } from '../art/index.js';
 import rules from '../../content/triage-rules.json';
 import vocab from '../../content/vocab.json';
 import actions from '../../content/actions.json';
-import type { Action, ActionResult, CardField, Content, Debrief, Session } from './types';
+import type { Action, ActionResult, AnswerResult, CardField, Content, Debrief, Session } from './types';
 
 const casualtyFiles = Object.values(import.meta.glob('../../content/casualties/*.json', { eager: true, import: 'default' }));
 const sceneFiles = Object.values(import.meta.glob('../../content/scenes/*.json', { eager: true, import: 'default' }));
@@ -13,8 +13,11 @@ export const content = E.indexContent({ vocab, actions, rules, casualtyFiles, sc
 
 const art = { vocab, actions, rules };
 
-export const createSession = (sceneId: string, seed: string, hints: boolean) =>
-  E.createSession(content as never, sceneId, { seed, hints }) as unknown as Session;
+export const createSession = (sceneId: string, seed: string, hints: boolean, qte = false) =>
+  E.createSession(content as never, sceneId, { seed, hints, qte }) as unknown as Session;
+/** Answer the pending quick-time prompt (null when time ran out) with the real reaction time in seconds. */
+export const answerPrompt = (s: Session, actionId: string | null, seconds: number) =>
+  E.answerPrompt(s, actionId, seconds) as unknown as AnswerResult;
 export const approach = (s: Session, id: string) => E.approach(s, id) as { ok: boolean; seconds: number; text: string };
 export const leave = (s: Session) => E.leave(s);
 export const perform = (s: Session, id: string, opts: { category?: string } = {}) =>

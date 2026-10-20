@@ -72,13 +72,34 @@ export interface Content {
   categories: Map<string, Category>;
 }
 
-export interface SessionEvent { def: { id: string }; resolved: boolean; missed: boolean; deadlineAt?: number }
+export interface SessionEvent {
+  def: { id: string; type?: string; cue?: string; followUpCue?: string; description?: string };
+  resolved: boolean; missed: boolean; deadlineAt?: number;
+}
+
+/** A quick-time prompt. The engine also knows the right answer; the UI is never given it before the player answers. */
+export interface Prompt {
+  eventId: string;
+  step: number;
+  cue: string;
+  signal: { id: string; pattern: string; blasts: number[] } | null;
+  choices: { id: string; label: string }[];
+  limitSeconds: number;
+  at: number;
+}
+
+export interface QteResult { eventId: string; step: number; expected: string; answer: string | null; seconds: number; ok: boolean; fast: boolean }
+
+export interface AnswerResult { ok: boolean; correct: boolean; fast: boolean; text: string; expected: string }
 
 export interface Session {
   content: Content;
   scene: Scene;
   seed: string;
   hints: boolean;
+  qte: boolean;
+  prompt: Prompt | null;
+  qteResults: QteResult[];
   clock: number;
   position: Pos;
   current: string | null;
@@ -110,4 +131,10 @@ export interface Debrief {
   casualties: DebriefCasualty[];
   items: { points: number; text: string; casualty: string | null; kind: string }[];
   teaching: string[];
+  /** Things done well: scene safety, danger checks, quick-time reactions. */
+  credits: { text: string; kind: 'safety' | 'reaction' }[];
+  safety: {
+    dangerChecks: { checked: number; of: number };
+    expected: { id: string; action: string; by: string | number; credit?: string; miss?: string; ok: boolean; at: number | null }[];
+  };
 }
