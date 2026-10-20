@@ -15,7 +15,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { indexContent, createSession, approach, perform, snapshot, debrief, card, availableActions, answerPrompt, pendingSafety } from '../src/game/session.js';
+import { indexContent, createSession, approach, perform, snapshot, debrief, card, availableActions, answerPrompt, pendingSafety, idealRun } from '../src/game/session.js';
 import { triage } from '../src/engine/rules.js';
 import { renderCasualty } from '../src/art/index.js';
 
@@ -182,6 +182,36 @@ function playCareful(sceneId, { qte = false, cautious = false } = {}) {
   return d;
 }
 
+/** Follows exactly the engine's ideal run for each casualty: it must be correct and complete. */
+function playIdeal(sceneId) {
+  const s = createSession(content, sceneId, { seed: 'sim' });
+  for (const x of pendingSafety(s)) act(s, x.action);
+  if (s.order.length > 1) act(s, 'call_walking_wounded');
+  const walkers = s.order.filter((id) => s.casualties.get(id).cameToYou);
+  for (const id of [...walkers, ...s.order.filter((id) => !walkers.includes(id))]) {
+    answerPrompts(s);
+    approach(s, id);
+    answerPrompts(s);
+    const rc = s.casualties.get(id);
+    const plan = idealRun(s, rc);
+    for (const step of plan.steps) {
+      if (step.id === 'call_walking_wounded') continue;
+      act(s, step.id, step.id === 'tag_casualty' ? { category: plan.category } : undefined);
+    }
+  }
+  const d = debrief(s);
+  for (const c of d.casualties) {
+    // The ideal describes the casualty as found; skip anyone who changed between arrival and tag.
+    const rc = s.casualties.get(c.id);
+    if (rc.stages.some((st) => st.status === 'applied' && st.appliedAt > rc.visitedAt && st.appliedAt <= (rc.tag?.t ?? s.clock))) continue;
+    const own = c.mistakes.filter((m) => !m.startsWith('Deteriorated') && !m.startsWith('Not handled'));
+    if (c.verdict !== 'correct' && !own.length) problems.push(`${sceneId}/${c.id}: ideal run tagged ${c.assigned}, correct ${c.correct}`);
+    for (const m of own) problems.push(`${sceneId}/${c.id}: ideal run still made a mistake: ${m}`);
+    if (!c.ideal.steps.every((x) => x.done)) problems.push(`${sceneId}/${c.id}: ideal steps not all marked done: ${c.ideal.steps.filter((x) => !x.done).map((x) => x.id).join(', ')}`);
+  }
+  return d;
+}
+
 function playCareless(sceneId) {
   const s = createSession(content, sceneId, { seed: 'sim' });
   for (const id of s.order) { approach(s, id); perform(s, 'tag_casualty', { category: 'green' }); }
@@ -193,7 +223,8 @@ for (const scene of content.scenes.values()) {
   try {
     const good = playCareful(scene.id);
     const bad = playCareless(scene.id);
-    const row = { id: scene.id, good, bad };
+    const ideal = playIdeal(scene.id);
+    const row = { id: scene.id, good, bad, ideal };
     if (!scene.id.startsWith('solo_')) {
       row.qte = playCareful(scene.id, { qte: true });
       row.cautious = playCareful(scene.id, { cautious: true });
@@ -210,9 +241,15 @@ for (const scene of content.scenes.values()) {
   }
 }
 
-console.log('scene | careful (tags, time/target) | careful + QTE | extra-cautious | careless | safety credits');
+console.log('scene | careful (tags, time/target) | careful + QTE | extra-cautious | ideal run (action time) | careless | safety credits');
 for (const r of results.filter((x) => !x.id.startsWith('solo_'))) {
-  console.log(`${r.id} | ${r.good.score} (${r.good.correctTags}/${r.good.total}, ${Math.round(r.good.seconds)}/${r.good.targetSeconds}s) | ${r.qte?.score} | ${r.cautious?.score} | ${r.bad.score} | ${r.good.credits.length}`);
+  console.log(`${r.id} | ${r.good.score} (${r.good.correctTags}/${r.good.total}, ${Math.round(r.good.seconds)}/${r.good.targetSeconds}s) | ${r.qte?.score} | ${r.cautious?.score} | ${r.ideal.score} (${r.ideal.ideal.seconds}s) | ${r.bad.score} | ${r.good.credits.length}`);
+}
+if (process.argv.includes('--ideal')) {
+  for (const id of ['solo_bl_thigh_bleed_01', 'solo_br_not_breathing_black_01', 'solo_ch_rescue_breaths_01', 'solo_en_slab_legs_01', 'solo_wk_loud_forearm_01']) {
+    const c = results.find((r) => r.id === id)?.ideal.casualties[0];
+    if (c) console.log(`\n${id}: ${c.ideal.seconds}s (played in ${c.ideal.yours}s)\n${c.ideal.steps.map((x) => `  ${x.label} [${x.seconds}s] - ${x.why}`).join('\n')}`);
+  }
 }
 if (process.argv.includes('--why')) {
   for (const r of results.filter((x) => !x.id.startsWith('solo_') && x.good.score < 90)) {

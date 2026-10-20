@@ -15,7 +15,7 @@
 // run on the scene clock; a stage is prevented when one of its `unless` actions
 // was finished at or before the stage time.
 
-import { triage, rollState, mergeState, evalCond, findingContext, requiredChecks } from '../engine/rules.js';
+import { triage, rollState, mergeState, evalCond, findingContext, requiredChecks, fillThresholdsDeep } from '../engine/rules.js';
 import { makeRng } from '../art/util.js';
 
 export const CARD_FIELDS = [
@@ -49,8 +49,19 @@ const EXTRA_COUNT = 3;
 
 // ---------- content ----------
 
-/** Index raw content. casualtyFiles/sceneFiles are the parsed JSON files. */
-export function indexContent({ vocab, actions, rules, casualtyFiles, sceneFiles }) {
+/**
+ * Index raw content. casualtyFiles/sceneFiles are the parsed JSON files. Every text's {{adult.rrHigh}}-style
+ * placeholders are filled from rules.thresholds here, so all screens quote the same numbers the rules use.
+ */
+export function indexContent(raw) {
+  const t = raw.rules.thresholds;
+  const { vocab, actions, rules, casualtyFiles, sceneFiles } = {
+    ...raw,
+    actions: fillThresholdsDeep(raw.actions, t),
+    rules: fillThresholdsDeep(raw.rules, t),
+    casualtyFiles: fillThresholdsDeep(raw.casualtyFiles, t),
+    sceneFiles: fillThresholdsDeep(raw.sceneFiles, t),
+  };
   const actionList = actions.actions ?? actions;
   const casualties = new Map();
   for (const f of casualtyFiles) for (const c of f.casualties) casualties.set(c.id, c);
@@ -393,6 +404,7 @@ export function approach(session, casualtyId) {
   session.current = casualtyId;
   if (rc.visitedAt == null) {
     rc.visitedAt = session.clock;
+    rc.atVisit = { state: structuredClone(rc.state), findings: structuredClone(rc.findings) };
     const brief = session.scene.briefing?.type;
     if (brief) addCard(session, rc, 'mechanism', `${brief} (briefing)`);
     for (const f of rc.findings) if (f.visible) addCard(session, rc, f.cardField, f.label);
@@ -521,6 +533,7 @@ function applySceneEffect(session, a, rc) {
         r.position = [Math.min(100, session.position[0] + 4 + walkers.length * 3), Math.max(0, session.position[1] - 4)];
         if (r.visitedAt == null) {
           r.visitedAt = session.clock;
+          r.atVisit = { state: structuredClone(r.state), findings: structuredClone(r.findings) };
           for (const f of r.findings) if (f.visible) addCard(session, r, f.cardField, f.label);
         }
         addCard(session, r, 'signs', 'Walking: yes');
@@ -838,6 +851,98 @@ export function hint(session) {
   return 'Tagged. Move on to the next casualty.';
 }
 
+// ---------- ideal run ----------
+
+/** Why each sieve check is in the ideal run (the deciding sieve question goes on the tag step). */
+const CHECK_WHY = {
+  check_breathing: 'Breathing? Count the rate for the full check.',
+  open_airway: 'Not breathing: open the airway once, then look again.',
+  check_radial_pulse: 'Circulation: is there a radial pulse?',
+  check_crt: 'Circulation: capillary refill.',
+  give_command: 'Can they follow a simple command?',
+  check_response: 'How do they respond to voice and pain?',
+  rescue_breaths: 'A child with a pulse but not breathing gets 5 rescue breaths.',
+};
+
+const IDEAL_WHY = {
+  recovery_position: 'Breathing but not responding: protect the airway.',
+  open_airway: 'Opening the airway is what keeps them breathing.',
+  rescue_breaths: 'A child with a pulse but not breathing gets 5 rescue breaths.',
+  flag_for_medical: 'Trapped: line up medical support before anyone frees them.',
+  give_oral_glucose: 'Low blood sugar but still able to swallow: sugar now.',
+  help_use_inhaler: 'Their own reliever inhaler is the quickest help.',
+  self_pressure: 'Have them press on their own bleeding while you carry on.',
+};
+
+/**
+ * The shortest correct sequence for one casualty, from the state they were in when first reached:
+ * danger check, catastrophic bleed control, the sieve checks in rule order, life-saving and key
+ * actions, then the tag. Each step says why and whether the player did it before tagging.
+ */
+export function idealRun(session, rc) {
+  const { rules, actions, categories } = session.content;
+  const st = rc.atVisit?.state ?? rc.state;
+  const findings = rc.atVisit?.findings ?? rc.findings;
+  const truth = triage(rules, rc.ageGroup, st);
+  const exp = rc.def.expected ?? {};
+  const steps = [];
+  const add = (id, why, { again = false, seconds } = {}) => {
+    if (!id || (!again && steps.some((x) => x.id === id))) return;
+    const a = actions.get(id);
+    steps.push({ id, label: a?.label ?? id, seconds: seconds ?? a?.timeCostSeconds ?? 0, why });
+  };
+
+  const lsi = exp.lifeSavingInterventions ?? [];
+  // Interventions aimed at a finding need it in view: expose first when it is hidden.
+  const treat = (id, why) => {
+    const target = actions.get(id)?.effect?.target;
+    if (target) {
+      const m = /^(minor|major|catastrophic)_bleed$/.exec(target);
+      const hit = findings.find((f) => f.lifeThreat === target || f.overlay === target || (m && f.overlay === 'bleed' && f.params?.severity === m[1]));
+      if (hit && !hit.visible) add('expose_check_bleeding', 'It is hidden under clothing: expose to find it.');
+    }
+    add(id, why);
+  };
+  const cat = findings.find((f) => f.lifeThreat === 'catastrophic_bleed');
+  if (rc.cameToYou) {
+    add('call_walking_wounded', 'They answered the call-out and walked to you.', { seconds: 0 });
+    if (lsi[0]) treat(lsi[0], IDEAL_WHY[lsi[0]] ?? 'Life-saving for this casualty.');
+    for (const k of exp.keyActions ?? []) treat(k, IDEAL_WHY[k] ?? 'Needed for this casualty.');
+  } else {
+    if (needsDangerCheck(session, rc)) add('check_danger', 'Check for danger before you kneel down.');
+    if (cat) treat(lsi[0], 'Catastrophic bleeding comes first.');
+    const canBeAsked = ['alert', 'voice'].includes(st.responsive) && st.obeysCommands && !st.entrapped;
+    if (canBeAsked && truth.step !== 'catastrophic_bleed') add('ask_to_walk', st.canWalk ? 'Can they walk? Yes, so they are green.' : 'Can they walk? No, so carry on with the sieve.');
+    for (const step of rules.sieves[rc.ageGroup].steps) {
+      const deciding = step.id === truth.step;
+      for (const c of deciding ? step.checks : (step.ruleOutChecks ?? step.checks)) {
+        const id = Array.isArray(c) ? c[0] : c;
+        if (id === 'ask_to_walk' || id === 'call_walking_wounded') continue; // handled above
+        add(id, CHECK_WHY[id] ?? step.question);
+        if ((id === 'open_airway' || id === 'rescue_breaths') && st.breathing === false) add('check_breathing', 'Look, listen and feel again.', { again: true });
+      }
+      if (deciding) break;
+    }
+    if (!cat && lsi[0]) treat(lsi[0], IDEAL_WHY[lsi[0]] ?? 'Life-saving for this casualty.');
+    for (const k of exp.keyActions ?? []) treat(k, IDEAL_WHY[k] ?? 'Needed for this casualty.');
+  }
+  const category = categories.get(truth.category);
+  const decider = rules.sieves[rc.ageGroup].steps.find((x) => x.id === truth.step);
+  const decided = truth.step === 'otherwise' ? 'none of the sieve questions apply.' : decider?.question ?? '';
+  add('tag_casualty', `Tag ${category?.label ?? truth.category} (${truth.category}): ${decided}`.trim());
+
+  // Done: the player did this action (that many times, for repeats) before tagging.
+  const cutoff = rc.tag?.t ?? session.clock;
+  const seen = {};
+  for (const x of steps) {
+    seen[x.id] = (seen[x.id] ?? 0) + 1;
+    const times = x.id === 'call_walking_wounded' ? (rc.cameToYou ? 1 : 0) : rc.done.filter((d) => d.id === x.id && d.ok !== false && d.t <= cutoff).length;
+    x.done = times >= seen[x.id];
+  }
+  const yours = session.log.filter((l) => l.casualty === rc.id && l.action !== 'approach' && l.t <= cutoff).reduce((sum, l) => sum + (l.seconds ?? 0), 0);
+  return { steps, seconds: steps.reduce((sum, x) => sum + x.seconds, 0), yours, category: truth.category };
+}
+
 // ---------- debrief ----------
 
 const maxOf = (row) => Math.max(...Object.values(row));
@@ -899,6 +1004,7 @@ export function debrief(session) {
         mark(w('missedRetriage', 3), `Deteriorated to ${now.category} after you tagged ${assigned}; a re-triage would have caught it.`);
       }
     }
+    out.ideal = idealRun(session, rc);
     out.missedFindings = rc.findings.filter((f) => !f.visible && !rc.revealed.has(f.id) && f.overlay !== 'entrapment').map((f) => f.label);
     out.stages = rc.stages.map((st) => ({ id: st.def.id, note: st.def.note, status: st.status, at: st.appliedAt }));
     return out;
@@ -947,6 +1053,8 @@ export function debrief(session) {
   }
 
   const tagged = casualties.filter((c) => c.assigned);
+  const visited = casualties.filter((c) => session.casualties.get(c.id).visitedAt != null);
+  const ideal = { seconds: visited.reduce((sum, c) => sum + c.ideal.seconds, 0), yours: visited.reduce((sum, c) => sum + c.ideal.yours, 0), casualties: visited.length };
   return {
     score: Math.max(0, 100 - penalty),
     penalty,
@@ -957,6 +1065,7 @@ export function debrief(session) {
     under: tagged.filter((c) => c.verdict === 'under').length,
     over: tagged.filter((c) => c.verdict === 'over').length,
     casualties,
+    ideal,
     items,
     credits,
     safety: { dangerChecks: { checked: checked.length, of: checkable.length }, expected: safetyResults(session) },
